@@ -1,0 +1,1000 @@
+{
+  "owner": "rsasaki0109",
+  "synced_at": "2026-04-03T04:46:29+00:00",
+  "repos": [
+    {
+      "name": "rsasaki0109.github.io",
+      "description": "",
+      "topics": [],
+      "language": "HTML",
+      "clone_url": "https://github.com/rsasaki0109/rsasaki0109.github.io.git",
+      "html_url": "https://github.com/rsasaki0109/rsasaki0109.github.io",
+      "default_branch": "main"
+    },
+    {
+      "name": "gnss_gpu",
+      "description": "GPU-accelerated GNSS signal processing library (CUDA + Python)",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/gnss_gpu.git",
+      "html_url": "https://github.com/rsasaki0109/gnss_gpu",
+      "default_branch": "main"
+    },
+    {
+      "name": "rsasaki0109",
+      "description": "GitHub profile README for Ryohei Sasaki",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/rsasaki0109.git",
+      "html_url": "https://github.com/rsasaki0109/rsasaki0109",
+      "default_branch": "main"
+    },
+    {
+      "name": "gnssplusplus-library",
+      "description": "Modern C++ GNSS/RTK/PPP/CLAS toolkit.",
+      "topics": [
+        "c-plus-plus",
+        "gnss",
+        "localization",
+        "positioning",
+        "ppp",
+        "qzss",
+        "rinex",
+        "ros2",
+        "rtcm",
+        "rtk"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/gnssplusplus-library.git",
+      "html_url": "https://github.com/rsasaki0109/gnssplusplus-library",
+      "default_branch": "develop"
+    },
+    {
+      "name": "CudaRobotics",
+      "description": "CUDA-accelerated robotics algorithms in C++. 20+ algorithms for SLAM, Path Planning, and Localization.",
+      "topics": [
+        "cpp",
+        "cuda",
+        "gpu",
+        "path-planning",
+        "robotics",
+        "slam"
+      ],
+      "language": "Cuda",
+      "clone_url": "https://github.com/rsasaki0109/CudaRobotics.git",
+      "html_url": "https://github.com/rsasaki0109/CudaRobotics",
+      "default_branch": "master"
+    },
+    {
+      "name": "rsasaki-hub",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/rsasaki-hub.git",
+      "html_url": "https://github.com/rsasaki0109/rsasaki-hub",
+      "default_branch": "main"
+    },
+    {
+      "name": "repo2paper",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/repo2paper.git",
+      "html_url": "https://github.com/rsasaki0109/repo2paper",
+      "default_branch": "main"
+    },
+    {
+      "name": "simple_visual_slam",
+      "description": "",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/simple_visual_slam.git",
+      "html_url": "https://github.com/rsasaki0109/simple_visual_slam",
+      "default_branch": "master"
+    },
+    {
+      "name": "localization_zoo",
+      "description": "C++ implementations, derived variants, and compact baselines for localization papers with ROS 2, tests, and benchmarks.",
+      "topics": [
+        "cpp",
+        "icp",
+        "lidar",
+        "lio",
+        "localization",
+        "odometry",
+        "point-cloud",
+        "robotics",
+        "ros2",
+        "slam"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/localization_zoo.git",
+      "html_url": "https://github.com/rsasaki0109/localization_zoo",
+      "default_branch": "main"
+    },
+    {
+      "name": "CloudAnalyzer",
+      "description": "AI-friendly CLI tool for point cloud analysis and evaluation — F1/Chamfer/Hausdorff metrics, ICP/GICP registration, 22 commands",
+      "topics": [
+        "cli",
+        "evaluation",
+        "lidar",
+        "open3d",
+        "point-cloud",
+        "slam"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/CloudAnalyzer.git",
+      "html_url": "https://github.com/rsasaki0109/CloudAnalyzer",
+      "default_branch": "main"
+    },
+    {
+      "name": "roboclaw-rs",
+      "description": "Rust-first, agent-first robotics workspace with ROS 2 hooks, YAML skills, simulator/hardware backends, and LLM-plannable execution.",
+      "topics": [
+        "ai-agent",
+        "autonomy",
+        "gazebo",
+        "llm",
+        "robotics",
+        "ros2",
+        "rust",
+        "simulation",
+        "yaml"
+      ],
+      "language": "Rust",
+      "clone_url": "https://github.com/rsasaki0109/roboclaw-rs.git",
+      "html_url": "https://github.com/rsasaki0109/roboclaw-rs",
+      "default_branch": "main"
+    },
+    {
+      "name": "gs-sim2real",
+      "description": "Multi-dataset 3D Gaussian Splatting reconstruction playground (COLMAP, gsplat, nerfstudio, Waymo)",
+      "topics": [
+        "3d-gaussian-splatting",
+        "3d-reconstruction",
+        "colmap",
+        "nerf",
+        "point-cloud",
+        "pytorch",
+        "robotics"
+      ],
+      "language": "JavaScript",
+      "clone_url": "https://github.com/rsasaki0109/gs-sim2real.git",
+      "html_url": "https://github.com/rsasaki0109/gs-sim2real",
+      "default_branch": "main"
+    },
+    {
+      "name": "rustclaw",
+      "description": "Memory search engine with hybrid vector/keyword search, MMR re-ranking, and temporal decay — Rust port of OpenClaw's memory system",
+      "topics": [
+        "embeddings",
+        "fts5",
+        "mcp",
+        "memory",
+        "rust",
+        "search-engine"
+      ],
+      "language": "Rust",
+      "clone_url": "https://github.com/rsasaki0109/rustclaw.git",
+      "html_url": "https://github.com/rsasaki0109/rustclaw",
+      "default_branch": "main"
+    },
+    {
+      "name": "kalman_filter_localization_ros2",
+      "description": "gnss/imu localization using kalman filter",
+      "topics": [
+        "gnss",
+        "imu",
+        "localization",
+        "robotics",
+        "ros",
+        "ros2"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/kalman_filter_localization_ros2.git",
+      "html_url": "https://github.com/rsasaki0109/kalman_filter_localization_ros2",
+      "default_branch": "devel"
+    },
+    {
+      "name": "rust_robotics",
+      "description": "Rust implementation of PythonRobotics, sample codes for robotics algorithms",
+      "topics": [
+        "algorithm",
+        "control",
+        "localization",
+        "navigation",
+        "path-planning",
+        "path-tracking",
+        "robotics",
+        "rust",
+        "slam"
+      ],
+      "language": "Rust",
+      "clone_url": "https://github.com/rsasaki0109/rust_robotics.git",
+      "html_url": "https://github.com/rsasaki0109/rust_robotics",
+      "default_branch": "main"
+    },
+    {
+      "name": "dynamic-3d-object-removal",
+      "description": "Numpy-only dynamic object removal for LiDAR point clouds. 3D box crop + temporal filtering, ROS2 realtime node, public AV2 demos.",
+      "topics": [
+        "argoverse",
+        "autonomous-driving",
+        "dynamic-object-removal",
+        "kitti",
+        "lidar",
+        "mapping",
+        "numpy",
+        "point-cloud",
+        "point-cloud-processing",
+        "ros2",
+        "slam"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/dynamic-3d-object-removal.git",
+      "html_url": "https://github.com/rsasaki0109/dynamic-3d-object-removal",
+      "default_branch": "master"
+    },
+    {
+      "name": "lidarslam_ros2",
+      "description": "ROS 2 LiDAR SLAM for pointcloud-map authoring, benchmarking, and Autoware-compatible map workflows.",
+      "topics": [
+        "autoware-compatible",
+        "benchmarking",
+        "gnss",
+        "lidar",
+        "lidar-slam",
+        "loop-closure",
+        "map-authoring",
+        "mapping",
+        "pointcloud-map",
+        "robotics",
+        "ros2"
+      ],
+      "language": "HTML",
+      "clone_url": "https://github.com/rsasaki0109/lidarslam_ros2.git",
+      "html_url": "https://github.com/rsasaki0109/lidarslam_ros2",
+      "default_branch": "develop"
+    },
+    {
+      "name": "lidar_localization_ros2",
+      "description": "3D LIDAR Localization using NDT/GICP and pointcloud map in ROS 2 (Not SLAM)",
+      "topics": [
+        "gicp",
+        "lidar",
+        "localization",
+        "ndt",
+        "pcl",
+        "ros2"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/lidar_localization_ros2.git",
+      "html_url": "https://github.com/rsasaki0109/lidar_localization_ros2",
+      "default_branch": "main"
+    },
+    {
+      "name": "tree-trunk-mapper",
+      "description": "Detect and map individual tree trunks from LiDAR point clouds",
+      "topics": [
+        "dbscan",
+        "forest-inventory",
+        "forestry",
+        "geojson",
+        "lidar",
+        "ransac",
+        "tree-detection"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/tree-trunk-mapper.git",
+      "html_url": "https://github.com/rsasaki0109/tree-trunk-mapper",
+      "default_branch": "main"
+    },
+    {
+      "name": "GNSS-Radar",
+      "description": "GNSS-Radar is a web application to show the current GNSS constellation",
+      "topics": [],
+      "language": "HTML",
+      "clone_url": "https://github.com/rsasaki0109/GNSS-Radar.git",
+      "html_url": "https://github.com/rsasaki0109/GNSS-Radar",
+      "default_branch": "master"
+    },
+    {
+      "name": "slam-handbook-python",
+      "description": "SLAM Handbookの内容をPython + Jupyter Notebookで学ぶハンズオン教材",
+      "topics": [],
+      "language": "Jupyter Notebook",
+      "clone_url": "https://github.com/rsasaki0109/slam-handbook-python.git",
+      "html_url": "https://github.com/rsasaki0109/slam-handbook-python",
+      "default_branch": "main"
+    },
+    {
+      "name": "rsasaki-slides",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/rsasaki-slides.git",
+      "html_url": "https://github.com/rsasaki0109/rsasaki-slides",
+      "default_branch": "main"
+    },
+    {
+      "name": "ge-drive-visualizer",
+      "description": "Visualization of vehicle position and pose estimation in Google Earth",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/ge-drive-visualizer.git",
+      "html_url": "https://github.com/rsasaki0109/ge-drive-visualizer",
+      "default_branch": "main"
+    },
+    {
+      "name": "tc-datasets",
+      "description": "Real World Datasets for Autonomous Navigation",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/tc-datasets.git",
+      "html_url": "https://github.com/rsasaki0109/tc-datasets",
+      "default_branch": "master"
+    },
+    {
+      "name": "robotics-technology-genealogy",
+      "description": "Interactive genealogy tree of Robotics & AI technologies. Live demo available.",
+      "topics": [
+        "autonomous-driving",
+        "awesome-list",
+        "computer-vision",
+        "deep-learning",
+        "genealogy",
+        "llm",
+        "robotics",
+        "ros2",
+        "slam",
+        "visualization"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/robotics-technology-genealogy.git",
+      "html_url": "https://github.com/rsasaki0109/robotics-technology-genealogy",
+      "default_branch": "main"
+    },
+    {
+      "name": "slam-handbook-public-release",
+      "description": "Release repo for our SLAM Handbook",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/slam-handbook-public-release.git",
+      "html_url": "https://github.com/rsasaki0109/slam-handbook-public-release",
+      "default_branch": "main"
+    },
+    {
+      "name": "amcl_3d",
+      "description": "AMCL(Adaptive Monte Carlo Localization) using 3D LiDAR for ROS.",
+      "topics": [
+        "lidar",
+        "localization",
+        "mcl",
+        "particle-filter",
+        "robotics",
+        "ros"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/amcl_3d.git",
+      "html_url": "https://github.com/rsasaki0109/amcl_3d",
+      "default_branch": "main"
+    },
+    {
+      "name": "bagx",
+      "description": "Post-processing analysis engine for ROS2 rosbag — eval, compare, sync, anomaly detection, AI export",
+      "topics": [
+        "cli",
+        "python",
+        "robotics",
+        "ros2",
+        "rosbag",
+        "sensor-analysis"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/bagx.git",
+      "html_url": "https://github.com/rsasaki0109/bagx",
+      "default_branch": "main"
+    },
+    {
+      "name": "virtual-tukuba-challenge-ros2",
+      "description": "ROS2 bridge and workflow workspace for Virtual Tsukuba Challenge (VTC)",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/virtual-tukuba-challenge-ros2.git",
+      "html_url": "https://github.com/rsasaki0109/virtual-tukuba-challenge-ros2",
+      "default_branch": "main"
+    },
+    {
+      "name": "game_product_ws",
+      "description": "🎮 8 browser games + 11 Roblox games. Play now: https://rsasaki0109.github.io/game_product_ws/",
+      "topics": [
+        "browser-games",
+        "games",
+        "indie-games",
+        "react",
+        "roblox",
+        "threejs",
+        "typescript",
+        "webgl"
+      ],
+      "language": "Luau",
+      "clone_url": "https://github.com/rsasaki0109/game_product_ws.git",
+      "html_url": "https://github.com/rsasaki0109/game_product_ws",
+      "default_branch": "master"
+    },
+    {
+      "name": "mathematical_robotics",
+      "description": "A C++ port of the MathematicalRobotics library",
+      "topics": [
+        "bundle-adjustment",
+        "cpp",
+        "graph-optimization",
+        "lie-algebra",
+        "localization",
+        "robotics",
+        "slam"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/mathematical_robotics.git",
+      "html_url": "https://github.com/rsasaki0109/mathematical_robotics",
+      "default_branch": "develop"
+    },
+    {
+      "name": "rsasaki0109-tweet-summaries",
+      "description": "ロボティクス・自動運転・3D再構成・VLA関連の技術ポストを月次でアーカイブ | Monthly archive of robotics, autonomous driving, 3D reconstruction & VLA posts",
+      "topics": [
+        "3d-reconstruction",
+        "autonomous-driving",
+        "monthly-summary",
+        "robotics",
+        "slam",
+        "vla"
+      ],
+      "language": "HTML",
+      "clone_url": "https://github.com/rsasaki0109/rsasaki0109-tweet-summaries.git",
+      "html_url": "https://github.com/rsasaki0109/rsasaki0109-tweet-summaries",
+      "default_branch": "main"
+    },
+    {
+      "name": "arxiv-curator",
+      "description": "arXiv の新着論文を自動で発見する CLI ツール。キーワード検索、論文ランキング、分野マップ生成、Semantic Scholar 連携",
+      "topics": [
+        "arxiv",
+        "citation",
+        "cli",
+        "paper",
+        "semantic-scholar"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/arxiv-curator.git",
+      "html_url": "https://github.com/rsasaki0109/arxiv-curator",
+      "default_branch": "main"
+    },
+    {
+      "name": "github-curator",
+      "description": "複数の GitHub リポジトリの健全性を一括チェックする CLI ツール。ヘルスチェック、代替リポ提案、トレンド分析、重複検出",
+      "topics": [
+        "cli",
+        "github",
+        "health-check",
+        "repository-analysis",
+        "trend-analysis"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/github-curator.git",
+      "html_url": "https://github.com/rsasaki0109/github-curator",
+      "default_branch": "main"
+    },
+    {
+      "name": "company-technology-genealogy",
+      "description": "Interactive genealogy of robotics & AI companies and their technology evolution",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/company-technology-genealogy.git",
+      "html_url": "https://github.com/rsasaki0109/company-technology-genealogy",
+      "default_branch": "main"
+    },
+    {
+      "name": "robotics-datasets-hub",
+      "description": "",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/robotics-datasets-hub.git",
+      "html_url": "https://github.com/rsasaki0109/robotics-datasets-hub",
+      "default_branch": "main"
+    },
+    {
+      "name": "construction-diff",
+      "description": "Detect construction progress by comparing point cloud scans over time",
+      "topics": [
+        "3d",
+        "change-detection",
+        "construction",
+        "icp",
+        "point-cloud",
+        "progress-monitoring",
+        "registration"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/construction-diff.git",
+      "html_url": "https://github.com/rsasaki0109/construction-diff",
+      "default_branch": "main"
+    },
+    {
+      "name": "npy2pointcloud",
+      "description": "Convert Rohbau3D .npy point clouds to PLY/PCD/LAS formats",
+      "topics": [
+        "format-conversion",
+        "las",
+        "open3d",
+        "pcd",
+        "ply",
+        "point-cloud",
+        "rohbau3d"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/npy2pointcloud.git",
+      "html_url": "https://github.com/rsasaki0109/npy2pointcloud",
+      "default_branch": "main"
+    },
+    {
+      "name": "forest-place-recognition",
+      "description": "Season-invariant visual place recognition in forest environments",
+      "topics": [
+        "benchmark",
+        "cosplace",
+        "eigenplaces",
+        "forest",
+        "netvlad",
+        "seasonal",
+        "visual-place-recognition"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/forest-place-recognition.git",
+      "html_url": "https://github.com/rsasaki0109/forest-place-recognition",
+      "default_branch": "main"
+    },
+    {
+      "name": "DesignEval",
+      "description": "システム設計面接をAIが自動評価するWebアプリ + CLIツール (Next.js / Supabase / Claude API)",
+      "topics": [
+        "ai",
+        "claude",
+        "evaluation",
+        "interview",
+        "nextjs",
+        "system-design"
+      ],
+      "language": "TypeScript",
+      "clone_url": "https://github.com/rsasaki0109/DesignEval.git",
+      "html_url": "https://github.com/rsasaki0109/DesignEval",
+      "default_branch": "main"
+    },
+    {
+      "name": "crossdomain-object-tracker",
+      "description": "Cross-domain object detection/tracking evaluation tool for robotics datasets (YOLOv8, Grounding DINO, ByteTrack, COCO mAP)",
+      "topics": [
+        "computer-vision",
+        "cross-domain",
+        "object-detection",
+        "pytorch",
+        "robotics",
+        "tracking",
+        "yolo"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/crossdomain-object-tracker.git",
+      "html_url": "https://github.com/rsasaki0109/crossdomain-object-tracker",
+      "default_branch": "main"
+    },
+    {
+      "name": "ndt_omp_ros2",
+      "description": "ROS2 porting of ndt_omp",
+      "topics": [
+        "mapping",
+        "ndt",
+        "openmp",
+        "ros2",
+        "slam"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/ndt_omp_ros2.git",
+      "html_url": "https://github.com/rsasaki0109/ndt_omp_ros2",
+      "default_branch": "humble"
+    },
+    {
+      "name": "forest-panoptic-nav",
+      "description": "Panoptic segmentation for autonomous forest navigation",
+      "topics": [
+        "autonomous-navigation",
+        "forest",
+        "lidar",
+        "panoptic-segmentation",
+        "traversability",
+        "zero-shot"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/forest-panoptic-nav.git",
+      "html_url": "https://github.com/rsasaki0109/forest-panoptic-nav",
+      "default_branch": "main"
+    },
+    {
+      "name": "li_slam_ros2",
+      "description": "ROS 2 package of tightly-coupled lidar inertial ndt/gicp slam",
+      "topics": [
+        "g2o",
+        "gicp",
+        "gtsam",
+        "lidar",
+        "loop-closure",
+        "ndt",
+        "ros2",
+        "slam"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/li_slam_ros2.git",
+      "html_url": "https://github.com/rsasaki0109/li_slam_ros2",
+      "default_branch": "develop"
+    },
+    {
+      "name": "rohbau-annotator",
+      "description": "Annotate Rohbau3D construction site point clouds via panorama back-projection",
+      "topics": [
+        "3d",
+        "annotation",
+        "construction",
+        "point-cloud",
+        "rohbau3d",
+        "sam2",
+        "semantic-segmentation"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/rohbau-annotator.git",
+      "html_url": "https://github.com/rsasaki0109/rohbau-annotator",
+      "default_branch": "main"
+    },
+    {
+      "name": "bim-quality-checker",
+      "description": "Evaluate BIM model quality against point cloud measurements",
+      "topics": [
+        "3d",
+        "bim",
+        "construction",
+        "deviation-analysis",
+        "ifc",
+        "point-cloud",
+        "quality-assurance"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/bim-quality-checker.git",
+      "html_url": "https://github.com/rsasaki0109/bim-quality-checker",
+      "default_branch": "main"
+    },
+    {
+      "name": "pointcloud2ifc",
+      "description": "Automatic point cloud to IFC (BIM) conversion using semantic segmentation",
+      "topics": [
+        "3d-reconstruction",
+        "bim",
+        "building-information-modeling",
+        "ifc",
+        "open3d",
+        "point-cloud",
+        "semantic-segmentation"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/pointcloud2ifc.git",
+      "html_url": "https://github.com/rsasaki0109/pointcloud2ifc",
+      "default_branch": "main"
+    },
+    {
+      "name": "stock-video-gender-convert",
+      "description": "ジェンダー動画変換",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/stock-video-gender-convert.git",
+      "html_url": "https://github.com/rsasaki0109/stock-video-gender-convert",
+      "default_branch": "main"
+    },
+    {
+      "name": "littleslam_ros2",
+      "description": "A ROS2 Wrapper for LittleSLAM, which is a 2D-LiDAR SLAM for educational use",
+      "topics": [
+        "localization",
+        "robotics",
+        "ros2",
+        "slam"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/littleslam_ros2.git",
+      "html_url": "https://github.com/rsasaki0109/littleslam_ros2",
+      "default_branch": "main"
+    },
+    {
+      "name": "PoseOptimizationSLAM3D",
+      "description": "Python sample code of 3D pose optimization SLAM",
+      "topics": [
+        "localization",
+        "mapping",
+        "optimization",
+        "robotics",
+        "slam"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/PoseOptimizationSLAM3D.git",
+      "html_url": "https://github.com/rsasaki0109/PoseOptimizationSLAM3D",
+      "default_branch": "master"
+    },
+    {
+      "name": "gnss_imu_wheel_localizer",
+      "description": "gnss/imu/wheel localizer for autoware",
+      "topics": [
+        "autoware",
+        "gnss",
+        "imu",
+        "ros",
+        "ros2"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/gnss_imu_wheel_localizer.git",
+      "html_url": "https://github.com/rsasaki0109/gnss_imu_wheel_localizer",
+      "default_branch": "develop"
+    },
+    {
+      "name": "lidar_localizer",
+      "description": "lidar localizer in Autoware AI",
+      "topics": [
+        "lidar",
+        "ros1"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/lidar_localizer.git",
+      "html_url": "https://github.com/rsasaki0109/lidar_localizer",
+      "default_branch": "main"
+    },
+    {
+      "name": "NormalDistributionTransform2D",
+      "description": "Python sample code of 2D NDT Scan Matching",
+      "topics": [
+        "lidar",
+        "localization",
+        "mapping",
+        "ndt",
+        "robotics",
+        "slam"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/NormalDistributionTransform2D.git",
+      "html_url": "https://github.com/rsasaki0109/NormalDistributionTransform2D",
+      "default_branch": "main"
+    },
+    {
+      "name": "tracking",
+      "description": "",
+      "topics": [],
+      "language": "JavaScript",
+      "clone_url": "https://github.com/rsasaki0109/tracking.git",
+      "html_url": "https://github.com/rsasaki0109/tracking",
+      "default_branch": "main"
+    },
+    {
+      "name": "anomaly_detection",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/anomaly_detection.git",
+      "html_url": "https://github.com/rsasaki0109/anomaly_detection",
+      "default_branch": "main"
+    },
+    {
+      "name": "casual-minigames",
+      "description": "",
+      "topics": [],
+      "language": "JavaScript",
+      "clone_url": "https://github.com/rsasaki0109/casual-minigames.git",
+      "html_url": "https://github.com/rsasaki0109/casual-minigames",
+      "default_branch": "main"
+    },
+    {
+      "name": "action-fighting-games",
+      "description": "",
+      "topics": [],
+      "language": "JavaScript",
+      "clone_url": "https://github.com/rsasaki0109/action-fighting-games.git",
+      "html_url": "https://github.com/rsasaki0109/action-fighting-games",
+      "default_branch": "main"
+    },
+    {
+      "name": "mukashi-banashi-games",
+      "description": "",
+      "topics": [],
+      "language": "C#",
+      "clone_url": "https://github.com/rsasaki0109/mukashi-banashi-games.git",
+      "html_url": "https://github.com/rsasaki0109/mukashi-banashi-games",
+      "default_branch": "main"
+    },
+    {
+      "name": "throw_beans_at_the_oni",
+      "description": "鬼退治！豆まきバトル",
+      "topics": [],
+      "language": "Lua",
+      "clone_url": "https://github.com/rsasaki0109/throw_beans_at_the_oni.git",
+      "html_url": "https://github.com/rsasaki0109/throw_beans_at_the_oni",
+      "default_branch": "main"
+    },
+    {
+      "name": "lidar_undistortion",
+      "description": "A header-only program of 3d rotary lidar undistortion using 9-axis imu",
+      "topics": [
+        "imu",
+        "lidar",
+        "undistortion"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/lidar_undistortion.git",
+      "html_url": "https://github.com/rsasaki0109/lidar_undistortion",
+      "default_branch": "main"
+    },
+    {
+      "name": "RANSAC-plus",
+      "description": "(unofficial)(2025)RANSAC Revisited: An Improved Algorithm for Robust Subspace Recovery under Adversarial and Noisy Corruptions",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/RANSAC-plus.git",
+      "html_url": "https://github.com/rsasaki0109/RANSAC-plus",
+      "default_branch": "main"
+    },
+    {
+      "name": "particle_filtering_model_predictive_control",
+      "description": "Particle filtering model predictive control simulation.",
+      "topics": [
+        "mpc",
+        "particle-filter",
+        "robotics"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/particle_filtering_model_predictive_control.git",
+      "html_url": "https://github.com/rsasaki0109/particle_filtering_model_predictive_control",
+      "default_branch": "main"
+    },
+    {
+      "name": "ai_poker",
+      "description": "",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/ai_poker.git",
+      "html_url": "https://github.com/rsasaki0109/ai_poker",
+      "default_branch": "main"
+    },
+    {
+      "name": "quaternion-based_kalman_filter",
+      "description": "",
+      "topics": [],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/quaternion-based_kalman_filter.git",
+      "html_url": "https://github.com/rsasaki0109/quaternion-based_kalman_filter",
+      "default_branch": "main"
+    },
+    {
+      "name": "transfrom_velocity",
+      "description": "C++ program for performing 3D and 2D velocity transformations using Lie algebra.",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/transfrom_velocity.git",
+      "html_url": "https://github.com/rsasaki0109/transfrom_velocity",
+      "default_branch": "main"
+    },
+    {
+      "name": "q-method",
+      "description": "estimator to minimize Wahba's loss function for satellite attitude ",
+      "topics": [
+        "attitude-determination",
+        "gnss",
+        "satellite"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/q-method.git",
+      "html_url": "https://github.com/rsasaki0109/q-method",
+      "default_branch": "master"
+    },
+    {
+      "name": "laser_deskew",
+      "description": "ros1 package for 2d laser deskew using tf.",
+      "topics": [
+        "deskew",
+        "laser",
+        "lidar",
+        "ros",
+        "undistortion"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/laser_deskew.git",
+      "html_url": "https://github.com/rsasaki0109/laser_deskew",
+      "default_branch": "master"
+    },
+    {
+      "name": "imu_estimator",
+      "description": "attitude estimator with gyro bias correction",
+      "topics": [
+        "bias-correction",
+        "ekf",
+        "imu"
+      ],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/imu_estimator.git",
+      "html_url": "https://github.com/rsasaki0109/imu_estimator",
+      "default_branch": "main"
+    },
+    {
+      "name": "gaussian_particle_filter",
+      "description": "Python sample of Gaussian Particle Filter localization",
+      "topics": [
+        "localization",
+        "particle-filter",
+        "robotics"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/gaussian_particle_filter.git",
+      "html_url": "https://github.com/rsasaki0109/gaussian_particle_filter",
+      "default_branch": "master"
+    },
+    {
+      "name": "RTKLIB",
+      "description": "",
+      "topics": [],
+      "language": null,
+      "clone_url": "https://github.com/rsasaki0109/RTKLIB.git",
+      "html_url": "https://github.com/rsasaki0109/RTKLIB",
+      "default_branch": "demo5"
+    },
+    {
+      "name": "kinematicPOST",
+      "description": "",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/kinematicPOST.git",
+      "html_url": "https://github.com/rsasaki0109/kinematicPOST",
+      "default_branch": "develop"
+    },
+    {
+      "name": "glim",
+      "description": "GLIM: versatile and extensible range-based 3D localization and mapping framework",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/glim.git",
+      "html_url": "https://github.com/rsasaki0109/glim",
+      "default_branch": "dev"
+    },
+    {
+      "name": "FAST_LIO",
+      "description": "A computationally efficient and robust LiDAR-inertial odometry (LIO) package",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/FAST_LIO.git",
+      "html_url": "https://github.com/rsasaki0109/FAST_LIO",
+      "default_branch": "main"
+    },
+    {
+      "name": "sideslip-angle-vehicle-estimation",
+      "description": "MATLAB and C++ implementations of sideslip angle estimators",
+      "topics": [],
+      "language": "C++",
+      "clone_url": "https://github.com/rsasaki0109/sideslip-angle-vehicle-estimation.git",
+      "html_url": "https://github.com/rsasaki0109/sideslip-angle-vehicle-estimation",
+      "default_branch": "main"
+    },
+    {
+      "name": "RosDataTools",
+      "description": "ROS1/ROS2 data analystics tools",
+      "topics": [
+        "ros",
+        "ros2"
+      ],
+      "language": "Python",
+      "clone_url": "https://github.com/rsasaki0109/RosDataTools.git",
+      "html_url": "https://github.com/rsasaki0109/RosDataTools",
+      "default_branch": "main"
+    }
+  ]
+}
