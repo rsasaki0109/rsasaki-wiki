@@ -1,68 +1,47 @@
 # rsasaki-hub
 
-`rsasaki-hub` is the exploration control plane for the public repositories under `rsasaki0109`.
+`rsasaki0109` 配下の public リポジトリを横断的に比較・評価するための探索中枢です。
 
-This repository is not a shared library and not a permanent best-practice vault. It exists to speed up exploration across repositories, keep comparable experiments in one place, and leave behind evidence for why one implementation is temporarily preferred over another.
+共通ライブラリでも設計書でもありません。複数の実装を並べて比較し、暫定採用の根拠を残し続けることが目的です。
 
-## Purpose
+## 探索の原則
 
-- Collect the current public repositories owned by `rsasaki0109`
-- Extract comparable implementations for a narrow problem slice
-- Evaluate them with repeatable heuristics
-- Synthesize only the smallest shared interface that survives comparison
-- Record experiments and decisions as exploration logs
+1. 抽象を先に作らない
+2. 複数実装を前提にする
+3. 比較可能性を最優先にする
+4. すべての実装を破棄可能とみなす
+5. 設計書ではなく探索ログを残す
 
-## Relationship To Other Repositories
+## 現在の探索対象
 
-The public repositories are the concrete implementations. They stay disposable.
+最初の experiment family として **LiDAR スタック** を扱っています。
 
-This repository tracks:
+| Track | 暫定採用 | 比較対象 |
+| --- | --- | --- |
+| lidar_localization | `amcl_3d` | `lidar_localization_ros2` |
+| lidar_slam | `lidarslam_ros2` | `glim`, `littleslam_ros2`, `li_slam_ros2` |
+| lidar_imu_slam | `localization_zoo` | `FAST_LIO` |
 
-- which repositories exist
-- which ones solve the same problem
-- how their I/O shapes overlap
-- where the algorithmic differences live
-- why a temporary reference implementation is chosen
+詳細は [Experiments](https://rsasaki0109.github.io/rsasaki-hub/) を参照してください。
 
-The current first experiment family is:
+## ディレクトリ構成
 
-- lidar localization
-- lidar slam
-- lidar + imu slam
+| パス | 内容 |
+| --- | --- |
+| `registry/` | repo メタデータと実験状態 |
+| `ingestors/` | GitHub からの repo 収集・ローカル checkout |
+| `evaluator/` | benchmark 準備度・可読性・拡張性の heuristic 評価 |
+| `synthesizer/` | 最小インターフェース合成・実装間 diff 生成 |
+| `docs/` | 生成された探索ログ (GitHub Pages で公開) |
+| `cli/` | `expctl` エントリーポイント |
 
-## Layout
-
-- `registry/`: repo metadata and extracted experiment state
-- `ingestors/`: GitHub collection and local checkout logic
-- `evaluator/`: repeatable benchmark, readability, and extensibility heuristics
-- `synthesizer/`: minimal interface and implementation diff generation
-- `docs/`: generated exploration logs
-- `cli/`: `expctl` entrypoint
-
-`registry/*.yaml` uses JSON-compatible YAML so the repo stays dependency-free and runnable with the Python standard library.
-
-## Usage
-
-Run from the repository root:
+## 使い方
 
 ```bash
-python3 cli/expctl.py sync
-python3 cli/expctl.py extract
-python3 cli/expctl.py eval
-python3 cli/expctl.py synthesize
+python3 cli/expctl.py sync        # rsasaki0109 の public repo 一覧を取得
+python3 cli/expctl.py extract     # 関連 repo を clone し、I/O・アルゴリズム信号を抽出
+python3 cli/expctl.py eval        # proxy メトリクスで評価・ランキング
+python3 cli/expctl.py synthesize  # 最小インターフェースと docs を生成
 ```
 
-What each command does:
-
-- `expctl sync`: fetch the current public repository list for `rsasaki0109` and write `registry/repos.yaml`
-- `expctl extract`: shallow-clone relevant repositories into `.cache/repos/` and extract problem, I/O, topic, and algorithm signals into `registry/experiments.yaml`
-- `expctl eval`: compute repeatable proxy metrics for benchmark readiness, readability, and extensibility
-- `expctl synthesize`: generate the current minimal interfaces and rewrite `docs/experiments.md`, `docs/decisions.md`, and `docs/interfaces.md`
-
-## Process Rules
-
-- Do not abstract first
-- Always preserve multiple implementations
-- Optimize for comparability before elegance
-- Treat every concrete implementation as disposable
-- Keep exploration logs current in the same change as the code
+外部依存なし。Python 標準ライブラリのみで動作します。

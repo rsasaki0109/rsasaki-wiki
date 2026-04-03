@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rsasaki-hub</title>
+<style>
+:root { --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e; --border: #30363d; --accent: #58a6ff; --green: #3fb950; --yellow: #d29922; --card: #161b22; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; padding: 2rem; max-width: 960px; margin: 0 auto; }
+h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+h2 { font-size: 1.3rem; margin-top: 2rem; margin-bottom: 0.8rem; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+h3 { font-size: 1.05rem; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+p, li { color: var(--fg); }
+.subtitle { color: var(--muted); margin-bottom: 2rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; }
+th, td { padding: 0.5rem 0.8rem; border: 1px solid var(--border); text-align: left; }
+th { background: var(--card); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+td { font-size: 0.9rem; }
+tr:hover td { background: var(--card); }
+.score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.winner { color: var(--green); }
+.tag { display: inline-block; padding: 0.1rem 0.45rem; margin: 0.1rem; border-radius: 3px; font-size: 0.75rem; background: var(--card); border: 1px solid var(--border); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.diff-label { font-size: 0.8rem; color: var(--muted); }
+.io { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; }
+.rejected { color: var(--muted); font-size: 0.85rem; }
+.section-icon { margin-right: 0.3rem; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>rsasaki-hub</h1>
+<p class="subtitle"><code>rsasaki0109</code> public repos の探索中枢</p>
+
+<h2><span class="section-icon">&#9670;</span> LiDAR Stack Exploration</h2>
+<p>LiDAR localization / SLAM / LiDAR+IMU SLAM の public 実装を横断比較し、暫定採用と最小 I/O 契約を導出しています。</p>
+
+<!-- lidar_localization -->
+<h3>lidar_localization</h3>
+<p>点群マップに対する自己位置推定</p>
+<table>
+<thead>
+<tr><th>Repo</th><th>Score</th><th>I/O</th><th>Algorithms</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/amcl_3d">amcl_3d</a></td>
+  <td class="score winner">90.22</td>
+  <td class="io">Imu, Odometry, PointCloud2, Pose &rarr; Path, PointCloud2, Pose</td>
+  <td><span class="tag">AMCL</span><span class="tag">NDT</span><span class="tag">Odometry</span><span class="tag">LoopClosure</span></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/lidar_localization_ros2">lidar_localization_ros2</a></td>
+  <td class="score">36.72</td>
+  <td class="io">Imu, Odometry, PointCloud2, Pose &rarr; Path, PointCloud2, Pose</td>
+  <td><span class="tag">NDT</span><span class="tag">VoxelGrid</span><span class="tag">GICP</span><span class="tag">ICP</span></td>
+</tr>
+</tbody>
+</table>
+<div class="card">
+  <div class="diff-label">Key diff: amcl_3d vs lidar_localization_ros2</div>
+  <p>共通入力: Imu, Odometry, PointCloud2, Pose<br>
+  アルゴリズム差分: <strong>AMCL, LoopClosure, ParticleFilter</strong> / <strong>GICP, VoxelGrid</strong></p>
+</div>
+<div class="card">
+  <div class="diff-label">最小 I/O 契約</div>
+  <p class="io">Input: Imu, Odometry, PointCloud2, Pose &nbsp;|&nbsp; Optional: Path<br>
+  Output: Path, PointCloud2, Pose</p>
+  <p>暫定採用: <strong>amcl_3d</strong></p>
+</div>
+
+<!-- lidar_slam -->
+<h3>lidar_slam</h3>
+<p>LiDAR のみによる odometry + mapping</p>
+<table>
+<thead>
+<tr><th>Repo</th><th>Score</th><th>I/O</th><th>Algorithms</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/lidarslam_ros2">lidarslam_ros2</a></td>
+  <td class="score winner">83.97</td>
+  <td class="io">Imu, MapArray, NavSatFix, Odometry, PointCloud2 &rarr; MapArray, Path, PointCloud2, Pose</td>
+  <td><span class="tag">Submap</span><span class="tag">LoopClosure</span><span class="tag">PoseGraph</span><span class="tag">VoxelGrid</span></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/glim">glim</a></td>
+  <td class="score">45.78</td>
+  <td class="io">Imu, Odometry, PointCloud2 &rarr; Pose</td>
+  <td><span class="tag">Submap</span><span class="tag">Odometry</span><span class="tag">VoxelGrid</span><span class="tag">ICP</span></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/littleslam_ros2">littleslam_ros2</a></td>
+  <td class="score">42.74</td>
+  <td class="io">LaserScan, PointCloud2 &rarr; Path, PointCloud2, Pose</td>
+  <td><span class="tag">ICP</span></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/li_slam_ros2">li_slam_ros2</a></td>
+  <td class="score">36.48</td>
+  <td class="io">Imu, MapArray, Odometry, PointCloud2, Pose &rarr; MapArray, Path, PointCloud2, Pose</td>
+  <td><span class="tag">VoxelGrid</span><span class="tag">Submap</span><span class="tag">NDT</span><span class="tag">ICP</span></td>
+</tr>
+</tbody>
+</table>
+<div class="card">
+  <div class="diff-label">最小 I/O 契約</div>
+  <p class="io">Input: PointCloud2 &nbsp;|&nbsp; Optional: Imu, Odometry, MapArray, NavSatFix, Pose<br>
+  Output: Pose &nbsp;|&nbsp; Optional: Path, PointCloud2, MapArray</p>
+  <p>暫定採用: <strong>lidarslam_ros2</strong></p>
+</div>
+
+<!-- lidar_imu_slam -->
+<h3>lidar_imu_slam</h3>
+<p>LiDAR + IMU による慣性融合 odometry + mapping</p>
+<table>
+<thead>
+<tr><th>Repo</th><th>Score</th><th>I/O</th><th>Algorithms</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/localization_zoo">localization_zoo</a></td>
+  <td class="score winner">84.33</td>
+  <td class="io">Imu, Odometry, Path, PointCloud2 &rarr; Odometry, Path, Pose</td>
+  <td><span class="tag">ICP</span><span class="tag">LIO</span><span class="tag">GICP</span><span class="tag">VoxelGrid</span></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/rsasaki0109/FAST_LIO">FAST_LIO</a></td>
+  <td class="score">52.26</td>
+  <td class="io">Imu, Odometry, PointCloud2 &rarr; Odometry, Path, PointCloud2</td>
+  <td><span class="tag">LIO</span><span class="tag">Odometry</span><span class="tag">Inertial</span><span class="tag">ICP</span></td>
+</tr>
+</tbody>
+</table>
+<div class="card">
+  <div class="diff-label">Key diff: FAST_LIO vs localization_zoo</div>
+  <p>共通入力: Imu, Odometry, PointCloud2<br>
+  アルゴリズム差分: <strong>Kalman</strong> / <strong>GICP, IMUPreintegration, VGICP</strong></p>
+</div>
+<div class="card">
+  <div class="diff-label">最小 I/O 契約</div>
+  <p class="io">Input: Imu, Odometry, PointCloud2 &nbsp;|&nbsp; Optional: Path<br>
+  Output: Odometry, Path &nbsp;|&nbsp; Optional: PointCloud2, Pose</p>
+  <p>暫定採用: <strong>localization_zoo</strong></p>
+</div>
+
+<!-- Rejected -->
+<h2><span class="section-icon">&#9670;</span> 除外された候補</h2>
+<p class="rejected">
+CloudAnalyzer, CudaRobotics, NormalDistributionTransform2D, PoseOptimizationSLAM3D,
+gaussian_particle_filter, gnss_imu_wheel_localizer, gnssplusplus-library,
+kalman_filter_localization_ros2, mathematical_robotics, ndt_omp_ros2
+&mdash; いずれも LiDAR 入力信号なし、またはスコープ外のため除外。除外理由は <code>registry/experiments.yaml</code> に記録。
+</p>
+
+<footer>
+  <p>Generated by <a href="https://github.com/rsasaki0109/rsasaki-hub">rsasaki-hub</a> &mdash; <code>python3 cli/expctl.py synthesize</code> で再生成</p>
+</footer>
+
+</body>
+</html>
