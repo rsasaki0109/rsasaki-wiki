@@ -44,6 +44,7 @@ MESSAGE_TOKENS = {
 INPUT_HINTS = ("Subscription", "create_subscription", "Received", "receive", "input", "sub_")
 OUTPUT_HINTS = ("Publisher", "create_publisher", "publish", "pub_", "output")
 ALGORITHM_MARKERS = {
+    # LiDAR / SLAM
     "ndt": "NDT",
     "gicp": "GICP",
     "vgicp": "VGICP",
@@ -66,6 +67,48 @@ ALGORITHM_MARKERS = {
     "voxel": "VoxelGrid",
     "submap": "Submap",
     "odometry": "Odometry",
+    # Robotics algorithms
+    "extended_kalman": "EKF",
+    "ekf": "EKF",
+    "ukf": "UKF",
+    "unscented": "UKF",
+    "rrt": "RRT",
+    "a_star": "AStar",
+    "astar": "AStar",
+    "dijkstra": "Dijkstra",
+    "dwa": "DWA",
+    "dynamic_window": "DWA",
+    "lqr": "LQR",
+    "mpc": "MPC",
+    "model_predictive": "MPC",
+    "pid": "PID",
+    "cubic_spline": "CubicSpline",
+    "dubins": "Dubins",
+    "potential_field": "PotentialField",
+    "voronoi": "Voronoi",
+    "prm": "PRM",
+    "slam": "SLAM",
+    # GNSS / positioning
+    "rtk": "RTK",
+    "ppp": "PPP",
+    "rinex": "RINEX",
+    "rtcm": "RTCM",
+    "pseudorange": "Pseudorange",
+    "carrier_phase": "CarrierPhase",
+    "troposphere": "Troposphere",
+    "ionosphere": "Ionosphere",
+    "ambiguity": "AmbiguityResolution",
+    "qzss": "QZSS",
+    "clas": "CLAS",
+    # Point cloud processing
+    "segmentation": "Segmentation",
+    "clustering": "Clustering",
+    "ransac": "RANSAC",
+    "ground_removal": "GroundRemoval",
+    "noise_removal": "NoiseRemoval",
+    "downsampling": "Downsampling",
+    "semantic": "Semantic",
+    "panoptic": "Panoptic",
 }
 PY_FUNCTION_PATTERN = re.compile(r"^\s*def\s+([A-Za-z_]\w*)\s*\(", re.MULTILINE)
 CXX_FUNCTION_PATTERN = re.compile(
@@ -226,6 +269,7 @@ def classify_track(experiment: dict[str, Any], repo: dict[str, Any], files: list
         score += keyword_score(file_text, keywords)
         score += keyword_score(algorithm_text, keywords)
         score += keyword_score(io_text, keywords)
+        # --- lidar_stack boosts ---
         if track["name"] == "lidar_localization":
             if "localization" in repo_name or "localizer" in repo_name or "amcl" in repo_name:
                 score += 5
@@ -253,35 +297,133 @@ def classify_track(experiment: dict[str, Any], repo: dict[str, Any], files: list
                 score += 3
             if "LIO" in algorithms or "IMUPreintegration" in algorithms:
                 score += 3
+        # --- robotics_algorithms boosts ---
+        elif track["name"] == "state_estimation":
+            if any(w in repo_name for w in ("kalman", "filter", "ekf", "ukf", "particle", "estimation")):
+                score += 5
+            if any(a in algorithms for a in ("EKF", "UKF", "Kalman", "ParticleFilter")):
+                score += 3
+        elif track["name"] == "path_planning":
+            if any(w in repo_name for w in ("planning", "planner", "rrt", "dwa", "path")):
+                score += 5
+            if any(a in algorithms for a in ("RRT", "AStar", "Dijkstra", "DWA", "PRM", "MPC", "LQR")):
+                score += 3
+        elif track["name"] == "scan_matching":
+            if any(w in repo_name for w in ("ndt", "icp", "registration", "matching")):
+                score += 5
+            if any(a in algorithms for a in ("ICP", "NDT", "GICP", "VGICP")):
+                score += 3
+        # --- gnss_positioning boosts ---
+        elif track["name"] == "gnss_processing":
+            if any(w in repo_name for w in ("gnss", "gps", "rtk", "ppp", "rinex")):
+                score += 5
+            if any(a in algorithms for a in ("RTK", "PPP", "RINEX", "RTCM", "Pseudorange", "QZSS", "CLAS")):
+                score += 3
+        elif track["name"] == "multi_sensor_positioning":
+            if any(w in repo_name for w in ("localizer", "localization", "fusion", "imu", "wheel")):
+                score += 5
+            if any(a in algorithms for a in ("EKF", "Kalman", "UKF")):
+                score += 2
+            if "imu" in repo_text or "wheel" in repo_text:
+                score += 2
+        # --- pointcloud_processing boosts ---
+        elif track["name"] == "pointcloud_analysis":
+            if any(w in repo_name for w in ("analyzer", "analysis", "cloud", "quality", "eval")):
+                score += 5
+            if any(a in algorithms for a in ("Segmentation", "Clustering", "RANSAC")):
+                score += 2
+        elif track["name"] == "pointcloud_transformation":
+            if any(w in repo_name for w in ("removal", "diff", "convert", "npy", "dynamic", "construction")):
+                score += 5
+            if any(a in algorithms for a in ("GroundRemoval", "NoiseRemoval", "Downsampling", "RANSAC")):
+                score += 2
+        elif track["name"] == "pointcloud_to_model":
+            if any(w in repo_name for w in ("bim", "ifc", "annotator", "semantic", "pointcloud2")):
+                score += 5
+            if any(a in algorithms for a in ("Semantic", "Panoptic", "Segmentation")):
+                score += 3
         if score > best_score:
             best_track = track["name"]
             best_score = score
     return best_track, best_score
 
 
-def candidate_status(repo: dict[str, Any], track: str, files: list[Path], io: dict[str, list[str]], algorithms: list[str], best_score: int) -> tuple[bool, str | None]:
-    core_problem_words = ("localization", "localizer", "slam", "lio", "odometry", "amcl")
+def candidate_status(repo: dict[str, Any], track: str, files: list[Path], io: dict[str, list[str]], algorithms: list[str], best_score: int, family_name: str = "lidar_stack_exploration") -> tuple[bool, str | None]:
     repo_text = repo_text_blob(repo)
     if not files:
         return False, "no_source_files"
     if best_score < 3:
         return False, "weak_problem_match"
-    if not any(word in repo_text for word in core_problem_words):
-        return False, "out_of_scope_domain"
-    if "PointCloud2" not in io.get("inputs", []) and "LaserScan" not in io.get("inputs", []):
-        return False, "no_lidar_input_signal"
-    if track == "lidar_localization" and "Pose" not in io.get("outputs", []):
-        return False, "missing_pose_output"
-    if track == "lidar_slam" and not {"Pose", "Odometry", "MapArray"} & set(io.get("outputs", [])):
-        return False, "supporting_component_only"
-    if track == "lidar_imu_slam" and "Imu" not in io.get("inputs", []):
-        return False, "missing_imu_input"
-    if not io.get("outputs"):
-        return False, "supporting_component_only"
-    if repo["name"] in {"imu_estimator", "laser_deskew", "ndt_omp_ros2"}:
-        return False, "supporting_component_only"
-    if "Deskew" in algorithms and "LIO" not in algorithms and "PoseGraph" not in algorithms:
-        return False, "preprocessing_only"
+
+    # --- lidar_stack-specific gates ---
+    if family_name == "lidar_stack_exploration":
+        core_problem_words = ("localization", "localizer", "slam", "lio", "odometry", "amcl")
+        if not any(word in repo_text for word in core_problem_words):
+            return False, "out_of_scope_domain"
+        if "PointCloud2" not in io.get("inputs", []) and "LaserScan" not in io.get("inputs", []):
+            return False, "no_lidar_input_signal"
+        if track == "lidar_localization" and "Pose" not in io.get("outputs", []):
+            return False, "missing_pose_output"
+        if track == "lidar_slam" and not {"Pose", "Odometry", "MapArray"} & set(io.get("outputs", [])):
+            return False, "supporting_component_only"
+        if track == "lidar_imu_slam" and "Imu" not in io.get("inputs", []):
+            return False, "missing_imu_input"
+        if not io.get("outputs"):
+            return False, "supporting_component_only"
+        if repo["name"] in {"imu_estimator", "laser_deskew", "ndt_omp_ros2"}:
+            return False, "supporting_component_only"
+        if "Deskew" in algorithms and "LIO" not in algorithms and "PoseGraph" not in algorithms:
+            return False, "preprocessing_only"
+
+    # --- robotics_algorithms: require algorithmic repo, exclude pure SLAM/LiDAR/GNSS/pointcloud repos ---
+    elif family_name == "robotics_algorithms_exploration":
+        known = {"EKF", "UKF", "Kalman", "ParticleFilter", "RRT", "AStar", "Dijkstra",
+                 "DWA", "PRM", "MPC", "LQR", "PID", "ICP", "NDT", "GICP", "SLAM",
+                 "CubicSpline", "Dubins", "PotentialField", "Voronoi"}
+        if not known & set(algorithms):
+            return False, "no_known_algorithm"
+        repo_name = repo.get("name", "").lower()
+        # exclude repos that belong to other families (LiDAR SLAM, GNSS, pointcloud tools)
+        lidar_slam_names = {"lidarslam_ros2", "li_slam_ros2", "littleslam_ros2", "glim",
+                            "FAST_LIO", "localization_zoo", "lidar_localization_ros2", "amcl_3d",
+                            "ndt_omp_ros2", "laser_deskew", "lidar_localizer", "lidar_undistortion"}
+        if repo["name"] in lidar_slam_names:
+            return False, "belongs_to_lidar_family"
+        pointcloud_names = {"CloudAnalyzer", "dynamic-3d-object-removal", "construction-diff",
+                            "npy2pointcloud", "pointcloud2ifc", "bim-quality-checker", "rohbau-annotator"}
+        if repo["name"] in pointcloud_names:
+            return False, "belongs_to_pointcloud_family"
+        gnss_names = {"gnssplusplus-library", "gnss_gpu", "gnss_imu_wheel_localizer",
+                      "kalman_filter_localization_ros2", "GNSS-Radar", "RTKLIB"}
+        if repo["name"] in gnss_names:
+            return False, "belongs_to_gnss_family"
+        non_algo_names = {"rsasaki0109.github.io", "rsasaki0109", "bagx", "crossdomain-object-tracker",
+                          "gs-sim2real", "robotics-technology-genealogy", "company-technology-genealogy",
+                          "kinematicPOST", "slam-handbook-python"}
+        if repo["name"] in non_algo_names:
+            return False, "not_algorithm_implementation"
+
+    # --- gnss_positioning: require GNSS-related signal in repo name/description ---
+    elif family_name == "gnss_positioning_exploration":
+        gnss_words = ("gnss", "gps", "rtk", "ppp", "satellite", "navsat", "rinex", "rtcm", "qzss")
+        repo_name = repo.get("name", "").lower()
+        if not any(w in repo_name for w in gnss_words) and not any(w in repo_text for w in gnss_words):
+            return False, "no_gnss_signal"
+        # exclude repos that are primarily SLAM
+        if any(w in repo_name for w in ("slam", "lidarslam", "littleslam")):
+            return False, "primarily_slam"
+
+    # --- pointcloud_processing: require point-cloud focus, exclude SLAM/localization repos ---
+    elif family_name == "pointcloud_processing_exploration":
+        pc_words = ("pointcloud", "point_cloud", "point cloud", "ply", "pcd", "las",
+                    "npy", "cloud", "voxel", "bim", "ifc", "construction")
+        if not any(w in repo_text for w in pc_words):
+            return False, "no_pointcloud_signal"
+        repo_name = repo.get("name", "").lower()
+        # exclude repos whose primary purpose is SLAM/localization/GNSS
+        if any(w in repo_name for w in ("slam", "localization", "localizer", "amcl", "gnss", "lio")):
+            return False, "primarily_other_domain"
+
     return True, None
 
 
@@ -320,7 +462,7 @@ def extract_command(_args: argparse.Namespace) -> None:
             io = extract_io(relevant_files)
             algorithms = extract_algorithm_markers(relevant_files, repo)
             track, score = classify_track(experiment, repo, relevant_files, io, algorithms)
-            include, reason = candidate_status(repo, track, source_files, io, algorithms, score)
+            include, reason = candidate_status(repo, track, source_files, io, algorithms, score, family_name=experiment["name"])
             record = {
                 "repo": repo["name"],
                 "description": repo.get("description", ""),
@@ -535,6 +677,134 @@ def render_interfaces_doc(registry: dict[str, Any]) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+EXPERIMENT_TITLES: dict[str, str] = {
+    "lidar_stack_exploration": "LiDAR Stack",
+    "robotics_algorithms_exploration": "Robotics Algorithms",
+    "gnss_positioning_exploration": "GNSS Positioning",
+    "pointcloud_processing_exploration": "Point Cloud Processing",
+}
+
+TRACK_DESCRIPTIONS: dict[str, str] = {
+    "lidar_localization": "点群マップに対する自己位置推定",
+    "lidar_slam": "LiDAR のみによる odometry + mapping",
+    "lidar_imu_slam": "LiDAR + IMU による慣性融合 odometry + mapping",
+    "state_estimation": "フィルタリング・状態推定 (EKF, UKF, Particle Filter 等)",
+    "path_planning": "経路・動作計画 (RRT, A*, DWA 等)",
+    "scan_matching": "点群レジストレーション・スキャンマッチング (ICP, NDT 等)",
+    "gnss_processing": "GNSS 信号処理・測位 (RTK, PPP 等)",
+    "multi_sensor_positioning": "GNSS + IMU/Wheel 複合測位",
+    "pointcloud_analysis": "点群の分析・評価・可視化",
+    "pointcloud_transformation": "点群のフィルタリング・変換・差分検出",
+    "pointcloud_to_model": "点群から BIM/IFC・セマンティックモデルへの変換",
+}
+
+
+def _html_escape(text: str) -> str:
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+
+def render_index_html(registry: dict[str, Any]) -> str:
+    parts: list[str] = []
+    parts.append("""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rsasaki-hub</title>
+<style>
+:root { --bg: #0d1117; --fg: #e6edf3; --muted: #8b949e; --border: #30363d; --accent: #58a6ff; --green: #3fb950; --card: #161b22; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; padding: 2rem; max-width: 960px; margin: 0 auto; }
+h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+h2 { font-size: 1.3rem; margin-top: 2rem; margin-bottom: 0.8rem; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+h3 { font-size: 1.05rem; margin-top: 1.2rem; margin-bottom: 0.5rem; }
+p, li { color: var(--fg); }
+.subtitle { color: var(--muted); margin-bottom: 2rem; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+table { width: 100%; border-collapse: collapse; margin: 0.8rem 0; }
+th, td { padding: 0.5rem 0.8rem; border: 1px solid var(--border); text-align: left; }
+th { background: var(--card); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); }
+td { font-size: 0.9rem; }
+tr:hover td { background: var(--card); }
+.score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.winner { color: var(--green); }
+.tag { display: inline-block; padding: 0.1rem 0.45rem; margin: 0.1rem; border-radius: 3px; font-size: 0.75rem; background: var(--card); border: 1px solid var(--border); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.diff-label { font-size: 0.8rem; color: var(--muted); }
+.io { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; }
+.rejected { color: var(--muted); font-size: 0.85rem; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>rsasaki-hub</h1>
+<p class="subtitle"><code>rsasaki0109</code> public repos の探索中枢</p>
+""")
+
+    for experiment in registry.get("experiments", []):
+        exp_name = experiment["name"]
+        title = EXPERIMENT_TITLES.get(exp_name, exp_name)
+        parts.append(f'<h2>&#9670; {_html_escape(title)}</h2>')
+        parts.append(f'<p>{_html_escape(experiment.get("problem_statement", ""))}</p>')
+
+        rankings = experiment.get("track_rankings", {})
+        interfaces = experiment.get("interfaces", {})
+
+        for track in experiment.get("tracks", []):
+            track_name = track["name"]
+            desc = TRACK_DESCRIPTIONS.get(track_name, track.get("description", ""))
+            implementations = [
+                item for item in experiment.get("implementations", [])
+                if item.get("track") == track_name
+            ]
+            if not implementations:
+                continue
+
+            parts.append(f'<h3>{_html_escape(track_name)}</h3>')
+            parts.append(f'<p>{_html_escape(desc)}</p>')
+
+            # ranking table
+            ranked = rankings.get(track_name, [])
+            top_repo = ranked[0]["repo"] if ranked else None
+            parts.append('<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>')
+            for impl in sorted(implementations, key=lambda x: x.get("evaluation", {}).get("overall_score", 0), reverse=True):
+                score = impl.get("evaluation", {}).get("overall_score", "-")
+                is_winner = impl["repo"] == top_repo
+                score_cls = 'score winner' if is_winner else 'score'
+                algos = "".join(f'<span class="tag">{_html_escape(a)}</span>' for a in impl.get("algorithms", [])[:4])
+                repo_name = _html_escape(impl["repo"])
+                parts.append(f'<tr><td><a href="https://github.com/rsasaki0109/{impl["repo"]}">{repo_name}</a></td><td class="{score_cls}">{score}</td><td>{algos}</td></tr>')
+            parts.append('</tbody></table>')
+
+            # interface card
+            iface = interfaces.get(track_name)
+            if iface:
+                inp = ", ".join(iface.get("input", [])) or "none"
+                opt_inp = ", ".join(iface.get("optional_input", []))
+                out = ", ".join(iface.get("output", [])) or "none"
+                opt_out = ", ".join(iface.get("optional_output", []))
+                io_line = f'Input: {inp}'
+                if opt_inp:
+                    io_line += f' &nbsp;|&nbsp; Optional: {opt_inp}'
+                io_line += f'<br>Output: {out}'
+                if opt_out:
+                    io_line += f' &nbsp;|&nbsp; Optional: {opt_out}'
+                ref = ranked[0]["repo"] if ranked else "N/A"
+                parts.append(f'<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">{io_line}</p><p>暫定採用: <strong>{_html_escape(ref)}</strong></p></div>')
+
+    parts.append(f"""
+<footer>
+  <p>Generated at {registry.get('generated_at', '')} by <a href="https://github.com/rsasaki0109/rsasaki-hub">rsasaki-hub</a></p>
+</footer>
+
+</body>
+</html>
+""")
+    return "\n".join(parts)
+
+
 def synthesize_command(_args: argparse.Namespace) -> None:
     experiment_registry = load_yaml_like(EXPERIMENT_REGISTRY_PATH)
     for experiment in experiment_registry.get("experiments", []):
@@ -556,7 +826,8 @@ def synthesize_command(_args: argparse.Namespace) -> None:
     (ROOT / "docs" / "experiments.md").write_text(render_experiments_doc(experiment_registry), encoding="utf-8")
     (ROOT / "docs" / "decisions.md").write_text(render_decisions_doc(experiment_registry), encoding="utf-8")
     (ROOT / "docs" / "interfaces.md").write_text(render_interfaces_doc(experiment_registry), encoding="utf-8")
-    print("synthesized docs and interfaces")
+    (ROOT / "docs" / "index.html").write_text(render_index_html(experiment_registry), encoding="utf-8")
+    print("synthesized docs, interfaces, and index.html")
 
 
 def build_parser() -> argparse.ArgumentParser:
