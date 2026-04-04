@@ -920,6 +920,115 @@ def stats_command(_args: argparse.Namespace) -> None:
             print(f"  {c}: {count}")
 
 
+# ---- ask command ----
+
+def ask_command(args: argparse.Namespace) -> None:
+    """Answer a question using the knowledge base.
+
+    Finds relevant articles, extracts key passages, and presents
+    a structured answer with sources. Works without an LLM API
+    by doing keyword-based retrieval and excerpt assembly.
+    """
+    question = " ".join(args.question)
+    if not question:
+        print("Usage: kb ask <question>")
+        return
+
+    # Tokenize question into search terms
+    stop_words = {"の", "は", "が", "を", "に", "で", "と", "から", "まで", "より",
+                  "what", "is", "are", "how", "does", "do", "the", "a", "an", "in",
+                  "of", "for", "to", "and", "or", "which", "between", "vs", "about"}
+    terms = [t.lower() for t in re.split(r"[\s,?!。、？]+", question) if t.lower() not in stop_words and len(t) > 1]
+
+    if not terms:
+        print("Could not extract search terms from question.")
+        return
+
+    # Score all files by relevance
+    search_dirs = [WIKI_DIR / "articles", CONCEPTS_DIR, RAW_DIR]
+    scored: list[tuple[Path, float, list[str]]] = []
+
+    for search_dir in search_dirs:
+        if not search_dir.exists():
+            continue
+        for path in search_dir.rglob("*.md"):
+            text = path.read_text(encoding="utf-8", errors="ignore").lower()
+            fm = read_frontmatter(path)
+            title = fm.get("title", path.stem).lower()
+
+            score = 0.0
+            matched_terms: list[str] = []
+            for term in terms:
+                count = text.count(term)
+                if count > 0:
+                    matched_terms.append(term)
+                    score += min(count, 20)
+                    # Boost for title match
+                    if term in title:
+                        score += 10
+
+            # Boost wiki articles over raw
+            if "articles" in path.parts:
+                score *= 1.5
+            elif "concepts" in path.parts:
+                score *= 1.2
+
+            if score > 0:
+                scored.append((path, score, matched_terms))
+
+    scored.sort(key=lambda x: x[1], reverse=True)
+
+    if not scored:
+        print(f"No relevant articles found for: {question}")
+        return
+
+    # Present top results with excerpts
+    print(f"Question: {question}")
+    print(f"Search terms: {', '.join(terms)}")
+    print(f"Found {len(scored)} relevant files\n")
+    print("=" * 60)
+
+    for path, score, matched in scored[:5]:
+        fm = read_frontmatter(path)
+        title = fm.get("title", path.stem)
+        rel_path = path.relative_to(ROOT)
+        article_type = fm.get("type", "unknown")
+        source = fm.get("source", "")
+
+        print(f"\n## {title}")
+        print(f"   File: {rel_path} ({article_type}, relevance: {score:.0f})")
+        if source:
+            print(f"   Source: {source}")
+
+        # Extract relevant excerpts
+        body = body_text(path)
+        lines = body.splitlines()
+        excerpts: list[str] = []
+        for i, line in enumerate(lines):
+            lowered = line.lower()
+            if any(term in lowered for term in terms):
+                # Get surrounding context
+                start = max(0, i - 1)
+                end = min(len(lines), i + 2)
+                excerpt = "\n".join(lines[start:end]).strip()
+                if excerpt and excerpt not in excerpts:
+                    excerpts.append(excerpt)
+                if len(excerpts) >= 3:
+                    break
+
+        if excerpts:
+            print()
+            for excerpt in excerpts:
+                # Truncate long excerpts
+                if len(excerpt) > 300:
+                    excerpt = excerpt[:300] + "..."
+                print(f"   > {excerpt}")
+            print()
+
+    print("=" * 60)
+    print(f"\nTo dive deeper, read the full articles or run: kb search {terms[0]}")
+
+
 # ---- parser ----
 
 def build_parser() -> argparse.ArgumentParser:
@@ -950,6 +1059,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     stats_p = subparsers.add_parser("stats", help="Show knowledge base statistics")
     stats_p.set_defaults(func=stats_command)
+
+    ask_p = subparsers.add_parser("ask", help="Ask a question against the knowledge base")
+    ask_p.add_argument("question", nargs="+", help="Your question")
+    ask_p.set_defaults(func=ask_command)
 
     return parser
 
