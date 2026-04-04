@@ -741,6 +741,20 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border
 
 <h1>rsasaki-hub</h1>
 <p class="subtitle"><code>rsasaki0109</code> public repos の探索中枢</p>
+
+<div class="card">
+<div class="diff-label">Score について</div>
+<p>各リポジトリのスコア (0〜100) は以下の 3 指標の加重平均です。実行ベンチマークではなく、ソースコードの静的解析による proxy 評価です。</p>
+<table style="margin-top:0.5rem">
+<thead><tr><th>指標</th><th>重み</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td>Benchmark 準備度</td><td>50%</td><td>README / docs に精度・速度の記述があるか、benchmark 用ファイルが存在するか</td></tr>
+<tr><td>可読性</td><td>25%</td><td>ファイル数、LOC、分岐数、最大関数サイズ、コメント率などの heuristic</td></tr>
+<tr><td>拡張性</td><td>25%</td><td>モジュール分割、設定ファイル、public API surface、ハードコード数などの heuristic</td></tr>
+</tbody>
+</table>
+<p style="margin-top:0.4rem;color:var(--muted);font-size:0.85rem">スコアが高い = 「比較・検証を進めやすい実装」であり、「実運用で最強」ではありません。</p>
+</div>
 """)
 
     for experiment in registry.get("experiments", []):
