@@ -24,6 +24,10 @@
 
 詳細は [Experiments](https://rsasaki0109.github.io/rsasaki-hub/) を参照してください。
 
+## Recent notes
+
+- [CLAS parity status on gnssplusplus-library (2026-04-10)](docs/clas_parity_status_2026-04-10.md)
+
 ## ディレクトリ構成
 
 | パス | 内容 |
