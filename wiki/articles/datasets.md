@@ -1,12 +1,12 @@
 ---
-title: "Datasets"
+title: "データセット"
 type: "llm_article"
 concept: "datasets"
 generated_at: "2026-04-05"
 source_count: 23
 ---
 
-# Datasets (データセット)
+# データセット
 
 ロボティクスのアルゴリズム評価に不可欠なベンチマークデータ。[[slam]]、[[localization]]、[[computer_vision]] の性能比較には、共通のデータセットでの定量評価が必要。
 
@@ -32,14 +32,14 @@ source_count: 23
 
 ## rsasaki-hub のベンチマーク課題
 
-plan.md で指摘されている通り、現在の eval は proxy 評価 (README に benchmark 記述があるか等) であり、実際のデータセットでの runtime / 精度評価ではない。次のステップは:
+plan.md で指摘されている通り、現在の `eval` は代理評価（README に benchmark 記述があるか等）であり、実際のデータセットでの実行時間 / 精度評価ではない。次のステップは:
 
-1. track ごとに benchmark contract を定義
+1. トラックごとにベンチマーク契約を定義
 2. データセットを 1 つ選定
-3. 各実装の runner を作成
-4. runtime / failure / 精度メトリクスを自動収集
+3. 各実装のランナーを作成
+4. 実行時間 / failure / 精度メトリクスを自動収集
 
-`lidar_localization` track が最も scope が狭く、最初のベンチマーク対象として適切。
+`lidar_localization` トラックが最も対象範囲が狭く、最初のベンチマーク対象として適切。
 
 ## 関連コンセプト
 

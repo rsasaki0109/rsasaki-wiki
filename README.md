@@ -1,8 +1,8 @@
 # rsasaki-hub
 
-`rsasaki0109` 配下の public リポジトリを横断的に比較・評価するための探索中枢です。
+`rsasaki0109` 配下の公開リポジトリを横断比較・評価するための探索ハブです。
 
-共通ライブラリでも設計書でもありません。複数の実装を並べて比較し、暫定採用の根拠を残し続けることが目的です。
+共通ライブラリでも設計書置き場でもありません。複数の実装を並べて比較し、暫定採用の根拠を更新し続けることを目的にしています。
 
 ## 探索の原則
 
@@ -14,50 +14,50 @@
 
 ## 現在の探索対象
 
-最初の experiment family として **LiDAR スタック** を扱っています。
+最初の探索ファミリは **LiDAR スタック** です。
 
-| Track | 暫定採用 | 比較対象 |
+| トラック | 暫定採用 | 比較対象 |
 | --- | --- | --- |
-| lidar_localization | `amcl_3d` | `lidar_localization_ros2` |
-| lidar_slam | `lidarslam_ros2` | `glim`, `littleslam_ros2`, `li_slam_ros2` |
-| lidar_imu_slam | `localization_zoo` | `FAST_LIO` |
+| `lidar_localization` | `amcl_3d` | `lidar_localization_ros2` |
+| `lidar_slam` | `lidarslam_ros2` | `glim`, `littleslam_ros2`, `li_slam_ros2` |
+| `lidar_imu_slam` | `localization_zoo` | `FAST_LIO` |
 
-詳細は [Experiments](https://rsasaki0109.github.io/rsasaki-hub/) を参照してください。
+詳細は [探索結果](https://rsasaki0109.github.io/rsasaki-hub/) を参照してください。
 
 ## ディレクトリ構成
 
 | パス | 内容 |
 | --- | --- |
-| `registry/` | repo メタデータと実験状態 |
-| `ingestors/` | GitHub からの repo 収集・ローカル checkout |
-| `evaluator/` | benchmark 準備度・可読性・拡張性の heuristic 評価 |
-| `synthesizer/` | 最小インターフェース合成・実装間 diff 生成 |
-| `docs/` | 生成された探索ログ (GitHub Pages で公開) |
-| `cli/` | `expctl` と `kb` エントリーポイント |
-| `raw/` | KB の生ソース (記事, 論文, repo メモ) ※ gitignore |
-| `wiki/` | KB のコンパイル済みウィキ ※ gitignore |
+| `registry/` | リポジトリのメタデータと探索状態 |
+| `ingestors/` | GitHub からのリポジトリ収集とローカル checkout |
+| `evaluator/` | ベンチマーク準備度・可読性・拡張性のヒューリスティック評価 |
+| `synthesizer/` | 最小インターフェース合成と実装間差分生成 |
+| `docs/` | 生成された探索ログ（GitHub Pages で公開） |
+| `cli/` | `expctl` と `kb` のエントリーポイント |
+| `raw/` | ナレッジベースの生ソース（記事、論文、repo メモ）※ gitignore |
+| `wiki/` | ナレッジベースのコンパイル済み wiki ※ gitignore |
 
-## 探索 CLI
-
-```bash
-python3 cli/expctl.py sync        # rsasaki0109 の public repo 一覧を取得
-python3 cli/expctl.py extract     # 関連 repo を clone し、I/O・アルゴリズム信号を抽出
-python3 cli/expctl.py eval        # proxy メトリクスで評価・ランキング
-python3 cli/expctl.py synthesize  # 最小インターフェースと docs を生成
-```
-
-## Knowledge Base CLI
-
-ロボティクス研究の知識ベースを構築・検索するための CLI。ソースを `raw/` に取り込み、LLM と組み合わせて `wiki/` にコンパイルします。
+## 探索コマンド
 
 ```bash
-python3 cli/kb.py ingest                           # experiments.yaml から自動取り込み
-python3 cli/kb.py ingest https://example.com/article  # Web 記事を取り込み
-python3 cli/kb.py ingest path/to/local.md          # ローカルファイルを取り込み
-python3 cli/kb.py compile                          # raw/ から wiki/ を生成 (index + concept pages)
-python3 cli/kb.py search "particle filter"         # 全文検索
-python3 cli/kb.py lint                             # 不整合検出・カバレッジチェック
-python3 cli/kb.py stats                            # 統計表示
+python3 cli/expctl.py sync        # rsasaki0109 の公開リポジトリ一覧を取得
+python3 cli/expctl.py extract     # 関連 repo を clone し、I/O とアルゴリズム信号を抽出
+python3 cli/expctl.py eval        # 代理指標で評価してランキング
+python3 cli/expctl.py synthesize  # 最小インターフェースとドキュメントを生成
 ```
 
-外部依存なし。Python 標準ライブラリのみで動作します。
+## ナレッジベースコマンド
+
+ロボティクス研究の知識ベースを構築・検索するための CLI です。ソースを `raw/` に取り込み、必要に応じて LLM と組み合わせて `wiki/` にコンパイルします。
+
+```bash
+python3 cli/kb.py ingest                              # experiments.yaml から自動取り込み
+python3 cli/kb.py ingest https://example.com/article  # Web 記事を取り込む
+python3 cli/kb.py ingest path/to/local.md             # ローカルファイルを取り込む
+python3 cli/kb.py compile                             # raw/ から wiki/ を生成（索引 + コンセプトページ）
+python3 cli/kb.py search "particle filter"            # 全文検索
+python3 cli/kb.py lint                                # 不整合検出とカバレッジ確認
+python3 cli/kb.py stats                               # 統計表示
+```
+
+外部依存なし。Python 標準ライブラリだけで動作します。

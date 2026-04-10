@@ -1,231 +1,234 @@
-# Experiments
+# 探索結果
 
-Generated at: 2026-04-04T21:34:41+00:00
+生成日時: 2026-04-10T09:30:59+00:00
 
-## lidar_stack_exploration
+## LiDAR スタック (`lidar_stack_exploration`)
 
-Compare public lidar localization, lidar SLAM, and lidar+imu SLAM repositories under one exploration family.
+公開 LiDAR 自己位置推定・LiDAR SLAM・LiDAR+IMU SLAM 実装を 1 つの探索ファミリとして比較する。
 
-### lidar_localization
+### LiDAR 自己位置推定 (`lidar_localization`)
 
-- Description: Point-cloud-based localization against a map.
-- Implementations: 2
+- 説明: 点群マップに対する自己位置推定
+- 実装数: 2
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | amcl_3d | 90.22 | Imu, Odometry, Path, PointCloud2, Pose -> Path, PointCloud2, Pose | AMCL, CLAS, PID, NDT |
 | lidar_localization_ros2 | 36.72 | Imu, Odometry, PointCloud2, Pose -> Path, PointCloud2, Pose | NDT, VoxelGrid, GICP, ICP |
 
-- Key diffs:
-  - amcl_3d vs lidar_localization_ros2: common input Imu, Odometry, PointCloud2, Pose; algorithm split AMCL, LoopClosure, PID / GICP, VoxelGrid
+- 主要差分:
+  - amcl_3d vs lidar_localization_ros2: 共通入力 Imu, Odometry, PointCloud2, Pose; アルゴリズム差分 AMCL, LoopClosure, PID / GICP, VoxelGrid
 
-### lidar_slam
+### LiDAR SLAM (`lidar_slam`)
 
-- Description: LiDAR-only odometry and mapping.
-- Implementations: 3
+- 説明: LiDAR 単独によるオドメトリと地図構築
+- 実装数: 3
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | lidarslam_ros2 | 83.97 | Imu, MapArray, NavSatFix, Odometry, PointCloud2 -> MapArray, NavSatFix, Path, PointCloud2, Pose | Submap, LoopClosure, SLAM, PoseGraph |
 | li_slam_ros2 | 36.48 | Imu, MapArray, Odometry, PointCloud2, Pose -> Imu, MapArray, Odometry, Path, PointCloud2, Pose | VoxelGrid, Submap, SLAM, NDT |
 | littleslam_ros2 | 42.74 | LaserScan, PointCloud2 -> Path, PointCloud2, Pose | SLAM, CLAS, ICP |
 
-- Key diffs:
-  - li_slam_ros2 vs lidarslam_ros2: common input Imu, MapArray, Odometry, PointCloud2; algorithm split GICP, ICP, IMUPreintegration / CLAS, LIO, RTK
-  - li_slam_ros2 vs littleslam_ros2: common input PointCloud2; algorithm split GICP, IMUPreintegration, LoopClosure / CLAS
-  - lidarslam_ros2 vs littleslam_ros2: common input PointCloud2; algorithm split LIO, LoopClosure, NDT / ICP
+- 主要差分:
+  - li_slam_ros2 vs lidarslam_ros2: 共通入力 Imu, MapArray, Odometry, PointCloud2; アルゴリズム差分 GICP, ICP, IMUPreintegration / CLAS, LIO, RTK
+  - li_slam_ros2 vs littleslam_ros2: 共通入力 PointCloud2; アルゴリズム差分 GICP, IMUPreintegration, LoopClosure / CLAS
+  - lidarslam_ros2 vs littleslam_ros2: 共通入力 PointCloud2; アルゴリズム差分 LIO, LoopClosure, NDT / ICP
 
-### lidar_imu_slam
+### LiDAR+IMU SLAM (`lidar_imu_slam`)
 
-- Description: LiDAR-inertial odometry and mapping.
-- Implementations: 2
+- 説明: LiDAR と IMU を使う慣性融合オドメトリと地図構築
+- 実装数: 2
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | FAST_LIO | 52.26 | Imu, Odometry, PointCloud2 -> Odometry, Path, PointCloud2 | CLAS, LIO, EKF, Odometry |
-| localization_zoo | 84.33 | Imu, Odometry, Path, PointCloud2 -> Odometry, Path, Pose | ICP, LIO, GICP, VoxelGrid |
+| localization_zoo | 92.81 | Imu, Odometry, PointCloud2 -> Path | ICP, GICP, LIO, NDT |
 
-- Key diffs:
-  - FAST_LIO vs localization_zoo: common input Imu, Odometry, PointCloud2; algorithm split CLAS, EKF, Kalman / GICP, IMUPreintegration, NDT
+- 主要差分:
+  - FAST_LIO vs localization_zoo: 共通入力 Imu, Odometry, PointCloud2; アルゴリズム差分 CLAS, EKF, Kalman / GICP, NDT, SMALL_GICP
 
-### Rejected Candidates
+### 除外候補
 
-- CloudAnalyzer: no_lidar_input_signal
-- CudaRobotics: no_lidar_input_signal
-- NormalDistributionTransform2D: no_lidar_input_signal
-- PoseOptimizationSLAM3D: no_lidar_input_signal
-- gaussian_particle_filter: no_lidar_input_signal
-- gnss_imu_wheel_localizer: no_lidar_input_signal
-- gnssplusplus-library: no_lidar_input_signal
-- kalman_filter_localization_ros2: no_lidar_input_signal
-- mathematical_robotics: no_lidar_input_signal
-- ndt_omp_ros2: no_lidar_input_signal
+- CloudAnalyzer: LiDAR 入力信号が見つからない
+- CudaRobotics: LiDAR 入力信号が見つからない
+- NormalDistributionTransform2D: LiDAR 入力信号が見つからない
+- PoseOptimizationSLAM3D: LiDAR 入力信号が見つからない
+- gaussian_particle_filter: LiDAR 入力信号が見つからない
+- gnss_imu_wheel_localizer: LiDAR 入力信号が見つからない
+- gnssplusplus-library: LiDAR 入力信号が見つからない
+- kalman_filter_localization_ros2: LiDAR 入力信号が見つからない
+- mathematical_robotics: LiDAR 入力信号が見つからない
+- ndt_omp_ros2: LiDAR 入力信号が見つからない
 
-## robotics_algorithms_exploration
+## ロボティクスアルゴリズム (`robotics_algorithms_exploration`)
 
-Compare cross-language implementations of core robotics algorithms (filtering, path planning, SLAM basics).
+ロボティクス基盤アルゴリズムの多言語実装を比較する（フィルタ、経路計画、SLAM 基礎）。
 
-### state_estimation
+### 状態推定 (`state_estimation`)
 
-- Description: Filtering and state estimation algorithms (EKF, UKF, Particle Filter, etc.).
-- Implementations: 5
+- 説明: フィルタリング・状態推定 (EKF, UKF, Particle Filter 等)
+- 実装数: 5
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
-| gaussian_particle_filter | 33.64 | none -> none | ParticleFilter, Kalman |
-| particle_filtering_model_predictive_control | 35.44 | none -> Path | MPC, ParticleFilter, CLAS |
-| quaternion-based_kalman_filter | 38.64 | none -> none | Kalman, CLAS |
+| gaussian_particle_filter | 33.64 | なし -> なし | ParticleFilter, Kalman |
+| particle_filtering_model_predictive_control | 35.44 | なし -> Path | MPC, ParticleFilter, CLAS |
+| quaternion-based_kalman_filter | 38.64 | なし -> なし | Kalman, CLAS |
 | mathematical_robotics | 32.91 | Imu, Odometry -> Path, Pose | IMUPreintegration, EKF, PoseGraph, CLAS |
-| imu_estimator | 41.5 | Imu -> none | EKF, CLAS |
+| imu_estimator | 41.5 | Imu -> なし | EKF, CLAS |
 
-- Key diffs:
-  - gaussian_particle_filter vs imu_estimator: common input none; algorithm split Kalman, ParticleFilter / CLAS, EKF
-  - gaussian_particle_filter vs mathematical_robotics: common input none; algorithm split none / CLAS, EKF, ICP
-  - gaussian_particle_filter vs particle_filtering_model_predictive_control: common input none; algorithm split Kalman / CLAS, MPC
+- 主要差分:
+  - gaussian_particle_filter vs imu_estimator: 共通入力 なし; アルゴリズム差分 Kalman, ParticleFilter / CLAS, EKF
+  - gaussian_particle_filter vs mathematical_robotics: 共通入力 なし; アルゴリズム差分 なし / CLAS, EKF, ICP
+  - gaussian_particle_filter vs particle_filtering_model_predictive_control: 共通入力 なし; アルゴリズム差分 Kalman / CLAS, MPC
 
-### path_planning
+### 経路計画 (`path_planning`)
 
-- Description: Path and motion planning algorithms (RRT, A*, DWA, etc.).
-- Implementations: 4
+- 説明: 経路・動作計画 (RRT, A*, DWA 等)
+- 実装数: 3
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
-| rust_robotics | 41.34 | none -> Path | MPC, LQR, AStar, LoopClosure |
-| CudaRobotics | 63.29 | none -> Path | CLAS, LIO, RRT, AStar |
-| roboclaw-rs | 27.62 | none -> Path | CLAS, LoopClosure, ICP, DWA |
-| simple_visual_slam | 78.19 | none -> Path | CLAS, LoopClosure, SLAM, NDT |
+| rust_robotics | 48.75 | なし -> Path, Pose | MPC, AStar, LQR, SLAM |
+| CudaRobotics | 63.29 | なし -> Path | CLAS, LIO, RRT, AStar |
+| simple_visual_slam | 78.99 | なし -> Path | CLAS, LoopClosure, SLAM, RANSAC |
 
-- Key diffs:
-  - CudaRobotics vs roboclaw-rs: common input none; algorithm split AMCL, AStar, Dijkstra / LoopClosure
-  - CudaRobotics vs rust_robotics: common input none; algorithm split AMCL, CLAS, Dijkstra / EKF, Kalman, LQR
-  - CudaRobotics vs simple_visual_slam: common input none; algorithm split AMCL, AStar, DWA / EKF, LoopClosure, MPC
+- 主要差分:
+  - CudaRobotics vs rust_robotics: 共通入力 なし; アルゴリズム差分 AMCL, CLAS, Dijkstra / EKF, Kalman, LQR
+  - CudaRobotics vs simple_visual_slam: 共通入力 なし; アルゴリズム差分 AMCL, AStar, DWA / EKF, LoopClosure, MPC
+  - rust_robotics vs simple_visual_slam: 共通入力 なし; アルゴリズム差分 AStar, DWA, Kalman / CLAS, NDT, PID
 
-### scan_matching
+### スキャンマッチング (`scan_matching`)
 
-- Description: Point cloud registration and scan matching (ICP, NDT, etc.).
-- Implementations: 1
+- 説明: 点群レジストレーション・スキャンマッチング (ICP, NDT 等)
+- 実装数: 2
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
-| NormalDistributionTransform2D | 36.44 | none -> none | NDT, SLAM |
+| NormalDistributionTransform2D | 36.44 | なし -> なし | NDT, SLAM |
+| roboclaw-rs | 27.62 | なし -> Path | CLAS, LoopClosure, ICP |
 
-### Rejected Candidates
+- 主要差分:
+  - NormalDistributionTransform2D vs roboclaw-rs: 共通入力 なし; アルゴリズム差分 NDT, SLAM / CLAS, ICP, LoopClosure
 
-- kalman_filter_localization_ros2: belongs_to_gnss_family
-- amcl_3d: belongs_to_lidar_family
-- glim: belongs_to_lidar_family
-- li_slam_ros2: belongs_to_lidar_family
-- lidar_localization_ros2: belongs_to_lidar_family
-- lidarslam_ros2: belongs_to_lidar_family
-- littleslam_ros2: belongs_to_lidar_family
-- localization_zoo: belongs_to_lidar_family
-- ndt_omp_ros2: belongs_to_lidar_family
-- CloudAnalyzer: belongs_to_pointcloud_family
+### 除外候補
 
-## gnss_positioning_exploration
+- kalman_filter_localization_ros2: GNSS 系探索ファミリに属する
+- amcl_3d: LiDAR 系探索ファミリに属する
+- glim: LiDAR 系探索ファミリに属する
+- li_slam_ros2: LiDAR 系探索ファミリに属する
+- lidar_localization_ros2: LiDAR 系探索ファミリに属する
+- lidarslam_ros2: LiDAR 系探索ファミリに属する
+- littleslam_ros2: LiDAR 系探索ファミリに属する
+- localization_zoo: LiDAR 系探索ファミリに属する
+- ndt_omp_ros2: LiDAR 系探索ファミリに属する
+- CloudAnalyzer: 点群処理系探索ファミリに属する
 
-Compare GNSS and multi-sensor positioning implementations.
+## GNSS 測位 (`gnss_positioning_exploration`)
 
-### gnss_processing
+GNSS および複合センサ測位の実装を比較する。
 
-- Description: Raw GNSS signal processing and positioning (RTK, PPP, code/carrier).
-- Implementations: 4
+### GNSS 処理 (`gnss_processing`)
 
-| Repo | Score | I/O | Algorithms |
+- 説明: GNSS 信号処理・測位 (RTK, PPP 等)
+- 実装数: 4
+
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
-| gnssplusplus-library | 75.16 | NavSatFix, Path, Pose -> NavSatFix, Path, Pose | PPP, RTK, CLAS, RTCM |
+| gnssplusplus-library | 74.36 | Path -> Path | PPP, RTK, CLAS, RTCM |
 | gnss_gpu | 53.86 | PointCloud2 -> Path | EKF, Pseudorange, RTK, RINEX |
-| RTKLIB | 31.51 | none -> Path | RTK, RTCM, RINEX, CLAS |
-| q-method | 35.98 | none -> none | none |
+| RTKLIB | 31.51 | なし -> Path | RTK, RTCM, RINEX, CLAS |
+| q-method | 35.98 | なし -> なし | なし |
 
-- Key diffs:
-  - RTKLIB vs gnss_gpu: common input none; algorithm split AStar, AmbiguityResolution, NDT / EKF, LIO, LoopClosure
-  - RTKLIB vs gnssplusplus-library: common input none; algorithm split AStar, AmbiguityResolution, NDT / Ionosphere, PID, Pseudorange
-  - RTKLIB vs q-method: common input none; algorithm split AStar, AmbiguityResolution, CLAS / none
+- 主要差分:
+  - RTKLIB vs gnss_gpu: 共通入力 なし; アルゴリズム差分 AStar, AmbiguityResolution, NDT / EKF, LIO, LoopClosure
+  - RTKLIB vs gnssplusplus-library: 共通入力 なし; アルゴリズム差分 AStar, NDT / Ionosphere, PID, Pseudorange
+  - RTKLIB vs q-method: 共通入力 なし; アルゴリズム差分 AStar, AmbiguityResolution, CLAS / なし
 
-### multi_sensor_positioning
+### 複合測位 (`multi_sensor_positioning`)
 
-- Description: GNSS fused with IMU, wheel odometry, or other sensors.
-- Implementations: 2
+- 説明: GNSS + IMU/Wheel 複合測位
+- 実装数: 2
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | gnss_imu_wheel_localizer | 37.33 | Imu, NavSatFix, Odometry, Pose -> Imu, Odometry, Path, Pose | Kalman, EKF, Odometry, LoopClosure |
 | kalman_filter_localization_ros2 | 45.77 | Imu, Odometry, Pose -> Pose | EKF, Kalman, Odometry, NDT |
 
-- Key diffs:
-  - gnss_imu_wheel_localizer vs kalman_filter_localization_ros2: common input Imu, Odometry, Pose; algorithm split LoopClosure / none
+- 主要差分:
+  - gnss_imu_wheel_localizer vs kalman_filter_localization_ros2: 共通入力 Imu, Odometry, Pose; アルゴリズム差分 LoopClosure / なし
 
-### Rejected Candidates
+### 除外候補
 
-- CudaRobotics: no_gnss_signal
-- PoseOptimizationSLAM3D: no_gnss_signal
-- amcl_3d: no_gnss_signal
-- gaussian_particle_filter: no_gnss_signal
-- glim: no_gnss_signal
-- imu_estimator: no_gnss_signal
-- lidar_localization_ros2: no_gnss_signal
-- lidar_localizer: no_gnss_signal
-- lidar_undistortion: no_gnss_signal
-- littleslam_ros2: no_gnss_signal
+- PoseOptimizationSLAM3D: GNSS 関連の信号が見つからない
+- amcl_3d: GNSS 関連の信号が見つからない
+- gaussian_particle_filter: GNSS 関連の信号が見つからない
+- glim: GNSS 関連の信号が見つからない
+- imu_estimator: GNSS 関連の信号が見つからない
+- lidar_localization_ros2: GNSS 関連の信号が見つからない
+- lidar_localizer: GNSS 関連の信号が見つからない
+- lidar_undistortion: GNSS 関連の信号が見つからない
+- littleslam_ros2: GNSS 関連の信号が見つからない
+- localization_zoo: GNSS 関連の信号が見つからない
 
-## pointcloud_processing_exploration
+## 点群処理 (`pointcloud_processing_exploration`)
 
-Compare point cloud analysis, transformation, and processing tools.
+点群の分析・変換・処理ツールを比較する。
 
-### pointcloud_analysis
+### 点群分析 (`pointcloud_analysis`)
 
-- Description: Point cloud inspection, evaluation, and visualization.
-- Implementations: 1
+- 説明: 点群の分析・評価・可視化
+- 実装数: 1
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | CloudAnalyzer | 79.22 | Path -> Path | CLAS, VoxelGrid, ICP, GICP |
 
-### pointcloud_transformation
+### 点群変換 (`pointcloud_transformation`)
 
-- Description: Point cloud filtering, object removal, diff, and format conversion.
-- Implementations: 5
+- 説明: 点群のフィルタリング・変換・差分検出
+- 実装数: 5
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | npy2pointcloud | 40.05 | Path -> Path | CLAS, NDT |
-| dynamic-3d-object-removal | 51.26 | Path, PointCloud2 -> Path, PointCloud2 | VoxelGrid, CLAS, NDT, SLAM |
-| construction-diff | 83.92 | none -> Path | VoxelGrid, ICP, CLAS, RANSAC |
+| construction-diff | 83.92 | なし -> Path | VoxelGrid, ICP, CLAS, RANSAC |
+| dynamic-3d-object-removal | 52.86 | Path, PointCloud2 -> Path, PointCloud2 | VoxelGrid, CLAS, NDT, SLAM |
 | laser_deskew | 39.11 | LaserScan, Odometry -> LaserScan | Deskew, NDT, Odometry, CLAS |
 | tree-trunk-mapper | 80.03 | Path, PointCloud2 -> Path, Pose | CLAS, RANSAC, NDT, Clustering |
 
-- Key diffs:
-  - construction-diff vs dynamic-3d-object-removal: common input none; algorithm split ICP, RANSAC / EKF, LoopClosure, NDT
-  - construction-diff vs laser_deskew: common input none; algorithm split Downsampling, ICP, RANSAC / Deskew, NDT, Odometry
-  - construction-diff vs npy2pointcloud: common input none; algorithm split Downsampling, ICP, RANSAC / NDT
+- 主要差分:
+  - construction-diff vs dynamic-3d-object-removal: 共通入力 なし; アルゴリズム差分 ICP, RANSAC / EKF, LoopClosure, NDT
+  - construction-diff vs laser_deskew: 共通入力 なし; アルゴリズム差分 Downsampling, ICP, RANSAC / Deskew, NDT, Odometry
+  - construction-diff vs npy2pointcloud: 共通入力 なし; アルゴリズム差分 Downsampling, ICP, RANSAC / NDT
 
-### pointcloud_to_model
+### 点群モデル化 (`pointcloud_to_model`)
 
-- Description: Point cloud to BIM/IFC or semantic model conversion.
-- Implementations: 4
+- 説明: 点群から BIM/IFC・セマンティックモデルへの変換
+- 実装数: 4
 
-| Repo | Score | I/O | Algorithms |
+| リポジトリ | スコア | I/O | アルゴリズム |
 | --- | ---: | --- | --- |
 | pointcloud2ifc | 59.48 | Path, PointCloud2 -> Path | CLAS, VoxelGrid, Segmentation, RANSAC |
-| rohbau-annotator | 36.59 | none -> Path | CLAS, Semantic, Segmentation, NDT |
-| bim-quality-checker | 58.59 | none -> Path | CLAS, NDT |
+| rohbau-annotator | 36.59 | なし -> Path | CLAS, Semantic, Segmentation, NDT |
+| bim-quality-checker | 58.59 | なし -> Path | CLAS, NDT |
 | gs-sim2real | 48.67 | Path -> Path | CLAS, NDT, LoopClosure, SLAM |
 
-- Key diffs:
-  - bim-quality-checker vs gs-sim2real: common input none; algorithm split none / LoopClosure, SLAM, Semantic
-  - bim-quality-checker vs pointcloud2ifc: common input none; algorithm split none / Clustering, Downsampling, RANSAC
-  - bim-quality-checker vs rohbau-annotator: common input none; algorithm split none / Segmentation, Semantic
+- 主要差分:
+  - bim-quality-checker vs gs-sim2real: 共通入力 なし; アルゴリズム差分 なし / LoopClosure, SLAM, Semantic
+  - bim-quality-checker vs pointcloud2ifc: 共通入力 なし; アルゴリズム差分 なし / Clustering, Downsampling, RANSAC
+  - bim-quality-checker vs rohbau-annotator: 共通入力 なし; アルゴリズム差分 なし / Segmentation, Semantic
 
-### Rejected Candidates
+### 除外候補
 
-- amcl_3d: no_pointcloud_signal
-- bagx: no_pointcloud_signal
-- forest-panoptic-nav: no_pointcloud_signal
-- glim: no_pointcloud_signal
-- transfrom_velocity: no_pointcloud_signal
-- rsasaki0109-tweet-summaries: no_source_files
-- gnssplusplus-library: primarily_other_domain
-- lidarslam_ros2: primarily_other_domain
-- localization_zoo: primarily_other_domain
-- PoseOptimizationSLAM3D: weak_problem_match
+- amcl_3d: 点群処理の信号が見つからない
+- bagx: 点群処理の信号が見つからない
+- forest-panoptic-nav: 点群処理の信号が見つからない
+- glim: 点群処理の信号が見つからない
+- transfrom_velocity: 点群処理の信号が見つからない
+- rsasaki0109-tweet-summaries: ソースファイルが見つからない
+- gnssplusplus-library: 主用途が別領域
+- lidarslam_ros2: 主用途が別領域
+- PoseOptimizationSLAM3D: 対象課題との一致が弱い
+- github-curator: 対象課題との一致が弱い

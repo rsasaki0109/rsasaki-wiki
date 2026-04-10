@@ -6,15 +6,15 @@ generated_at: "2026-04-05"
 source_count: 40
 ---
 
-# ROS (Robot Operating System)
+# ROS（Robot Operating System）
 
 ロボットソフトウェア開発のためのミドルウェアフレームワーク。rsasaki0109 の実装の大半は ROS2 (主に Humble / Iron) をベースにしており、rsasaki-hub の探索パイプラインも ROS2 のメッセージ型 (PointCloud2, Imu, Odometry 等) を I/O 契約の基本単位として使っている。
 
 ## rsasaki-hub における ROS の役割
 
 rsasaki-hub の `expctl.py extract` は ROS2 のメッセージ型パターンを手がかりに実装の I/O を抽出する。具体的には:
-- `create_subscription<sensor_msgs::msg::PointCloud2>` → Input: PointCloud2
-- `create_publisher<nav_msgs::msg::Path>` → Output: Path
+- `create_subscription<sensor_msgs::msg::PointCloud2>` → 入力: PointCloud2
+- `create_publisher<nav_msgs::msg::Path>` → 出力: Path
 - Topic 名 (`/scan`, `/imu`, `/odom`) からもセンサ入力を推定
 
 ## ROS2 ベースの主要実装

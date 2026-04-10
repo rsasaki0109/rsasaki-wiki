@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Knowledge base CLI for rsasaki-hub.
+"""rsasaki-hub 用ナレッジベース CLI。
 
-Ingest raw sources (URLs, local files), compile them into a wiki of .md files,
-search, and lint the knowledge base. All without external dependencies.
+生ソース（URL、ローカルファイル）を取り込み、.md ベースの wiki にコンパイルし、
+検索と lint を行う。外部依存は不要。
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ WIKI_DIR = ROOT / "wiki"
 CONCEPTS_DIR = WIKI_DIR / "concepts"
 INDEX_PATH = WIKI_DIR / "index.md"
 
-# Robotics domain taxonomy for auto-categorization
+# 自動分類に使うロボティクス領域タクソノミ
 CONCEPT_KEYWORDS: dict[str, list[str]] = {
     "localization": ["localization", "localizer", "amcl", "particle filter", "monte carlo",
                      "pose estimation", "position estimation", "self-localization"],
@@ -62,13 +62,61 @@ CONCEPT_KEYWORDS: dict[str, list[str]] = {
                           "renovation", "rohbau", "as-built"],
 }
 
+CONCEPT_LABELS: dict[str, str] = {
+    "localization": "自己位置推定",
+    "slam": "SLAM",
+    "lidar": "LiDAR",
+    "imu": "IMU",
+    "gnss": "GNSS",
+    "path_planning": "経路計画",
+    "state_estimation": "状態推定",
+    "point_cloud_processing": "点群処理",
+    "ros": "ROS",
+    "deep_learning": "深層学習",
+    "computer_vision": "コンピュータビジョン",
+    "control": "制御",
+    "simulation": "シミュレーション",
+    "datasets": "データセット",
+    "bim_construction": "BIM / 建設",
+}
+
+TYPE_LABELS: dict[str, str] = {
+    "arxiv_paper": "arXiv 論文",
+    "experiment_data": "実験データ",
+    "local_file": "ローカルファイル",
+    "llm_article": "LLM 記事",
+    "repo_readme": "リポジトリ README",
+    "unknown": "不明",
+    "web_article": "Web 記事",
+}
+
+
+def concept_label(concept: str) -> str:
+    return CONCEPT_LABELS.get(concept, concept.replace("_", " ").title())
+
+
+def concept_link(concept: str) -> str:
+    return f"[[{concept}|{concept_label(concept)}]]"
+
+
+def type_label(article_type: str) -> str:
+    return TYPE_LABELS.get(article_type, article_type)
+
+
+def display_title(title: str) -> str:
+    if title.startswith("Repo: "):
+        return f"リポジトリ: {title[6:]}"
+    if title.startswith("Experiment: "):
+        return f"実験: {title[12:]}"
+    return title
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 def slugify(text: str) -> str:
-    """Convert text to a filesystem-safe slug."""
+    """テキストをファイルシステム安全な slug に変換する。"""
     text = text.lower().strip()
     text = re.sub(r"[^\w\s-]", "", text)
     text = re.sub(r"[-\s]+", "-", text)
@@ -76,7 +124,7 @@ def slugify(text: str) -> str:
 
 
 def extract_title_from_html(html_text: str) -> str:
-    """Extract <title> from HTML."""
+    """HTML から <title> を抽出する。"""
     match = re.search(r"<title[^>]*>(.*?)</title>", html_text, re.IGNORECASE | re.DOTALL)
     if match:
         return html.unescape(match.group(1)).strip()
@@ -84,44 +132,44 @@ def extract_title_from_html(html_text: str) -> str:
 
 
 def html_to_markdown(html_text: str) -> str:
-    """Minimal HTML to Markdown conversion. Good enough for articles."""
+    """最小限の HTML -> Markdown 変換。記事用途として十分な精度。"""
     text = html_text
-    # Remove script, style, nav, header, footer
+    # script / style / nav / header / footer などを除去
     for tag in ("script", "style", "nav", "header", "footer", "aside"):
         text = re.sub(rf"<{tag}[^>]*>.*?</{tag}>", "", text, flags=re.DOTALL | re.IGNORECASE)
-    # Headers
+    # 見出し
     for level in range(1, 7):
         text = re.sub(rf"<h{level}[^>]*>(.*?)</h{level}>", rf"\n{'#' * level} \1\n", text, flags=re.IGNORECASE | re.DOTALL)
-    # Paragraphs and divs
+    # 段落と div
     text = re.sub(r"<(?:p|div)[^>]*>", "\n", text, flags=re.IGNORECASE)
     text = re.sub(r"</(?:p|div)>", "\n", text, flags=re.IGNORECASE)
-    # Line breaks
+    # 改行
     text = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
-    # Bold and italic
+    # 太字と斜体
     text = re.sub(r"<(?:strong|b)[^>]*>(.*?)</(?:strong|b)>", r"**\1**", text, flags=re.IGNORECASE | re.DOTALL)
     text = re.sub(r"<(?:em|i)[^>]*>(.*?)</(?:em|i)>", r"*\1*", text, flags=re.IGNORECASE | re.DOTALL)
-    # Links
+    # リンク
     text = re.sub(r'<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', r"[\2](\1)", text, flags=re.IGNORECASE | re.DOTALL)
-    # Code
+    # コード
     text = re.sub(r"<code[^>]*>(.*?)</code>", r"`\1`", text, flags=re.IGNORECASE | re.DOTALL)
     text = re.sub(r"<pre[^>]*>(.*?)</pre>", r"\n```\n\1\n```\n", text, flags=re.IGNORECASE | re.DOTALL)
-    # Lists
+    # 箇条書き
     text = re.sub(r"<li[^>]*>(.*?)</li>", r"- \1", text, flags=re.IGNORECASE | re.DOTALL)
-    # Images
+    # 画像
     text = re.sub(r'<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*/?>',  r"![\2](\1)", text, flags=re.IGNORECASE)
     text = re.sub(r'<img[^>]*src="([^"]*)"[^>]*/?>',  r"![](\1)", text, flags=re.IGNORECASE)
-    # Strip remaining tags
+    # 残ったタグを除去
     text = re.sub(r"<[^>]+>", "", text)
-    # Unescape HTML entities
+    # HTML エンティティをデコード
     text = html.unescape(text)
-    # Clean up whitespace
+    # 余分な空白を整理
     text = re.sub(r"\n{3,}", "\n\n", text)
     text = re.sub(r"[ \t]+\n", "\n", text)
     return text.strip()
 
 
 def classify_content(text: str) -> list[str]:
-    """Return matching concept tags for text."""
+    """テキストに一致するコンセプトタグを返す。"""
     lowered = text.lower()
     matched: list[tuple[str, int]] = []
     for concept, keywords in CONCEPT_KEYWORDS.items():
@@ -133,7 +181,7 @@ def classify_content(text: str) -> list[str]:
 
 
 def read_frontmatter(path: Path) -> dict[str, Any]:
-    """Read YAML-like frontmatter from a .md file."""
+    """.md ファイルから YAML 風 frontmatter を読む。"""
     text = path.read_text(encoding="utf-8", errors="ignore")
     if not text.startswith("---"):
         return {}
@@ -154,7 +202,7 @@ def read_frontmatter(path: Path) -> dict[str, Any]:
 
 
 def body_text(path: Path) -> str:
-    """Return markdown body (after frontmatter)."""
+    """frontmatter を除いた Markdown 本文を返す。"""
     text = path.read_text(encoding="utf-8", errors="ignore")
     if text.startswith("---"):
         end = text.find("---", 3)
@@ -167,11 +215,11 @@ def word_count(text: str) -> int:
     return len(text.split())
 
 
-# ---- ingest command ----
+# ---- ingest コマンド ----
 
 def ingest_url(url: str) -> Path:
-    """Fetch a URL and save as .md in raw/."""
-    print(f"Fetching {url} ...")
+    """URL を取得して raw/ 配下に .md として保存する。"""
+    print(f"{url} を取得しています ...")
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 rsasaki-hub-kb/1.0"})
     with urllib.request.urlopen(req, timeout=30) as resp:
         raw_html = resp.read().decode("utf-8", errors="ignore")
@@ -200,18 +248,18 @@ def ingest_url(url: str) -> Path:
     """)
 
     dest.write_text(frontmatter + md_body, encoding="utf-8")
-    print(f"  -> {dest.relative_to(ROOT)} ({word_count(md_body)} words, concepts: {concepts})")
+    print(f"  -> {dest.relative_to(ROOT)} ({word_count(md_body)} 語, コンセプト: {concepts})")
     return dest
 
 
 def ingest_file(file_path: Path) -> Path:
-    """Copy a local file into raw/ with frontmatter."""
+    """ローカルファイルを frontmatter 付きで raw/ へコピーする。"""
     if not file_path.exists():
-        print(f"File not found: {file_path}", file=sys.stderr)
+        print(f"ファイルが見つかりません: {file_path}", file=sys.stderr)
         sys.exit(1)
 
     text = file_path.read_text(encoding="utf-8", errors="ignore")
-    # If it already has frontmatter, just copy
+    # 既に frontmatter がある場合はそのままコピーする
     if text.startswith("---"):
         dest = RAW_DIR / file_path.name
         dest.write_text(text, encoding="utf-8")
@@ -237,7 +285,7 @@ def ingest_file(file_path: Path) -> Path:
 
 
 def ingest_repo_data() -> list[Path]:
-    """Ingest data from this repo's own experiments as raw sources."""
+    """このリポジトリ自身の実験データを raw ソースとして取り込む。"""
     created: list[Path] = []
     exp_path = ROOT / "registry" / "experiments.yaml"
     if not exp_path.exists():
@@ -251,7 +299,7 @@ def ingest_repo_data() -> list[Path]:
 
         lines = [
             "---",
-            f'title: "Experiment: {name}"',
+            f'title: "実験: {name}"',
             f'source: "registry/experiments.yaml"',
             f'ingested_at: "{utc_now()}"',
             f'concepts: ["slam", "localization", "lidar", "ros"]',
@@ -267,11 +315,11 @@ def ingest_repo_data() -> list[Path]:
         for impl in experiment.get("implementations", []):
             score = impl.get("evaluation", {}).get("overall_score", "?")
             algos = ", ".join(impl.get("algorithms", [])[:4])
-            lines.append(f"## {impl['repo']} (track: {impl['track']}, score: {score})")
+            lines.append(f"## {impl['repo']}（トラック: {impl['track']}、スコア: {score}）")
             lines.append("")
-            lines.append(f"- Description: {impl.get('description', 'N/A')}")
-            lines.append(f"- Language: {impl.get('language', '?')}")
-            lines.append(f"- Algorithms: {algos}")
+            lines.append(f"- 説明: {impl.get('description', 'なし')}")
+            lines.append(f"- 言語: {impl.get('language', '?')}")
+            lines.append(f"- アルゴリズム: {algos}")
             inputs = ", ".join(impl.get("io", {}).get("inputs", []))
             outputs = ", ".join(impl.get("io", {}).get("outputs", []))
             lines.append(f"- I/O: {inputs} -> {outputs}")
@@ -285,10 +333,10 @@ def ingest_repo_data() -> list[Path]:
 
 
 def ingest_repo_readmes() -> list[Path]:
-    """Ingest README.md files from all cached repos."""
+    """キャッシュ済みリポジトリすべてから README.md を取り込む。"""
     cache_dir = ROOT / ".cache" / "repos"
     if not cache_dir.exists():
-        print("No cached repos found. Run 'expctl.py sync' first.")
+        print("キャッシュ済みリポジトリが見つかりません。先に `expctl.py sync` を実行してください。")
         return []
 
     created: list[Path] = []
@@ -297,7 +345,7 @@ def ingest_repo_readmes() -> list[Path]:
             continue
         readme = repo_dir / "README.md"
         if not readme.exists():
-            # Try lowercase
+            # 小文字の readme.md も試す
             readme = repo_dir / "readme.md"
         if not readme.exists():
             continue
@@ -313,7 +361,7 @@ def ingest_repo_readmes() -> list[Path]:
 
         frontmatter = textwrap.dedent(f"""\
         ---
-        title: "Repo: {repo_name}"
+        title: "リポジトリ: {repo_name}"
         source: "https://github.com/rsasaki0109/{repo_name}"
         ingested_at: "{utc_now()}"
         concepts: [{', '.join(f'"{c}"' for c in concepts)}]
@@ -323,18 +371,18 @@ def ingest_repo_readmes() -> list[Path]:
 
         dest.write_text(frontmatter + text, encoding="utf-8")
         created.append(dest)
-        print(f"  -> {dest.relative_to(ROOT)} ({word_count(text)} words, {concepts[:3]})")
+        print(f"  -> {dest.relative_to(ROOT)} ({word_count(text)} 語, {concepts[:3]})")
 
     return created
 
 
 def ingest_arxiv(query: str, max_results: int = 10) -> list[Path]:
-    """Ingest papers from arXiv API."""
+    """arXiv API から論文を取り込む。"""
     import xml.etree.ElementTree as ET
 
     encoded_query = urllib.parse.quote(query)
     url = f"http://export.arxiv.org/api/query?search_query=all:{encoded_query}&start=0&max_results={max_results}&sortBy=relevance"
-    print(f"Querying arXiv for '{query}' (max {max_results}) ...")
+    print(f"arXiv で '{query}' を検索しています (最大 {max_results} 件) ...")
 
     req = urllib.request.Request(url, headers={"User-Agent": "rsasaki-hub-kb/1.0"})
     with urllib.request.urlopen(req, timeout=30) as resp:
@@ -380,11 +428,11 @@ def ingest_arxiv(query: str, max_results: int = 10) -> list[Path]:
             f"# {title}",
             "",
             f"**arXiv:** [{arxiv_id}]({arxiv_url})",
-            f"**Published:** {published}",
-            f"**Authors:** {', '.join(authors[:5])}{'...' if len(authors) > 5 else ''}",
-            f"**Categories:** {', '.join(categories)}",
+            f"**公開日:** {published}",
+            f"**著者:** {', '.join(authors[:5])}{'...' if len(authors) > 5 else ''}",
+            f"**カテゴリ:** {', '.join(categories)}",
             "",
-            "## Abstract",
+            "## 概要",
             "",
             abstract,
             "",
@@ -416,20 +464,20 @@ def ingest_command(args: argparse.Namespace) -> None:
 
     if mode == "repos":
         created = ingest_repo_readmes()
-        print(f"Ingested {len(created)} repo READMEs")
+        print(f"README を {len(created)} 件取り込みました")
         return
 
     if mode == "arxiv":
         query = " ".join(sources) if sources else "robotics SLAM localization LiDAR"
         max_results = getattr(args, "max_results", 10)
         created = ingest_arxiv(query, max_results)
-        print(f"Ingested {len(created)} arXiv papers")
+        print(f"arXiv 論文を {len(created)} 件取り込みました")
         return
 
     if not sources:
-        print("No sources specified. Ingesting from registry/experiments.yaml ...")
+        print("ソース指定が無いため、registry/experiments.yaml から取り込みます ...")
         created = ingest_repo_data()
-        print(f"Ingested {len(created)} experiment files")
+        print(f"実験ファイルを {len(created)} 件取り込みました")
         return
 
     for source in sources:
@@ -439,35 +487,35 @@ def ingest_command(args: argparse.Namespace) -> None:
             ingest_file(Path(source))
 
 
-# ---- compile command ----
+# ---- compile コマンド ----
 
 def compile_command(_args: argparse.Namespace) -> None:
-    """Compile raw/ into wiki/. Generates index.md and concept pages."""
+    """raw/ を wiki/ へコンパイルする。index.md と concept pages を生成する。"""
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     WIKI_DIR.mkdir(parents=True, exist_ok=True)
     CONCEPTS_DIR.mkdir(parents=True, exist_ok=True)
 
     raw_files = sorted(RAW_DIR.glob("*.md"))
     if not raw_files:
-        print("No raw files found. Run 'kb ingest' first.")
+        print("raw ファイルが見つかりません。先に `kb ingest` を実行してください。")
         return
 
-    # Collect all articles with metadata
+    # メタデータ付きで全記事を収集
     articles: list[dict[str, Any]] = []
     concept_articles: dict[str, list[dict[str, Any]]] = {}
 
     for path in raw_files:
         fm = read_frontmatter(path)
         body = body_text(path)
-        title = fm.get("title", path.stem)
+        title = display_title(str(fm.get("title", path.stem)))
         concepts = fm.get("concepts", [])
         if isinstance(concepts, str):
             concepts = [concepts]
-        # Re-classify if no concepts
+        # コンセプトが無ければ本文から再分類する
         if not concepts:
             concepts = classify_content(body)
 
-        # Generate summary (first 2 non-empty lines after headers)
+        # 要約は、見出し以降の最初の非空行 2 行から組み立てる
         summary_lines = []
         for line in body.splitlines():
             stripped = line.strip()
@@ -476,6 +524,9 @@ def compile_command(_args: argparse.Namespace) -> None:
                 if len(summary_lines) >= 2:
                     break
         summary = " ".join(summary_lines)[:200]
+        summary = summary.replace("**Published:**", "**公開日:**")
+        summary = summary.replace("**Authors:**", "**著者:**")
+        summary = summary.replace("**Categories:**", "**カテゴリ:**")
 
         article = {
             "path": path,
@@ -492,7 +543,7 @@ def compile_command(_args: argparse.Namespace) -> None:
         for concept in concepts:
             concept_articles.setdefault(concept, []).append(article)
 
-    # Build concept graph (which concepts co-occur)
+    # コンセプト共起グラフを構築
     concept_graph: dict[str, Counter[str]] = {}
     for art in articles:
         for c in art["concepts"]:
@@ -501,138 +552,137 @@ def compile_command(_args: argparse.Namespace) -> None:
                 if c2 != c:
                     concept_graph[c][c2] += 1
 
-    # Group articles by type
+    # 記事を種別ごとに整理する
     by_type: dict[str, list[dict[str, Any]]] = {}
     for art in articles:
         by_type.setdefault(art["type"], []).append(art)
 
-    # Generate index.md (Obsidian compatible)
+    # index.md を生成する（Obsidian 互換）
     index_lines = [
-        "# Knowledge Base Index",
+        "# ナレッジベース索引",
         "",
-        f"Generated at: {utc_now()}",
+        f"生成日時: {utc_now()}",
         "",
-        f"Total articles: {len(articles)}  ",
-        f"Total words: {sum(a['word_count'] for a in articles):,}  ",
-        f"Concepts: {len(concept_articles)}  ",
-        f"Sources: {', '.join(f'{t} ({len(arts)})' for t, arts in sorted(by_type.items()))}",
+        f"記事数: {len(articles)}  ",
+        f"総語数: {sum(a['word_count'] for a in articles):,}  ",
+        f"コンセプト数: {len(concept_articles)}  ",
+        f"ソース種別: {', '.join(f'{type_label(t)} ({len(arts)})' for t, arts in sorted(by_type.items()))}",
         "",
-        "## Concept Map",
+        "## コンセプトマップ",
         "",
     ]
     for concept in sorted(concept_articles.keys()):
         count = len(concept_articles[concept])
         related = concept_graph.get(concept, Counter())
-        top_related = ", ".join(f"[[{c}]]" for c, _ in related.most_common(3))
-        index_lines.append(f"- [[{concept}]] ({count} articles) — related: {top_related}")
-    index_lines.extend(["", "## By Type", ""])
+        top_related = ", ".join(concept_link(c) for c, _ in related.most_common(3))
+        index_lines.append(f"- {concept_link(concept)} ({count} 記事) — 関連: {top_related}")
+    index_lines.extend(["", "## 種別ごと", ""])
     for article_type in sorted(by_type.keys()):
         type_arts = by_type[article_type]
-        index_lines.append(f"### {article_type} ({len(type_arts)})")
+        index_lines.append(f"### {type_label(article_type)} ({len(type_arts)})")
         index_lines.append("")
         for art in sorted(type_arts, key=lambda a: a["word_count"], reverse=True):
-            tags = " ".join(f"[[{c}]]" for c in art["concepts"])
-            index_lines.append(f"- **{art['title']}** — {art['word_count']} words — {tags}")
+            tags = " ".join(concept_link(c) for c in art["concepts"])
+            index_lines.append(f"- **{art['title']}** — {art['word_count']} 語 — {tags}")
         index_lines.append("")
 
     INDEX_PATH.write_text("\n".join(index_lines) + "\n", encoding="utf-8")
-    print(f"Generated {INDEX_PATH.relative_to(ROOT)}")
+    print(f"{INDEX_PATH.relative_to(ROOT)} を生成しました")
 
-    # Generate concept pages (Obsidian compatible with backlinks)
+    # コンセプトページを生成する（Obsidian 互換、バックリンク対応）
     for concept, arts in concept_articles.items():
         concept_path = CONCEPTS_DIR / f"{concept}.md"
-        pretty_name = concept.replace("_", " ").title()
+        pretty_name = concept_label(concept)
         related = concept_graph.get(concept, Counter())
 
         lines = [
             f"# {pretty_name}",
             "",
-            f"Articles: {len(arts)}  ",
-            f"Total words: {sum(a['word_count'] for a in arts):,}",
+            f"記事数: {len(arts)}  ",
+            f"総語数: {sum(a['word_count'] for a in arts):,}",
             "",
         ]
 
-        # Related concepts with backlinks
+        # 関連コンセプトとバックリンクを出力する
         if related:
-            lines.append("## Related Concepts")
+            lines.append("## 関連コンセプト")
             lines.append("")
             for rel_concept, overlap_count in related.most_common(8):
-                rel_pretty = rel_concept.replace("_", " ").title()
-                lines.append(f"- [[{rel_concept}|{rel_pretty}]] ({overlap_count} shared articles)")
+                lines.append(f"- {concept_link(rel_concept)} ({overlap_count} 件の共通記事)")
             lines.append("")
 
-        # Key repos in this concept
+        # このコンセプトに属する主要 repo
         repo_arts = [a for a in arts if a["type"] == "repo_readme"]
         if repo_arts:
-            lines.append("## Repositories")
+            lines.append("## リポジトリ")
             lines.append("")
             for art in sorted(repo_arts, key=lambda a: a["word_count"], reverse=True)[:10]:
                 source = art["source"]
-                lines.append(f"- [{art['title']}]({source}) — {art['word_count']} words")
+                lines.append(f"- [{art['title']}]({source}) — {art['word_count']} 語")
             lines.append("")
 
-        # arXiv papers in this concept
+        # このコンセプトに属する arXiv 論文
         paper_arts = [a for a in arts if a["type"] == "arxiv_paper"]
         if paper_arts:
-            lines.append("## Papers")
+            lines.append("## 論文")
             lines.append("")
             for art in sorted(paper_arts, key=lambda a: a.get("ingested_at", ""), reverse=True)[:10]:
                 source = art["source"]
                 lines.append(f"- [{art['title']}]({source}) — {art['summary'][:100]}...")
             lines.append("")
 
-        # Other articles
+        # その他のソース
         other_arts = [a for a in arts if a["type"] not in ("repo_readme", "arxiv_paper")]
         if other_arts:
-            lines.append("## Other Sources")
+            lines.append("## その他のソース")
             lines.append("")
             for art in sorted(other_arts, key=lambda a: a["word_count"], reverse=True):
-                lines.append(f"- [{art['title']}]({art['source']}) — {art['word_count']} words")
+                lines.append(f"- [{art['title']}]({art['source']}) — {art['word_count']} 語")
             lines.append("")
 
-        # Backlinks section (which other concept pages link here)
+        # どのコンセプトページから参照されるか
         backlink_concepts = [c for c, _ in related.most_common()]
         if backlink_concepts:
-            lines.append("## Backlinks")
+            lines.append("## バックリンク")
             lines.append("")
             for bl in backlink_concepts[:10]:
-                lines.append(f"- [[{bl}]]")
+                lines.append(f"- {concept_link(bl)}")
             lines.append("")
 
         concept_path.write_text("\n".join(lines), encoding="utf-8")
 
-    # Generate graph visualization data (for Obsidian Graph or manual inspection)
+    # グラフ可視化データを生成する（Obsidian Graph / 手動確認向け）
     graph_path = WIKI_DIR / "graph.md"
     graph_lines = [
-        "# Concept Graph",
+        "# コンセプトグラフ",
         "",
-        "Nodes = concepts, edges = shared articles between concepts.",
+        "ノード = コンセプト、エッジ = コンセプト間で共有された記事数。",
         "",
         "```",
     ]
     for concept in sorted(concept_graph.keys()):
         related = concept_graph[concept]
         for target, weight in related.most_common(5):
-            if concept < target:  # avoid duplicates
+            if concept < target:  # 重複辺を避ける
                 graph_lines.append(f"{concept} --({weight})--> {target}")
     graph_lines.extend(["```", ""])
     graph_path.write_text("\n".join(graph_lines), encoding="utf-8")
 
-    print(f"Generated {len(concept_articles)} concept pages in wiki/concepts/")
-    print(f"Generated concept graph in wiki/graph.md")
-    print(f"Compiled {len(articles)} articles into wiki/")
+    print(f"wiki/concepts/ にコンセプトページを {len(concept_articles)} 件生成しました")
+    print("wiki/graph.md にコンセプトグラフを生成しました")
+    print(f"wiki/ へ {len(articles)} 件の記事をコンパイルしました")
 
-    # LLM-powered article generation
+    # LLM による記事生成
     if getattr(_args, "llm", False):
         api_key = os.environ.get("ANTHROPIC_API_KEY", "")
         if not api_key:
-            print("Warning: ANTHROPIC_API_KEY not set. Skipping LLM compilation.")
+            print("警告: ANTHROPIC_API_KEY が未設定のため、LLM コンパイルをスキップします。")
             return
         llm_compile(articles, concept_articles, concept_graph, api_key)
 
 
 def call_claude(prompt: str, system: str, api_key: str, max_tokens: int = 2000) -> str:
-    """Call Claude API directly via urllib (no SDK dependency)."""
+    """Claude API を urllib で直接呼び出す（SDK 依存なし）。"""
     payload = json.dumps({
         "model": "claude-sonnet-4-20250514",
         "max_tokens": max_tokens,
@@ -665,20 +715,20 @@ def llm_compile(
     concept_graph: dict[str, Counter[str]],
     api_key: str,
 ) -> None:
-    """Generate LLM-written wiki articles for each concept."""
+    """各コンセプト向けに LLM 生成 wiki 記事を作る。"""
     llm_dir = WIKI_DIR / "articles"
     llm_dir.mkdir(parents=True, exist_ok=True)
 
     system_prompt = textwrap.dedent("""\
-    You are a robotics research knowledge base compiler. You write concise, technical wiki articles in Japanese.
-    Each article should:
-    - Start with a one-paragraph overview of the concept
-    - Cover key algorithms, methods, and their trade-offs
-    - Reference specific repositories and papers from the provided data
-    - Use Obsidian-compatible [[backlinks]] to link to related concepts
-    - Be 300-600 words, information-dense, no filler
-    - Use markdown headers (##) to organize sections
-    Output only the markdown article body (no frontmatter).
+    あなたはロボティクス研究向けナレッジベースの編集者です。日本語で簡潔かつ技術的な wiki 記事を書いてください。
+    各記事は次を満たしてください。
+    - 最初に 1 段落で概念の概要を示す
+    - 主要なアルゴリズム、手法、トレードオフを扱う
+    - 与えられたデータに含まれる具体的なリポジトリ名と論文名に言及する
+    - 関連概念へのリンクに Obsidian 互換の [[backlinks]] を使う
+    - 300〜600 語程度で、情報密度を高くし、冗長さを避ける
+    - markdown の見出し (##) で構成する
+    出力は markdown 本文のみとし、frontmatter は含めない。
     """)
 
     generated = 0
@@ -687,31 +737,31 @@ def llm_compile(
             continue
 
         dest = llm_dir / f"{concept}.md"
-        pretty_name = concept.replace("_", " ").title()
+        pretty_name = concept_label(concept)
         related = concept_graph.get(concept, Counter())
         related_names = [c for c, _ in related.most_common(5)]
 
-        # Build context from articles
+        # 記事群からプロンプト用の文脈を組み立てる
         context_parts: list[str] = []
         for art in arts[:15]:
-            context_parts.append(f"- {art['title']} ({art['type']}, {art['word_count']} words): {art['summary'][:150]}")
+            context_parts.append(f"- {art['title']} ({type_label(art['type'])}, {art['word_count']} 語): {art['summary'][:150]}")
 
         prompt = textwrap.dedent(f"""\
-        Write a wiki article about "{pretty_name}" in the context of robotics.
+        ロボティクス文脈における「{pretty_name}」の wiki 記事を書いてください。
 
-        Related concepts: {', '.join(related_names)}
+        関連コンセプト: {', '.join(concept_label(name) for name in related_names)}
 
-        Articles in this concept:
+        このコンセプトに属する記事:
         {chr(10).join(context_parts)}
 
-        Requirements:
-        - Write in Japanese
-        - Link related concepts with [[{related_names[0] if related_names else 'slam'}]] syntax
-        - Mention specific repos and papers by name
-        - Be concise and technical
+        要件:
+        - 日本語で書く
+        - 関連概念へのリンクは [[{related_names[0] if related_names else 'slam'}]] 構文を使う
+        - 具体的な repo 名と論文名を明示する
+        - 簡潔かつ技術的にまとめる
         """)
 
-        print(f"  LLM generating: {concept} ({len(arts)} articles) ...", end=" ", flush=True)
+        print(f"  LLM 生成中: {concept} ({len(arts)} 記事) ...", end=" ", flush=True)
         try:
             article_text = call_claude(prompt, system_prompt, api_key)
             frontmatter = textwrap.dedent(f"""\
@@ -725,20 +775,20 @@ def llm_compile(
             """)
             dest.write_text(frontmatter + article_text + "\n", encoding="utf-8")
             generated += 1
-            print(f"done ({word_count(article_text)} words)")
+            print(f"完了 ({word_count(article_text)} 語)")
         except Exception as e:
-            print(f"failed: {e}")
+            print(f"失敗: {e}")
 
-    print(f"LLM generated {generated} concept articles in wiki/articles/")
+    print(f"wiki/articles/ に LLM 記事を {generated} 件生成しました")
 
 
-# ---- search command ----
+# ---- search コマンド ----
 
 def search_command(args: argparse.Namespace) -> None:
-    """Search wiki and raw files for a query."""
+    """wiki と raw ファイルを検索する。"""
     query = " ".join(args.query).lower()
     if not query:
-        print("Usage: kb search <query>")
+        print("使い方: kb search <query>")
         return
 
     results: list[tuple[Path, int, list[str]]] = []
@@ -753,7 +803,7 @@ def search_command(args: argparse.Namespace) -> None:
             matched_lines: list[str] = []
             for i, line in enumerate(lines):
                 if query in line.lower():
-                    # Show context
+                # 前後 1 行を含めて表示する
                     start = max(0, i - 1)
                     end = min(len(lines), i + 2)
                     context = "\n".join(f"  {lines[j]}" for j in range(start, end))
@@ -762,44 +812,44 @@ def search_command(args: argparse.Namespace) -> None:
                 results.append((path, len(matched_lines), matched_lines))
 
     if not results:
-        print(f'No results for "{query}"')
+        print(f'"{query}" に一致する結果はありません')
         return
 
     results.sort(key=lambda x: x[1], reverse=True)
-    print(f'Found {sum(r[1] for r in results)} matches in {len(results)} files for "{query}":\n')
+    print(f'"{query}" について {len(results)} ファイルで {sum(r[1] for r in results)} 件見つかりました:\n')
 
     for path, count, matches in results[:10]:
         rel = path.relative_to(ROOT)
-        print(f"--- {rel} ({count} matches) ---")
+        print(f"--- {rel} ({count} 件) ---")
         for match in matches[:3]:
             print(match)
         if len(matches) > 3:
-            print(f"  ... and {len(matches) - 3} more matches")
+            print(f"  ... さらに {len(matches) - 3} 件")
         print()
 
 
-# ---- lint command ----
+# ---- lint コマンド ----
 
 def lint_command(_args: argparse.Namespace) -> None:
-    """Check knowledge base health."""
+    """ナレッジベースの健全性を確認する。"""
     issues: list[str] = []
     suggestions: list[str] = []
 
-    # Check raw/ files
+    # raw/ と wiki/ の基本状態を確認する
     raw_files = list(RAW_DIR.glob("*.md")) if RAW_DIR.exists() else []
     wiki_files = list(WIKI_DIR.rglob("*.md")) if WIKI_DIR.exists() else []
 
-    print(f"Raw files: {len(raw_files)}")
-    print(f"Wiki files: {len(wiki_files)}")
+    print(f"raw ファイル数: {len(raw_files)}")
+    print(f"wiki ファイル数: {len(wiki_files)}")
     print()
 
     if not raw_files:
-        issues.append("No raw files found. Run 'kb ingest' to add sources.")
+        issues.append("raw ファイルがありません。`kb ingest` を実行してください。")
 
     if raw_files and not wiki_files:
-        issues.append("Raw files exist but wiki is empty. Run 'kb compile' to generate wiki.")
+        issues.append("raw ファイルはありますが wiki が空です。`kb compile` を実行してください。")
 
-    # Check frontmatter
+    # frontmatter の有無を確認する
     missing_frontmatter = 0
     missing_concepts = 0
     all_concepts: Counter[str] = Counter()
@@ -809,10 +859,10 @@ def lint_command(_args: argparse.Namespace) -> None:
         fm = read_frontmatter(path)
         if not fm:
             missing_frontmatter += 1
-            issues.append(f"Missing frontmatter: {path.relative_to(ROOT)}")
+            issues.append(f"frontmatter がありません: {path.relative_to(ROOT)}")
         elif not fm.get("concepts"):
             missing_concepts += 1
-            issues.append(f"Missing concepts: {path.relative_to(ROOT)}")
+            issues.append(f"concepts がありません: {path.relative_to(ROOT)}")
         else:
             concepts = fm["concepts"]
             if isinstance(concepts, str):
@@ -823,7 +873,7 @@ def lint_command(_args: argparse.Namespace) -> None:
         if source:
             all_sources.add(source)
 
-    # Check for broken internal links in wiki
+    # wiki 内の壊れた内部リンクを確認する
     broken_links = 0
     for path in wiki_files:
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -834,54 +884,54 @@ def lint_command(_args: argparse.Namespace) -> None:
             resolved = (path.parent / link_target).resolve()
             if not resolved.exists():
                 broken_links += 1
-                issues.append(f"Broken link: {path.relative_to(ROOT)} -> {link_target}")
+                issues.append(f"リンク切れ: {path.relative_to(ROOT)} -> {link_target}")
 
-    # Check concept coverage
+    # コンセプトの被覆率を確認する
     uncovered = [name for name in CONCEPT_KEYWORDS if name not in all_concepts]
     if uncovered:
-        suggestions.append(f"Uncovered concepts (consider adding sources): {', '.join(uncovered[:8])}")
+        suggestions.append(f"未カバーのコンセプト（ソース追加候補）: {', '.join(uncovered[:8])}")
 
-    # Check for small articles
+    # 短すぎる記事を確認する
     for path in raw_files:
         body = body_text(path)
         if word_count(body) < 50:
-            suggestions.append(f"Very short article ({word_count(body)} words): {path.relative_to(ROOT)}")
+            suggestions.append(f"短すぎる記事 ({word_count(body)} 語): {path.relative_to(ROOT)}")
 
-    # Check index freshness
+    # 索引の更新時刻を確認する
     if INDEX_PATH.exists():
         raw_newest = max((f.stat().st_mtime for f in raw_files), default=0)
         index_mtime = INDEX_PATH.stat().st_mtime
         if raw_newest > index_mtime:
-            issues.append("Index is stale. Run 'kb compile' to update.")
+            issues.append("索引が古い状態です。`kb compile` で更新してください。")
 
-    # Report
+    # 結果を表示する
     if issues:
-        print(f"Issues ({len(issues)}):")
+        print(f"問題点 ({len(issues)} 件):")
         for issue in issues:
             print(f"  - {issue}")
         print()
 
     if suggestions:
-        print(f"Suggestions ({len(suggestions)}):")
+        print(f"提案 ({len(suggestions)} 件):")
         for suggestion in suggestions:
             print(f"  - {suggestion}")
         print()
 
     if all_concepts:
-        print("Concept coverage:")
+        print("コンセプトのカバレッジ:")
         for concept, count in all_concepts.most_common():
             bar = "#" * min(count, 20)
             print(f"  {concept:25s} {bar} ({count})")
         print()
 
     if not issues and not suggestions:
-        print("All clean!")
+        print("問題は見つかりませんでした")
 
 
-# ---- stats command ----
+# ---- stats コマンド ----
 
 def stats_command(_args: argparse.Namespace) -> None:
-    """Show knowledge base statistics."""
+    """ナレッジベースの統計を表示する。"""
     raw_files = list(RAW_DIR.glob("*.md")) if RAW_DIR.exists() else []
     wiki_files = list(WIKI_DIR.rglob("*.md")) if WIKI_DIR.exists() else []
 
@@ -903,48 +953,47 @@ def stats_command(_args: argparse.Namespace) -> None:
     for path in wiki_files:
         total_wiki_words += word_count(path.read_text(encoding="utf-8", errors="ignore"))
 
-    print(f"Raw articles:  {len(raw_files)}")
-    print(f"Raw words:     {total_raw_words:,}")
-    print(f"Wiki files:    {len(wiki_files)}")
-    print(f"Wiki words:    {total_wiki_words:,}")
-    print(f"Concepts:      {len(concepts)}")
+    print(f"raw 記事数:   {len(raw_files)}")
+    print(f"raw 語数:     {total_raw_words:,}")
+    print(f"wiki ファイル数: {len(wiki_files)}")
+    print(f"wiki 語数:     {total_wiki_words:,}")
+    print(f"コンセプト数:  {len(concepts)}")
     print()
     if types:
-        print("Source types:")
+        print("ソース種別:")
         for t, count in types.most_common():
             print(f"  {t}: {count}")
     print()
     if concepts:
-        print("Top concepts:")
+        print("上位コンセプト:")
         for c, count in concepts.most_common(10):
             print(f"  {c}: {count}")
 
 
-# ---- ask command ----
+# ---- ask コマンド ----
 
 def ask_command(args: argparse.Namespace) -> None:
-    """Answer a question using the knowledge base.
+    """ナレッジベースを使って質問に答える。
 
-    Finds relevant articles, extracts key passages, and presents
-    a structured answer with sources. Works without an LLM API
-    by doing keyword-based retrieval and excerpt assembly.
+    関連記事を探し、重要な抜粋を集め、ソース付きで整理して表示する。
+    LLM API がなくても、キーワード検索と抜粋の組み合わせで動作する。
     """
     question = " ".join(args.question)
     if not question:
-        print("Usage: kb ask <question>")
+        print("使い方: kb ask <question>")
         return
 
-    # Tokenize question into search terms
+    # 質問文を検索語へ分解する
     stop_words = {"の", "は", "が", "を", "に", "で", "と", "から", "まで", "より",
                   "what", "is", "are", "how", "does", "do", "the", "a", "an", "in",
                   "of", "for", "to", "and", "or", "which", "between", "vs", "about"}
     terms = [t.lower() for t in re.split(r"[\s,?!。、？]+", question) if t.lower() not in stop_words and len(t) > 1]
 
     if not terms:
-        print("Could not extract search terms from question.")
+        print("質問から検索語を抽出できませんでした。")
         return
 
-    # Score all files by relevance
+    # すべての候補ファイルに関連度を付ける
     search_dirs = [WIKI_DIR / "articles", CONCEPTS_DIR, RAW_DIR]
     scored: list[tuple[Path, float, list[str]]] = []
 
@@ -963,11 +1012,11 @@ def ask_command(args: argparse.Namespace) -> None:
                 if count > 0:
                     matched_terms.append(term)
                     score += min(count, 20)
-                    # Boost for title match
+                    # タイトル一致には加点する
                     if term in title:
                         score += 10
 
-            # Boost wiki articles over raw
+            # raw より wiki 記事をやや優先する
             if "articles" in path.parts:
                 score *= 1.5
             elif "concepts" in path.parts:
@@ -979,13 +1028,13 @@ def ask_command(args: argparse.Namespace) -> None:
     scored.sort(key=lambda x: x[1], reverse=True)
 
     if not scored:
-        print(f"No relevant articles found for: {question}")
+        print(f"関連する記事が見つかりませんでした: {question}")
         return
 
-    # Present top results with excerpts
-    print(f"Question: {question}")
-    print(f"Search terms: {', '.join(terms)}")
-    print(f"Found {len(scored)} relevant files\n")
+    # 上位結果と抜粋を表示する
+    print(f"質問: {question}")
+    print(f"検索語: {', '.join(terms)}")
+    print(f"関連ファイル {len(scored)} 件\n")
     print("=" * 60)
 
     for path, score, matched in scored[:5]:
@@ -996,18 +1045,18 @@ def ask_command(args: argparse.Namespace) -> None:
         source = fm.get("source", "")
 
         print(f"\n## {title}")
-        print(f"   File: {rel_path} ({article_type}, relevance: {score:.0f})")
+        print(f"   ファイル: {rel_path} ({type_label(article_type)}, 関連度: {score:.0f})")
         if source:
-            print(f"   Source: {source}")
+            print(f"   ソース: {source}")
 
-        # Extract relevant excerpts
+        # 関連する抜粋を集める
         body = body_text(path)
         lines = body.splitlines()
         excerpts: list[str] = []
         for i, line in enumerate(lines):
             lowered = line.lower()
             if any(term in lowered for term in terms):
-                # Get surrounding context
+                # 前後 1 行を含めて文脈を残す
                 start = max(0, i - 1)
                 end = min(len(lines), i + 2)
                 excerpt = "\n".join(lines[start:end]).strip()
@@ -1019,49 +1068,49 @@ def ask_command(args: argparse.Namespace) -> None:
         if excerpts:
             print()
             for excerpt in excerpts:
-                # Truncate long excerpts
+                # 長い抜粋は詰める
                 if len(excerpt) > 300:
                     excerpt = excerpt[:300] + "..."
                 print(f"   > {excerpt}")
             print()
 
     print("=" * 60)
-    print(f"\nTo dive deeper, read the full articles or run: kb search {terms[0]}")
+    print(f"\nさらに深掘りするには全文を読むか、`kb search {terms[0]}` を実行してください")
 
 
 # ---- parser ----
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Knowledge base CLI for rsasaki-hub",
+        description="rsasaki-hub 用ナレッジベース CLI",
         prog="kb",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    ingest_p = subparsers.add_parser("ingest", help="Ingest sources into raw/")
-    ingest_p.add_argument("sources", nargs="*", help="URLs or local file paths. Empty = ingest from experiments.yaml")
+    ingest_p = subparsers.add_parser("ingest", help="ソースを raw/ へ取り込む")
+    ingest_p.add_argument("sources", nargs="*", help="URL またはローカルファイルパス。未指定なら experiments.yaml から取り込む")
     ingest_mode = ingest_p.add_mutually_exclusive_group()
-    ingest_mode.add_argument("--repos", dest="mode", action="store_const", const="repos", help="Ingest README.md from all cached repos")
-    ingest_mode.add_argument("--arxiv", dest="mode", action="store_const", const="arxiv", help="Ingest papers from arXiv (sources = search query)")
-    ingest_p.add_argument("--max-results", type=int, default=10, help="Max arXiv results (default: 10)")
+    ingest_mode.add_argument("--repos", dest="mode", action="store_const", const="repos", help="キャッシュ済み全リポジトリの README.md を取り込む")
+    ingest_mode.add_argument("--arxiv", dest="mode", action="store_const", const="arxiv", help="arXiv から論文を取り込む（sources は検索クエリ）")
+    ingest_p.add_argument("--max-results", type=int, default=10, help="arXiv の最大取得件数（既定値: 10）")
     ingest_p.set_defaults(func=ingest_command)
 
-    compile_p = subparsers.add_parser("compile", help="Compile raw/ into wiki/")
-    compile_p.add_argument("--llm", action="store_true", help="Also generate LLM-written concept articles (requires ANTHROPIC_API_KEY)")
+    compile_p = subparsers.add_parser("compile", help="raw/ を wiki/ にコンパイルする")
+    compile_p.add_argument("--llm", action="store_true", help="LLM 生成のコンセプト記事も作成する（ANTHROPIC_API_KEY が必要）")
     compile_p.set_defaults(func=compile_command)
 
-    search_p = subparsers.add_parser("search", help="Search the knowledge base")
-    search_p.add_argument("query", nargs="+", help="Search terms")
+    search_p = subparsers.add_parser("search", help="ナレッジベースを検索する")
+    search_p.add_argument("query", nargs="+", help="検索語")
     search_p.set_defaults(func=search_command)
 
-    lint_p = subparsers.add_parser("lint", help="Check knowledge base health")
+    lint_p = subparsers.add_parser("lint", help="ナレッジベースの健全性を確認する")
     lint_p.set_defaults(func=lint_command)
 
-    stats_p = subparsers.add_parser("stats", help="Show knowledge base statistics")
+    stats_p = subparsers.add_parser("stats", help="ナレッジベース統計を表示する")
     stats_p.set_defaults(func=stats_command)
 
-    ask_p = subparsers.add_parser("ask", help="Ask a question against the knowledge base")
-    ask_p.add_argument("question", nargs="+", help="Your question")
+    ask_p = subparsers.add_parser("ask", help="ナレッジベースに質問する")
+    ask_p.add_argument("question", nargs="+", help="質問文")
     ask_p.set_defaults(func=ask_command)
 
     return parser

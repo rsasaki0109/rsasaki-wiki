@@ -1,12 +1,12 @@
 ---
-title: "Path Planning"
+title: "経路計画"
 type: "llm_article"
 concept: "path_planning"
 generated_at: "2026-04-05"
 source_count: 13
 ---
 
-# Path Planning (経路計画)
+# 経路計画
 
 スタートからゴールまでの障害物回避経路を計算する技術。[[localization]] で自己位置が分かり、[[slam]] で地図が構築された後に、実際にロボットを動かすための計画を立てるフェーズ。
 

@@ -6,14 +6,14 @@ generated_at: "2026-04-05"
 source_count: 17
 ---
 
-# GNSS (Global Navigation Satellite System)
+# GNSS（Global Navigation Satellite System）
 
 衛星信号を利用した測位システムの総称。GPS (米), GLONASS (露), Galileo (欧), QZSS (日) などを含む。ロボティクスでは屋外 [[localization]] の基盤であり、[[imu]] やホイールオドメトリとの融合で精度を高める。
 
 ## 測位手法
 
 ### 単独測位 (SPP)
-疑似距離のみで位置を計算。精度は数メートル級。`gnssplusplus-library` が C++ でフル実装しており、rsasaki-hub の gnss_processing track で暫定採用 (score: 75.16)。
+疑似距離のみで位置を計算。精度は数メートル級。`gnssplusplus-library` が C++ でフル実装しており、rsasaki-hub の `gnss_processing` トラックで暫定採用 (スコア: 75.16)。
 
 ### RTK (Real-Time Kinematic)
 搬送波位相を利用し、基準局からの補正でセンチメートル級精度を実現。`gnssplusplus-library` が RTK をサポート。論文では RTK on 30,000 km of North American Highways (2019) が大規模実証。5G-Aided RTK (2023) は GNSS 不通環境での補完を提案。

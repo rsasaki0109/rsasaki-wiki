@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-04-04T21:34:41+00:00",
+  "generated_at": "2026-04-10T09:30:59+00:00",
   "experiments": [
     {
       "name": "lidar_stack_exploration",
       "status": "synthesized",
-      "problem_statement": "Compare public lidar localization, lidar SLAM, and lidar+imu SLAM repositories under one exploration family.",
+      "problem_statement": "公開 LiDAR 自己位置推定・LiDAR SLAM・LiDAR+IMU SLAM 実装を 1 つの探索ファミリとして比較する。",
       "notes": [
-        "This registry tracks comparable implementations, not permanent truth.",
-        "Tracks stay disposable until repeated evaluation says otherwise."
+        "このレジストリが追うのは比較可能な実装であり、恒久的な正解ではない。",
+        "各トラックは、反復評価で裏付けられるまで破棄可能な比較単位として扱う。"
       ],
       "family_keywords": [
         "lidar",
@@ -24,7 +24,7 @@
       "tracks": [
         {
           "name": "lidar_localization",
-          "description": "Point-cloud-based localization against a map.",
+          "description": "点群地図に対する自己位置推定。",
           "keywords": [
             "localization",
             "localizer",
@@ -37,7 +37,7 @@
         },
         {
           "name": "lidar_slam",
-          "description": "LiDAR-only odometry and mapping.",
+          "description": "LiDAR 単体によるオドメトリと地図構築。",
           "keywords": [
             "slam",
             "mapping",
@@ -50,7 +50,7 @@
         },
         {
           "name": "lidar_imu_slam",
-          "description": "LiDAR-inertial odometry and mapping.",
+          "description": "LiDAR と慣性センサを組み合わせたオドメトリと地図構築。",
           "keywords": [
             "imu",
             "lio",
@@ -65,12 +65,12 @@
       "implementations": [
         {
           "repo": "FAST_LIO",
-          "description": "A computationally efficient and robust LiDAR-inertial odometry (LIO) package",
+          "description": "計算効率と頑健性を重視した LiDAR 慣性オドメトリ（LIO）パッケージ",
           "language": "C++",
           "track": "lidar_imu_slam",
           "local_path": "rsasaki-hub/.cache/repos/FAST_LIO",
           "match_score": 28,
-          "summary": "lidar_imu_slam: Imu, Odometry, PointCloud2 -> Odometry, Path, PointCloud2 via CLAS, LIO, EKF",
+          "summary": "lidar_imu_slam: Imu, Odometry, PointCloud2 -> Odometry, Path, PointCloud2 / CLAS, LIO, EKF",
           "functions": [
             "plot",
             "oplus",
@@ -147,7 +147,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0027,
+              "analysis_runtime_seconds": 0.0053,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -237,60 +237,58 @@
               "score": 100.0
             },
             "overall_score": 52.26,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "localization_zoo",
-          "description": "C++ implementations, derived variants, and compact baselines for localization papers with ROS 2, tests, and benchmarks.",
+          "description": "ROS 2・テスト・ベンチマーク付きで、自己位置推定論文の C++ 実装、派生バリアント、コンパクトなベースラインをまとめたリポジトリ。",
           "language": "C++",
           "track": "lidar_imu_slam",
           "local_path": "rsasaki-hub/.cache/repos/localization_zoo",
-          "match_score": 25,
-          "summary": "lidar_imu_slam: Imu, Odometry, Path -> Odometry, Path, Pose via ICP, LIO, GICP",
+          "match_score": 23,
+          "summary": "lidar_imu_slam: Imu, Odometry, PointCloud2 -> Path / ICP, GICP, LIO",
           "functions": [
             "main",
-            "Create",
-            "curr_point_",
-            "computeATE",
-            "compute_ate",
             "parse_args",
-            "loadImuCsv",
-            "load_poses",
+            "load_json",
+            "write_binary_pcd",
+            "compute_ate",
+            "relpath",
+            "render_metric",
             "stamp_to_sec",
             "extract_points",
-            "write_binary_pcd",
-            "export_pointclouds"
+            "export_pointclouds",
+            "export_imu",
+            "fmt"
           ],
           "ros_topics": [
             "/lidar/0/pandar_packets",
-            "/imu/0/data_raw/corrected",
-            "/velodyne"
+            "/imu/0/data_raw/corrected"
           ],
           "io": {
             "inputs": [
               "Imu",
               "Odometry",
-              "Path",
               "PointCloud2"
             ],
             "outputs": [
-              "Odometry",
-              "Path",
-              "Pose"
+              "Path"
             ]
           },
           "algorithms": [
             "ICP",
-            "LIO",
             "GICP",
-            "VoxelGrid",
-            "Odometry",
+            "LIO",
             "NDT",
             "SLAM",
-            "IMUPreintegration",
-            "Inertial",
-            "LoopClosure"
+            "VoxelGrid",
+            "Odometry",
+            "VGICP",
+            "SMALL_GICP",
+            "Inertial"
           ],
           "relevant_files": [
             ".github/workflows/ci.yml",
@@ -299,37 +297,41 @@
             "PLAN.md",
             "README.md",
             "common/CMakeLists.txt",
+            "common/include/common/ceres_compat.h",
             "common/include/common/io.h",
             "common/include/common/math_utils.h",
             "common/include/common/types.h",
             "common/src/io.cpp",
             "common/src/math_utils.cpp",
             "docs/benchmarks/latest/results.json",
-            "evaluation/CMakeLists.txt",
-            "evaluation/scripts/benchmark.py",
-            "evaluation/scripts/export_benchmark_site.py",
-            "evaluation/scripts/extract_ros1_lidar_imu.py",
-            "evaluation/scripts/extract_ros2_lidar_imu.py",
-            "evaluation/scripts/plot_trajectory.py",
-            "evaluation/scripts/reference_pose_to_gt_csv.py",
-            "evaluation/src/dataset_loader.h"
+            "docs/decisions.md",
+            "docs/experiments.md",
+            "docs/interfaces.md",
+            "docs/paper_assets.md",
+            "docs/paper_captions.md",
+            "docs/paper_claim.md",
+            "docs/paper_comparison.md"
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0021,
+              "analysis_runtime_seconds": 0.0222,
               "benchmark_artifacts": [
-                "rsasaki-hub/.cache/repos/localization_zoo/docs/benchmarks/latest/results.json",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/CMakeLists.txt",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/scripts/benchmark.py",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/scripts/export_benchmark_site.py",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/scripts/extract_ros1_lidar_imu.py",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/scripts/extract_ros2_lidar_imu.py",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/scripts/plot_trajectory.py",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/scripts/reference_pose_to_gt_csv.py",
-                "rsasaki-hub/.cache/repos/localization_zoo/evaluation/src/dataset_loader.h"
+                "rsasaki-hub/.cache/repos/localization_zoo/docs/benchmarks/latest/results.json"
               ],
-              "benchmark_artifact_count": 9,
+              "benchmark_artifact_count": 1,
               "metric_mentions": [
+                {
+                  "kind": "evaluation",
+                  "value": null,
+                  "line": "chmod +x evaluation/scripts/smoke_ci_fixture.sh",
+                  "source": "rsasaki-hub/.cache/repos/localization_zoo/.github/workflows/ci.yml"
+                },
+                {
+                  "kind": "evaluation",
+                  "value": null,
+                  "line": "bash evaluation/scripts/smoke_ci_fixture.sh",
+                  "source": "rsasaki-hub/.cache/repos/localization_zoo/.github/workflows/ci.yml"
+                },
                 {
                   "kind": "evaluation",
                   "value": null,
@@ -337,96 +339,86 @@
                   "source": "rsasaki-hub/.cache/repos/localization_zoo/CMakeLists.txt"
                 },
                 {
-                  "kind": "evaluation",
-                  "value": null,
-                  "line": "M evaluation/CMakeLists.txt",
-                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
-                },
-                {
-                  "kind": "evaluation",
-                  "value": null,
-                  "line": "M evaluation/src/pcd_dogfooding.cpp        # scan-to-map方式に修正済み",
-                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
-                },
-                {
                   "kind": "benchmark",
-                  "value": 2.0,
-                  "line": "M ros2/localization_zoo_ros/launch/benchmark.launch.py  # 同上",
+                  "value": 3.0,
+                  "line": "3. [`evaluation/scripts/SETUP_PUBLIC_BENCHMARK_WINDOWS.md`](evaluation/scripts/SETUP_PUBLIC_BENCHMARK_WINDOWS.md)（Istanbul / HDL / KITTI / ミニフィクスチャ）",
+                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
+                },
+                {
+                  "kind": "evaluation",
+                  "value": 4.0,
+                  "line": "4. [`evaluation/scripts/VERIFY_KITTI_IMU_DLIO.md`](evaluation/scripts/VERIFY_KITTI_IMU_DLIO.md)（**KITTI 必須ではない**が、OXTS→`imu.csv` の代表例）",
+                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
+                },
+                {
+                  "kind": "evaluation",
+                  "value": 3.0,
+                  "line": "| **コミット済みミニデータ** | `evaluation/fixtures/mcd_kth_smoke/` — **MCD KTH 由来 3 フレーム**（計 ~3MB）、**CI で `pcd_dogfooding` スモークに使用** |",
+                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
+                },
+                {
+                  "kind": "evaluation",
+                  "value": null,
+                  "line": "- **[`evaluation/src/pcd_dogfooding.cpp`](evaluation/src/pcd_dogfooding.cpp)** — 単一 CLI の比較エントリ",
                   "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
                 },
                 {
                   "kind": "evaluation",
                   "value": 1.0,
-                  "line": "evaluation/scripts/extract_ros1_lidar_imu.py",
+                  "line": "- **Dogfooding 既定は `min_points_per_voxel=1`**（[`pcd_dogfooding.cpp`](evaluation/src/pcd_dogfooding.cpp) 内 `VoxelGICPDogfoodingOptions`）",
                   "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
                 },
                 {
-                  "kind": "benchmark",
-                  "value": 11.0,
-                  "line": "#### TASK-11: synthetic_benchmarkに全手法追加",
-                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
-                },
-                {
-                  "kind": "benchmark",
+                  "kind": "fps",
                   "value": null,
-                  "line": "- ファイル: `evaluation/src/synthetic_benchmark.cpp`",
+                  "line": "- `experiments/results/*_matrix.json` — **aggregate（variant ごとの ate_m, fps, decision 等）**",
                   "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
                 },
                 {
                   "kind": "evaluation",
-                  "value": null,
-                  "line": "- ファイル: `evaluation/src/pcd_dogfooding.cpp`",
-                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
-                },
-                {
-                  "kind": "evaluation",
-                  "value": null,
-                  "line": "- `evaluation/scripts/plot_trajectory.py` を拡張して複数手法の軌跡を重ねてプロット",
-                  "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
-                },
-                {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "- `docs/images/real_data_benchmark.png` を更新",
+                  "value": 3.0,
+                  "line": "python3 evaluation/scripts/refresh_study_docs.py",
                   "source": "rsasaki-hub/.cache/repos/localization_zoo/PLAN.md"
                 }
               ],
-              "metric_count": 74,
-              "quality_signal": 98.0,
-              "score": 98.8
+              "metric_count": 1583,
+              "quality_signal": 100.0,
+              "score": 100.0
             },
             "readability": {
-              "source_files": 12,
-              "nonempty_loc": 1376,
-              "comment_ratio": 0.055,
-              "branch_keywords": 169,
-              "import_count": 65,
-              "function_count": 52,
-              "largest_file_loc": 243,
-              "largest_function_span": 119,
-              "score": 56.72
+              "source_files": 6,
+              "nonempty_loc": 172,
+              "comment_ratio": 0.186,
+              "branch_keywords": 13,
+              "import_count": 17,
+              "function_count": 5,
+              "largest_file_loc": 66,
+              "largest_function_span": 38,
+              "score": 97.24
             },
             "extensibility": {
-              "module_dirs": 4,
+              "module_dirs": 2,
               "config_files": 3,
-              "helper_units": 704,
-              "public_surface_markers": 5,
-              "hard_coded_topics": 2,
+              "helper_units": 75,
+              "public_surface_markers": 3,
+              "hard_coded_topics": 0,
               "orchestration_split": 0.333,
-              "score": 83.0
+              "score": 74.0
             },
-            "overall_score": 84.33,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "overall_score": 92.81,
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "amcl_3d",
-          "description": "AMCL(Adaptive Monte Carlo Localization) using 3D LiDAR for ROS.",
+          "description": "ROS 向け 3D LiDAR を使う AMCL（Adaptive Monte Carlo Localization）実装",
           "language": "C++",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/amcl_3d",
           "match_score": 25,
-          "summary": "lidar_localization: Imu, Odometry, Path -> Path, PointCloud2, Pose via AMCL, CLAS, PID",
+          "summary": "lidar_localization: Imu, Odometry, Path -> Path, PointCloud2, Pose / AMCL, CLAS, PID",
           "functions": [
             "main",
             "yaw_from_quaternion",
@@ -503,7 +495,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0015,
+              "analysis_runtime_seconds": 0.0026,
               "benchmark_artifacts": [
                 "rsasaki-hub/.cache/repos/amcl_3d/reports/generate_short_test_trajectory.py",
                 "rsasaki-hub/.cache/repos/amcl_3d/reports/generate_trajectory.py",
@@ -597,17 +589,19 @@
               "score": 94.0
             },
             "overall_score": 90.22,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "lidar_localization_ros2",
-          "description": "3D LIDAR Localization using NDT/GICP and pointcloud map in ROS 2 (Not SLAM)",
+          "description": "ROS 2 上で NDT/GICP と点群地図を用いる 3D LiDAR 自己位置推定（SLAM ではない）",
           "language": "C++",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/lidar_localization_ros2",
           "match_score": 18,
-          "summary": "lidar_localization: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose via NDT, VoxelGrid, GICP",
+          "summary": "lidar_localization: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose / NDT, VoxelGrid, GICP",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -656,7 +650,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.001,
+              "analysis_runtime_seconds": 0.002,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -692,17 +686,19 @@
               "score": 81.0
             },
             "overall_score": 36.72,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 10,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "lidarslam_ros2",
-          "description": "ROS 2 LiDAR SLAM for pointcloud-map authoring, benchmarking, and Autoware-compatible map workflows.",
+          "description": "点群地図の作成、ベンチマーク、Autoware 互換の地図ワークフローに対応した ROS 2 LiDAR SLAM",
           "language": "HTML",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/lidarslam_ros2",
           "match_score": 27,
-          "summary": "lidar_slam: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path via Submap, LoopClosure, SLAM",
+          "summary": "lidar_slam: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path / Submap, LoopClosure, SLAM",
           "functions": [
             "add",
             "_load_module",
@@ -777,7 +773,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.002,
+              "analysis_runtime_seconds": 0.0038,
               "benchmark_artifacts": [
                 "rsasaki-hub/.cache/repos/lidarslam_ros2/.github/ISSUE_TEMPLATE/benchmark-report.yml",
                 "rsasaki-hub/.cache/repos/lidarslam_ros2/docs/benchmarking.md"
@@ -870,17 +866,19 @@
               "score": 36.0
             },
             "overall_score": 83.97,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "li_slam_ros2",
-          "description": "ROS 2 package of tightly-coupled lidar inertial ndt/gicp slam",
+          "description": "密結合な LiDAR 慣性 NDT/GICP SLAM の ROS 2 パッケージ",
           "language": "C++",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/li_slam_ros2",
           "match_score": 26,
-          "summary": "lidar_slam: Imu, MapArray, Odometry -> Imu, MapArray, Odometry via VoxelGrid, Submap, SLAM",
+          "summary": "lidar_slam: Imu, MapArray, Odometry -> Imu, MapArray, Odometry / VoxelGrid, Submap, SLAM",
           "functions": [
             "Agreement",
             "main",
@@ -954,7 +952,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0027,
+              "analysis_runtime_seconds": 0.0076,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -1008,17 +1006,19 @@
               "score": 100.0
             },
             "overall_score": 36.48,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "littleslam_ros2",
-          "description": "A ROS2 Wrapper for LittleSLAM, which is a 2D-LiDAR SLAM for educational use",
+          "description": "教育用途の 2D LiDAR SLAM である LittleSLAM の ROS2 ラッパー",
           "language": "C++",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/littleslam_ros2",
           "match_score": 14,
-          "summary": "lidar_slam: LaserScan, PointCloud2 -> Path, PointCloud2, Pose via SLAM, CLAS, ICP",
+          "summary": "lidar_slam: LaserScan, PointCloud2 -> Path, PointCloud2, Pose / SLAM, CLAS, ICP",
           "functions": [
             "generate_launch_description",
             "main",
@@ -1056,7 +1056,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0004,
+              "analysis_runtime_seconds": 0.0011,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -1092,19 +1092,21 @@
               "score": 75.0
             },
             "overall_score": 42.74,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 8,
+            "missing_relevant_files": []
           }
         }
       ],
       "rejected_candidates": [
         {
           "repo": "CloudAnalyzer",
-          "description": "AI-friendly CLI tool for point cloud analysis and evaluation — F1/Chamfer/Hausdorff metrics, ICP/GICP registration, 22 commands",
+          "description": "AI フレンドリーな点群分析・評価 CLI。F1 / Chamfer / Hausdorff 指標、ICP / GICP レジストレーション、22 コマンドを提供。",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/CloudAnalyzer",
           "match_score": 8,
-          "summary": "lidar_slam: Path -> Path via CLAS, ICP, VoxelGrid",
+          "summary": "lidar_slam: Path -> Path / CLAS, ICP, VoxelGrid",
           "functions": [
             "test_file_not_found",
             "test_custom_thresholds",
@@ -1166,25 +1168,25 @@
         },
         {
           "repo": "CudaRobotics",
-          "description": "CUDA-accelerated robotics algorithms in C++. 20+ algorithms for SLAM, Path Planning, and Localization.",
+          "description": "C++ による CUDA 加速ロボティクスアルゴリズム集。SLAM・経路計画・自己位置推定を 20 種以上収録。",
           "language": "Cuda",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/CudaRobotics",
           "match_score": 8,
-          "summary": "lidar_slam: unknown input -> Path via CLAS, LIO, RRT",
+          "summary": "lidar_slam: 入力不明 -> Path / CLAS, LIO, RRT",
           "functions": [
             "recommend",
-            "parse_args",
             "main",
             "__init__",
+            "parse_args",
             "compare",
             "build_requests",
             "build_variants",
             "evaluate_variant",
             "build_report",
-            "load_policy",
             "rank",
-            "calc_point"
+            "calc_point",
+            "calc_first_derivative"
           ],
           "ros_topics": [
             "/odom",
@@ -1234,12 +1236,12 @@
         },
         {
           "repo": "NormalDistributionTransform2D",
-          "description": "Python sample code of 2D NDT Scan Matching",
+          "description": "2D NDT スキャンマッチングの Python サンプルコード",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/NormalDistributionTransform2D",
           "match_score": 8,
-          "summary": "lidar_slam: unknown input -> unknown output via NDT, SLAM",
+          "summary": "lidar_slam: 入力不明 -> 出力不明 / NDT, SLAM",
           "functions": [
             "generate_src_points",
             "apply_transformation",
@@ -1266,12 +1268,12 @@
         },
         {
           "repo": "PoseOptimizationSLAM3D",
-          "description": "Python sample code of 3D pose optimization SLAM",
+          "description": "3D ポーズ最適化 SLAM の Python サンプルコード",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/PoseOptimizationSLAM3D",
           "match_score": 17,
-          "summary": "lidar_slam: unknown input -> Pose via SLAM, PoseGraph, CLAS",
+          "summary": "lidar_slam: 入力不明 -> Pose / SLAM, PoseGraph, CLAS",
           "functions": [
             "__init__",
             "main",
@@ -1310,12 +1312,12 @@
         },
         {
           "repo": "gaussian_particle_filter",
-          "description": "Python sample of Gaussian Particle Filter localization",
+          "description": "Gaussian Particle Filter 自己位置推定の Python サンプル",
           "language": "Python",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/gaussian_particle_filter",
           "match_score": 9,
-          "summary": "lidar_localization: unknown input -> unknown output via ParticleFilter, Kalman",
+          "summary": "lidar_localization: 入力不明 -> 出力不明 / ParticleFilter, Kalman",
           "functions": [
             "calc_input",
             "observation",
@@ -1343,12 +1345,12 @@
         },
         {
           "repo": "gnss_imu_wheel_localizer",
-          "description": "gnss/imu/wheel localizer for autoware",
+          "description": "Autoware 向け GNSS / IMU / Wheel 自己位置推定器",
           "language": "C++",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/gnss_imu_wheel_localizer",
           "match_score": 15,
-          "summary": "lidar_localization: Imu, NavSatFix, Odometry -> Imu, Odometry, Path via Kalman, EKF, Odometry",
+          "summary": "lidar_localization: Imu, NavSatFix, Odometry -> Imu, Odometry, Path / Kalman, EKF, Odometry",
           "functions": [
             "main",
             "quaternion_to_yaw",
@@ -1419,12 +1421,12 @@
         },
         {
           "repo": "gnssplusplus-library",
-          "description": "Modern C++ GNSS/RTK/PPP/CLAS toolkit.",
+          "description": "モダン C++ による GNSS / RTK / PPP / CLAS ツールキット。",
           "language": "C++",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/gnssplusplus-library",
           "match_score": 5,
-          "summary": "lidar_localization: Path -> Path via RTK, PPP, CLAS",
+          "summary": "lidar_localization: Path -> Path / RTK, PPP, CLAS",
           "functions": [
             "main",
             "parse_args",
@@ -1495,12 +1497,12 @@
         },
         {
           "repo": "kalman_filter_localization_ros2",
-          "description": "gnss/imu localization using kalman filter",
+          "description": "Kalman Filter による GNSS / IMU 測位。",
           "language": "C++",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/kalman_filter_localization_ros2",
           "match_score": 14,
-          "summary": "lidar_localization: Imu, Odometry, Pose -> Pose via EKF, Kalman, Odometry",
+          "summary": "lidar_localization: Imu, Odometry, Pose -> Pose / EKF, Kalman, Odometry",
           "functions": [
             "getX",
             "predictionUpdate",
@@ -1569,12 +1571,12 @@
         },
         {
           "repo": "mathematical_robotics",
-          "description": "A C++ port of the MathematicalRobotics library",
+          "description": "MathematicalRobotics ライブラリの C++ 移植",
           "language": "C++",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/mathematical_robotics",
           "match_score": 17,
-          "summary": "lidar_slam: Imu, Odometry -> Path, Pose via IMUPreintegration, CLAS, PoseGraph",
+          "summary": "lidar_slam: Imu, Odometry -> Path, Pose / IMUPreintegration, CLAS, PoseGraph",
           "functions": [
             "main",
             "timestamp",
@@ -1638,12 +1640,12 @@
         },
         {
           "repo": "ndt_omp_ros2",
-          "description": "ROS2 porting of ndt_omp",
+          "description": "ndt_omp の ROS2 移植版",
           "language": "C++",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/ndt_omp_ros2",
           "match_score": 13,
-          "summary": "lidar_slam: unknown input -> Path via VoxelGrid, ICP, GICP",
+          "summary": "lidar_slam: 入力不明 -> Path / VoxelGrid, ICP, GICP",
           "functions": [
             "Agreement",
             "getLeaf",
@@ -1701,12 +1703,12 @@
         },
         {
           "repo": "robotics-technology-genealogy",
-          "description": "Interactive genealogy tree of Robotics & AI technologies. Live demo available.",
+          "description": "ロボティクス / AI 技術のインタラクティブ系譜図。ライブデモあり。",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/robotics-technology-genealogy",
           "match_score": 13,
-          "summary": "lidar_slam: Odometry -> Path via SLAM, CLAS, Odometry",
+          "summary": "lidar_slam: Odometry -> Path / SLAM, CLAS, Odometry",
           "functions": [
             "main",
             "_resolve_domains_dir",
@@ -1763,25 +1765,25 @@
         },
         {
           "repo": "rust_robotics",
-          "description": "Rust implementation of PythonRobotics, sample codes for robotics algorithms",
+          "description": "PythonRobotics の Rust 実装。ロボティクスアルゴリズムのサンプルコード集。",
           "language": "Rust",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/rust_robotics",
           "match_score": 11,
-          "summary": "lidar_slam: unknown input -> Path via UKF, MPC, EKF",
+          "summary": "lidar_slam: 入力不明 -> Path / MPC, AStar, LQR",
           "functions": [
-            "new",
             "in",
+            "new",
+            "main",
             "default",
             "Some",
-            "main",
             "calc_position",
             "let",
-            "update",
             "get_path",
             "compute_control",
             "check_goal",
-            "with_defaults"
+            "to_state2d",
+            "compute_steering"
           ],
           "ros_topics": [],
           "io": {
@@ -1791,19 +1793,20 @@
             ]
           },
           "algorithms": [
-            "UKF",
             "MPC",
-            "EKF",
-            "LQR",
             "AStar",
+            "LQR",
             "LoopClosure",
-            "Kalman",
+            "EKF",
             "RRT",
-            "ParticleFilter",
-            "CLAS"
+            "UKF",
+            "CLAS",
+            "DWA",
+            "CubicSpline"
           ],
           "relevant_files": [
             "crates/rust_robotics/examples/a_star.rs",
+            "crates/rust_robotics/examples/any_angle_comparison.rs",
             "crates/rust_robotics/examples/headless_grid_planners.rs",
             "crates/rust_robotics/examples/headless_localizers.rs",
             "crates/rust_robotics/examples/headless_navigation_loop.rs",
@@ -1813,16 +1816,15 @@
             "crates/rust_robotics/examples/state_lattice.rs",
             "crates/rust_robotics/examples/theta_star.rs",
             "crates/rust_robotics/src/lib.rs",
+            "crates/rust_robotics_control/examples/update_path_tracking_accuracy_docs.rs",
             "crates/rust_robotics_control/src/arm_obstacle_navigation.rs",
             "crates/rust_robotics_control/src/behavior_tree.rs",
             "crates/rust_robotics_control/src/cgmres_nmpc.rs",
             "crates/rust_robotics_control/src/drone_3d_trajectory.rs",
-            "crates/rust_robotics_control/src/lib.rs",
-            "crates/rust_robotics_control/src/lqr_control.rs",
-            "crates/rust_robotics_control/src/lqr_speed_steer_control.rs",
-            "crates/rust_robotics_control/src/lqr_steer_control.rs",
-            "crates/rust_robotics_control/src/model_predictive_trajectory_generator.rs",
-            "crates/rust_robotics_control/src/move_to_pose.rs"
+            "crates/rust_robotics_control/src/experiments/mod.rs",
+            "crates/rust_robotics_control/src/experiments/path_tracking_accuracy/first_scenario.rs",
+            "crates/rust_robotics_control/src/experiments/path_tracking_accuracy/full_bucket.rs",
+            "crates/rust_robotics_control/src/experiments/path_tracking_accuracy/mod.rs"
           ],
           "reason": "no_lidar_input_signal"
         },
@@ -1833,7 +1835,7 @@
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/simple_visual_slam",
           "match_score": 19,
-          "summary": "lidar_slam: unknown input -> Path via CLAS, LoopClosure, SLAM",
+          "summary": "lidar_slam: 入力不明 -> Path / CLAS, LoopClosure, SLAM",
           "functions": [
             "main",
             "Create",
@@ -1844,9 +1846,9 @@
             "umeyama_alignment",
             "sample_indices",
             "build_html",
-            "clampConfidence",
-            "load_map",
-            "align_to_gt"
+            "sha256_file",
+            "clean_traj_artifacts",
+            "run_slam"
           ],
           "ros_topics": [
             "$HOME/workspace/ceres-bin",
@@ -1862,35 +1864,35 @@
             "CLAS",
             "LoopClosure",
             "SLAM",
+            "RANSAC",
             "NDT",
             "PID",
             "PoseGraph",
             "RTK",
             "MPC",
-            "RANSAC",
             "EKF"
           ],
           "relevant_files": [
+            ".github/workflows/ci.yml",
+            "CHANGELOG.md",
             "CMakeLists.txt",
+            "CONTRIBUTING.md",
             "README.md",
+            "RELEASING.md",
             "apps/run_mono.cc",
             "docs/decisions.md",
             "docs/experiments.md",
             "docs/index.md",
             "docs/interfaces.md",
+            "eval/regression_baselines.json",
             "plan.md",
+            "scripts/check_regression_gate.py",
             "scripts/eval_all.sh",
             "scripts/eval_ate.sh",
             "scripts/eval_reference_policies.sh",
             "scripts/extract_keyframe_trajectory.py",
             "scripts/generate_map_report.py",
-            "scripts/generate_tum_report.py",
-            "scripts/update_reference_policy_docs.py",
-            "src/backend/local_mapping.cc",
-            "src/backend/local_mapping.h",
-            "src/backend/optimizer.cc",
-            "src/backend/optimizer.h",
-            "src/core/camera.cc"
+            "scripts/generate_tum_report.py"
           ],
           "reason": "no_lidar_input_signal"
         },
@@ -1901,20 +1903,20 @@
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/slam-handbook-python",
           "match_score": 18,
-          "summary": "lidar_slam: Odometry -> Pose via SLAM, Odometry, IMUPreintegration",
+          "summary": "lidar_slam: Odometry -> Pose / SLAM, CLAS, Odometry",
           "functions": [
+            "test_exp_log_roundtrip",
+            "test_returns_axes",
+            "test_shape",
             "__init__",
-            "residual",
-            "cost",
-            "add_variable",
-            "add_factor",
-            "get_state_vector",
-            "total_cost",
-            "skew_2d",
-            "skew_3d",
-            "rotation_matrix_2d",
-            "homogeneous",
-            "dehomogeneous"
+            "test_residual",
+            "test_cost_zero_residual",
+            "test_antisymmetric",
+            "test_orthogonal",
+            "test_det_one",
+            "test_exp_identity",
+            "test_wedge_vee_roundtrip",
+            "test_inv"
           ],
           "ros_topics": [],
           "io": {
@@ -1927,36 +1929,48 @@
           },
           "algorithms": [
             "SLAM",
-            "Odometry",
-            "IMUPreintegration",
             "CLAS",
+            "Odometry",
             "Semantic",
+            "IMUPreintegration",
+            "NDT",
             "ICP",
             "Inertial",
             "RANSAC",
             "PoseGraph"
           ],
           "relevant_files": [
+            ".github/ISSUE_TEMPLATE/bug_report.md",
+            ".github/ISSUE_TEMPLATE/feature_request.md",
+            ".github/dependabot.yml",
+            ".github/workflows/ci.yml",
+            ".github/workflows/pages.yml",
+            ".pre-commit-config.yaml",
+            "CONTRIBUTING.md",
             "README.md",
+            "README_ja.md",
+            "_config.yml",
+            "_toc.yml",
             "data/README.md",
             "pyproject.toml",
             "requirements.txt",
-            "utils/__init__.py",
-            "utils/factor_graph.py",
-            "utils/geometry.py",
-            "utils/lie_groups.py",
-            "utils/plotting.py"
+            "tests/__init__.py",
+            "tests/test_factor_graph.py",
+            "tests/test_geometry.py",
+            "tests/test_lie_groups.py",
+            "tests/test_plotting.py",
+            "utils/__init__.py"
           ],
           "reason": "no_lidar_input_signal"
         },
         {
           "repo": "rsasaki0109-tweet-summaries",
-          "description": "ロボティクス・自動運転・3D再構成・VLA関連の技術ポストを月次でアーカイブ | Monthly archive of robotics, autonomous driving, 3D reconstruction & VLA posts",
+          "description": "ロボティクス・自動運転・3D 再構成・VLA 関連の技術ポストを月次でアーカイブ | ロボティクス、自動運転、3D 再構成、VLA 投稿の月次アーカイブ",
           "language": "HTML",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/rsasaki0109-tweet-summaries",
           "match_score": 6,
-          "summary": "lidar_slam: unknown input -> unknown output via SLAM",
+          "summary": "lidar_slam: 入力不明 -> 出力不明 / SLAM",
           "functions": [],
           "ros_topics": [],
           "io": {
@@ -1971,12 +1985,12 @@
         },
         {
           "repo": "slam-handbook-public-release",
-          "description": "Release repo for our SLAM Handbook",
+          "description": "SLAM Handbook の公開用リポジトリ",
           "language": null,
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/slam-handbook-public-release",
           "match_score": 14,
-          "summary": "lidar_slam: Odometry -> unknown output via SLAM, LIO, Odometry",
+          "summary": "lidar_slam: Odometry -> 出力不明 / SLAM, LIO, Odometry",
           "functions": [],
           "ros_topics": [],
           "io": {
@@ -2001,12 +2015,12 @@
         },
         {
           "repo": "imu_estimator",
-          "description": "attitude estimator with gyro bias correction",
+          "description": "ジャイロバイアス補正付き姿勢推定器",
           "language": "C++",
           "track": "lidar_imu_slam",
           "local_path": "rsasaki-hub/.cache/repos/imu_estimator",
           "match_score": 12,
-          "summary": "lidar_imu_slam: Imu -> unknown output via EKF, CLAS",
+          "summary": "lidar_imu_slam: Imu -> 出力不明 / EKF, CLAS",
           "functions": [
             "EKFEstimator",
             "predictionUpdate",
@@ -2042,12 +2056,12 @@
         },
         {
           "repo": "laser_deskew",
-          "description": "ros1 package for 2d laser deskew using tf.",
+          "description": "tf を用いた 2D レーザ deskew の ROS1 パッケージ",
           "language": "C++",
           "track": "lidar_imu_slam",
           "local_path": "rsasaki-hub/.cache/repos/laser_deskew",
           "match_score": 6,
-          "summary": "lidar_imu_slam: LaserScan, Odometry -> LaserScan via Deskew, NDT, Odometry",
+          "summary": "lidar_imu_slam: LaserScan, Odometry -> LaserScan / Deskew, NDT, Odometry",
           "functions": [
             "main",
             "odometryCallback"
@@ -2085,12 +2099,12 @@
         },
         {
           "repo": "lidar_undistortion",
-          "description": "A header-only program of 3d rotary lidar undistortion using 9-axis imu",
+          "description": "9 軸 IMU を用いた 3D 回転 LiDAR 歪み補正の header-only 実装",
           "language": "C++",
           "track": "lidar_imu_slam",
           "local_path": "rsasaki-hub/.cache/repos/lidar_undistortion",
           "match_score": 6,
-          "summary": "lidar_imu_slam: Imu -> unknown output via CLAS",
+          "summary": "lidar_imu_slam: Imu -> 出力不明 / CLAS",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -2114,12 +2128,12 @@
         },
         {
           "repo": "particle_filtering_model_predictive_control",
-          "description": "Particle filtering model predictive control simulation.",
+          "description": "Particle Filter とモデル予測制御のシミュレーション",
           "language": "Python",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/particle_filtering_model_predictive_control",
           "match_score": 4,
-          "summary": "lidar_localization: unknown input -> Path via MPC, ParticleFilter, CLAS",
+          "summary": "lidar_localization: 入力不明 -> Path / MPC, ParticleFilter, CLAS",
           "functions": [
             "__init__",
             "motion_model",
@@ -2153,12 +2167,12 @@
         },
         {
           "repo": "roboclaw-rs",
-          "description": "Rust-first, agent-first robotics workspace with ROS 2 hooks, YAML skills, simulator/hardware backends, and LLM-plannable execution.",
+          "description": "Rust-first・agent-first のロボティクスワークスペース。ROS 2 フック、YAML スキル、シミュレータ / 実機バックエンド、LLM で計画可能な実行基盤を備える。",
           "language": "Rust",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/roboclaw-rs",
           "match_score": 6,
-          "summary": "lidar_slam: unknown input -> Path via CLAS, LoopClosure, ICP",
+          "summary": "lidar_slam: 入力不明 -> Path / CLAS, LoopClosure, ICP",
           "functions": [
             "Some",
             "name",
@@ -2189,8 +2203,7 @@
           "algorithms": [
             "CLAS",
             "LoopClosure",
-            "ICP",
-            "DWA"
+            "ICP"
           ],
           "relevant_files": [
             "crates/agent/src/lib.rs",
@@ -2218,12 +2231,12 @@
         },
         {
           "repo": "tree-trunk-mapper",
-          "description": "Detect and map individual tree trunks from LiDAR point clouds",
+          "description": "LiDAR 点群から個々の樹幹を検出して地図化",
           "language": "Python",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/tree-trunk-mapper",
           "match_score": 6,
-          "summary": "lidar_localization: Path, PointCloud2 -> Path, Pose via CLAS, RANSAC, NDT",
+          "summary": "lidar_localization: Path, PointCloud2 -> Path, Pose / CLAS, RANSAC, NDT",
           "functions": [
             "__init__",
             "make_cylinder_points",
@@ -2284,12 +2297,12 @@
         },
         {
           "repo": "glim",
-          "description": "GLIM: versatile and extensible range-based 3D localization and mapping framework",
+          "description": "GLIM: 汎用性と拡張性を重視した range-based 3D 自己位置推定・地図構築フレームワーク",
           "language": "C++",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/glim",
           "match_score": 14,
-          "summary": "lidar_slam: Imu, Odometry, PointCloud2 -> Pose via Submap, Odometry, CLAS",
+          "summary": "lidar_slam: Imu, Odometry, PointCloud2 -> Pose / Submap, Odometry, CLAS",
           "functions": [
             "convert",
             "invert",
@@ -2353,12 +2366,12 @@
         },
         {
           "repo": "lidar_localizer",
-          "description": "lidar localizer in Autoware AI",
+          "description": "Autoware AI 向け LiDAR ローカライザ",
           "language": "C++",
           "track": "lidar_localization",
           "local_path": "rsasaki-hub/.cache/repos/lidar_localizer",
           "match_score": 18,
-          "summary": "lidar_localization: Imu, Odometry, PointCloud2 -> PointCloud2, Pose via NDT, VoxelGrid, Submap",
+          "summary": "lidar_localization: Imu, Odometry, PointCloud2 -> PointCloud2, Pose / NDT, VoxelGrid, Submap",
           "functions": [
             "main",
             "points_callback",
@@ -2422,12 +2435,12 @@
         },
         {
           "repo": "dynamic-3d-object-removal",
-          "description": "Numpy-only dynamic object removal for LiDAR point clouds. 3D box crop + temporal filtering, ROS2 realtime node, public AV2 demos.",
+          "description": "NumPy のみで動く LiDAR 点群向け動的物体除去。3D box crop + 時系列フィルタ、ROS2 リアルタイムノード、公開 AV2 デモ付き。",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal",
           "match_score": 13,
-          "summary": "lidar_slam: Path, PointCloud2 -> Path, PointCloud2 via VoxelGrid, CLAS, NDT",
+          "summary": "lidar_slam: Path, PointCloud2 -> Path, PointCloud2 / VoxelGrid, CLAS, NDT",
           "functions": [
             "main",
             "_build_parser",
@@ -2482,12 +2495,12 @@
         },
         {
           "repo": "forest-panoptic-nav",
-          "description": "Panoptic segmentation for autonomous forest navigation",
+          "description": "自律森林走行向けパノプティックセグメンテーション",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/forest-panoptic-nav",
           "match_score": 2,
-          "summary": "lidar_slam: Path -> Path via CLAS, Semantic, Panoptic",
+          "summary": "lidar_slam: Path -> Path / CLAS, Semantic, Panoptic",
           "functions": [
             "__init__",
             "_make_costmap",
@@ -2546,12 +2559,12 @@
         },
         {
           "repo": "npy2pointcloud",
-          "description": "Convert Rohbau3D .npy point clouds to PLY/PCD/LAS formats",
+          "description": "Rohbau3D の .npy 点群を PLY / PCD / LAS 形式へ変換",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/npy2pointcloud",
           "match_score": 2,
-          "summary": "lidar_slam: Path -> Path via CLAS, NDT",
+          "summary": "lidar_slam: Path -> Path / CLAS, NDT",
           "functions": [
             "test_roundtrip_coords",
             "convert",
@@ -2605,12 +2618,12 @@
         },
         {
           "repo": "pointcloud2ifc",
-          "description": "Automatic point cloud to IFC (BIM) conversion using semantic segmentation",
+          "description": "セマンティックセグメンテーションを用いた点群から IFC（BIM）への自動変換",
           "language": "Python",
           "track": "lidar_slam",
           "local_path": "rsasaki-hub/.cache/repos/pointcloud2ifc",
           "match_score": 2,
-          "summary": "lidar_slam: Path, PointCloud2 -> Path via CLAS, VoxelGrid, Segmentation",
+          "summary": "lidar_slam: Path, PointCloud2 -> Path / CLAS, VoxelGrid, Segmentation",
           "functions": [
             "predict",
             "__init__",
@@ -2674,7 +2687,7 @@
         "lidar_imu_slam": [
           {
             "repo": "localization_zoo",
-            "overall_score": 84.33
+            "overall_score": 92.81
           },
           {
             "repo": "FAST_LIO",
@@ -2767,32 +2780,29 @@
             "Odometry",
             "PointCloud2"
           ],
-          "optional_input": [
-            "Path"
-          ],
+          "optional_input": [],
           "output": [
-            "Odometry",
             "Path"
           ],
           "optional_output": [
-            "PointCloud2",
-            "Pose"
+            "Odometry",
+            "PointCloud2"
           ],
           "algorithm_markers": [
             "LIO",
             "Odometry",
             "Inertial",
             "ICP",
-            "LoopClosure"
+            "VoxelGrid"
           ]
         }
       },
-      "generated_at": "2026-04-04T04:01:13+00:00"
+      "generated_at": "2026-04-10T05:39:58+00:00"
     },
     {
       "name": "robotics_algorithms_exploration",
       "status": "synthesized",
-      "problem_statement": "Compare cross-language implementations of core robotics algorithms (filtering, path planning, SLAM basics).",
+      "problem_statement": "ロボティクス基盤アルゴリズムの多言語実装を比較する（フィルタ、経路計画、SLAM 基礎）。",
       "notes": [
         "CudaRobotics (CUDA/C++), rust_robotics (Rust), mathematical_robotics (C++) share overlapping algorithm sets.",
         "Comparison axes: language, algorithm coverage, API surface."
@@ -2825,7 +2835,7 @@
       "tracks": [
         {
           "name": "state_estimation",
-          "description": "Filtering and state estimation algorithms (EKF, UKF, Particle Filter, etc.).",
+          "description": "フィルタリングと状態推定アルゴリズム（EKF、UKF、Particle Filter など）。",
           "keywords": [
             "kalman",
             "ekf",
@@ -2839,7 +2849,7 @@
         },
         {
           "name": "path_planning",
-          "description": "Path and motion planning algorithms (RRT, A*, DWA, etc.).",
+          "description": "経路計画・動作計画アルゴリズム（RRT、A*、DWA など）。",
           "keywords": [
             "rrt",
             "a_star",
@@ -2855,7 +2865,7 @@
         },
         {
           "name": "scan_matching",
-          "description": "Point cloud registration and scan matching (ICP, NDT, etc.).",
+          "description": "点群レジストレーションとスキャンマッチング（ICP、NDT など）。",
           "keywords": [
             "icp",
             "ndt",
@@ -2871,44 +2881,45 @@
       "implementations": [
         {
           "repo": "rust_robotics",
-          "description": "Rust implementation of PythonRobotics, sample codes for robotics algorithms",
+          "description": "PythonRobotics の Rust 実装。ロボティクスアルゴリズムのサンプルコード集。",
           "language": "Rust",
           "track": "path_planning",
           "local_path": "rsasaki-hub/.cache/repos/rust_robotics",
-          "match_score": 14,
-          "summary": "path_planning: unknown input -> Path via MPC, LQR, AStar",
+          "match_score": 15,
+          "summary": "path_planning: 入力不明 -> Path, Pose / MPC, AStar, LQR",
           "functions": [
             "in",
             "new",
-            "default",
             "main",
-            "calc_position",
+            "default",
             "let",
-            "Some",
-            "get_path",
-            "compute_control",
             "check_goal",
-            "to_state2d",
-            "compute_steering"
+            "calc_position",
+            "reset",
+            "Err",
+            "name",
+            "should_escalate",
+            "to_state2d"
           ],
           "ros_topics": [],
           "io": {
             "inputs": [],
             "outputs": [
-              "Path"
+              "Path",
+              "Pose"
             ]
           },
           "algorithms": [
             "MPC",
-            "LQR",
             "AStar",
+            "LQR",
+            "SLAM",
             "LoopClosure",
             "EKF",
-            "SLAM",
             "RRT",
             "UKF",
-            "DWA",
-            "Kalman"
+            "Kalman",
+            "DWA"
           ],
           "relevant_files": [
             ".devcontainer/devcontainer.json",
@@ -2916,10 +2927,12 @@
             ".github/workflows/pages.yml",
             "CHANGELOG.md",
             "CLAUDE.md",
+            "CONTRIBUTING.md",
             "Cargo.toml",
             "README.md",
             "crates/rust_robotics/Cargo.toml",
             "crates/rust_robotics/examples/a_star.rs",
+            "crates/rust_robotics/examples/any_angle_comparison.rs",
             "crates/rust_robotics/examples/headless_grid_planners.rs",
             "crates/rust_robotics/examples/headless_localizers.rs",
             "crates/rust_robotics/examples/headless_navigation_loop.rs",
@@ -2928,13 +2941,11 @@
             "crates/rust_robotics/examples/speed_comparison.rs",
             "crates/rust_robotics/examples/state_lattice.rs",
             "crates/rust_robotics/examples/theta_star.rs",
-            "crates/rust_robotics/src/lib.rs",
-            "crates/rust_robotics_control/Cargo.toml",
-            "crates/rust_robotics_control/src/arm_obstacle_navigation.rs"
+            "crates/rust_robotics/src/lib.rs"
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0007,
+              "analysis_runtime_seconds": 0.0024,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -2947,7 +2958,49 @@
                 {
                   "kind": "benchmark",
                   "value": null,
+                  "line": "## Running Benchmarks",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/CONTRIBUTING.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "cargo bench --bench unified_planning_benchmark -p rust_robotics_planning",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/CONTRIBUTING.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "cargo bench --bench jps_crossover_benchmark -p rust_robotics_planning",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/CONTRIBUTING.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
                   "line": "## Benchmarks",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/README.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": 50.0,
+                  "line": "### Grid Planner Benchmark (50x50)",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/README.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "cargo bench -p rust_robotics_planning --bench unified_planning_benchmark",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/README.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "cargo bench -p rust_robotics_planning --bench jps_crossover_benchmark",
+                  "source": "rsasaki-hub/.cache/repos/rust_robotics/README.md"
+                },
+                {
+                  "kind": "accuracy",
+                  "value": 3.0,
+                  "line": "Cubature Kalman Filter (CKF) using 3rd-degree spherical-radial cubature rule. Achieves the same accuracy as UKF but 30% faster with zero tuning parameters (no alpha/beta/kappa). Re",
                   "source": "rsasaki-hub/.cache/repos/rust_robotics/README.md"
                 },
                 {
@@ -2957,42 +3010,44 @@
                   "source": "rsasaki-hub/.cache/repos/rust_robotics/README.md"
                 }
               ],
-              "metric_count": 3,
-              "quality_signal": 0.0,
-              "score": 4.8
+              "metric_count": 10,
+              "quality_signal": 3.0,
+              "score": 17.8
             },
             "readability": {
               "source_files": 11,
-              "nonempty_loc": 1948,
-              "comment_ratio": 0.131,
-              "branch_keywords": 140,
+              "nonempty_loc": 1574,
+              "comment_ratio": 0.107,
+              "branch_keywords": 84,
               "import_count": 0,
-              "function_count": 48,
-              "largest_file_loc": 503,
-              "largest_function_span": 170,
-              "score": 55.77
+              "function_count": 24,
+              "largest_file_loc": 277,
+              "largest_function_span": 133,
+              "score": 67.41
             },
             "extensibility": {
-              "module_dirs": 3,
-              "config_files": 6,
-              "helper_units": 885,
-              "public_surface_markers": 27,
+              "module_dirs": 2,
+              "config_files": 5,
+              "helper_units": 767,
+              "public_surface_markers": 12,
               "hard_coded_topics": 0,
-              "orchestration_split": 0.273,
-              "score": 100.0
+              "orchestration_split": 0.182,
+              "score": 92.0
             },
-            "overall_score": 41.34,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "overall_score": 48.75,
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "CudaRobotics",
-          "description": "CUDA-accelerated robotics algorithms in C++. 20+ algorithms for SLAM, Path Planning, and Localization.",
+          "description": "C++ による CUDA 加速ロボティクスアルゴリズム集。SLAM・経路計画・自己位置推定を 20 種以上収録。",
           "language": "Cuda",
           "track": "path_planning",
           "local_path": "rsasaki-hub/.cache/repos/CudaRobotics",
           "match_score": 12,
-          "summary": "path_planning: unknown input -> Path via CLAS, LIO, RRT",
+          "summary": "path_planning: 入力不明 -> Path / CLAS, LIO, RRT",
           "functions": [
             "recommend",
             "__init__",
@@ -3050,7 +3105,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.002,
+              "analysis_runtime_seconds": 0.0046,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -3076,6 +3131,12 @@
                   "kind": "benchmark",
                   "value": null,
                   "line": "add_executable(benchmark_diff_mppi_manipulator src/benchmark_diff_mppi_manipulator.cu)",
+                  "source": "rsasaki-hub/.cache/repos/CudaRobotics/CMakeLists.txt"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": 7.0,
+                  "line": "add_executable(benchmark_diff_mppi_manipulator_7dof src/benchmark_diff_mppi_manipulator_7dof.cu)",
                   "source": "rsasaki-hub/.cache/repos/CudaRobotics/CMakeLists.txt"
                 },
                 {
@@ -3107,15 +3168,9 @@
                   "value": null,
                   "line": "target_compile_options(benchmark_pf PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)",
                   "source": "rsasaki-hub/.cache/repos/CudaRobotics/CMakeLists.txt"
-                },
-                {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "add_executable(benchmark_rrt src/benchmark_rrt.cu)",
-                  "source": "rsasaki-hub/.cache/repos/CudaRobotics/CMakeLists.txt"
                 }
               ],
-              "metric_count": 207,
+              "metric_count": 208,
               "quality_signal": 0.0,
               "score": 40.0
             },
@@ -3140,17 +3195,251 @@
               "score": 92.0
             },
             "overall_score": 63.29,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
+          }
+        },
+        {
+          "repo": "simple_visual_slam",
+          "description": "",
+          "language": "C++",
+          "track": "path_planning",
+          "local_path": "rsasaki-hub/.cache/repos/simple_visual_slam",
+          "match_score": 6,
+          "summary": "path_planning: 入力不明 -> Path / CLAS, LoopClosure, SLAM",
+          "functions": [
+            "main",
+            "Create",
+            "id_",
+            "quaternion_to_rotation_matrix",
+            "load_positions",
+            "associate",
+            "umeyama_alignment",
+            "sample_indices",
+            "build_html",
+            "sha256_file",
+            "clean_traj_artifacts",
+            "run_slam"
+          ],
+          "ros_topics": [
+            "$HOME/workspace/ceres-bin",
+            "//"
+          ],
+          "io": {
+            "inputs": [],
+            "outputs": [
+              "Path"
+            ]
+          },
+          "algorithms": [
+            "CLAS",
+            "LoopClosure",
+            "SLAM",
+            "RANSAC",
+            "NDT",
+            "PID",
+            "PoseGraph",
+            "RTK",
+            "MPC",
+            "EKF"
+          ],
+          "relevant_files": [
+            ".github/workflows/ci.yml",
+            "CHANGELOG.md",
+            "CMakeLists.txt",
+            "CONTRIBUTING.md",
+            "README.md",
+            "RELEASING.md",
+            "apps/run_mono.cc",
+            "docs/decisions.md",
+            "docs/experiments.md",
+            "docs/index.md",
+            "docs/interfaces.md",
+            "eval/regression_baselines.json",
+            "plan.md",
+            "scripts/check_regression_gate.py",
+            "scripts/eval_all.sh",
+            "scripts/eval_ate.sh",
+            "scripts/eval_reference_policies.sh",
+            "scripts/extract_keyframe_trajectory.py",
+            "scripts/generate_map_report.py",
+            "scripts/generate_tum_report.py"
+          ],
+          "evaluation": {
+            "benchmark": {
+              "analysis_runtime_seconds": 0.0076,
+              "benchmark_artifacts": [
+                "rsasaki-hub/.cache/repos/simple_visual_slam/scripts/generate_map_report.py",
+                "rsasaki-hub/.cache/repos/simple_visual_slam/scripts/generate_tum_report.py"
+              ],
+              "benchmark_artifact_count": 2,
+              "metric_mentions": [
+                {
+                  "kind": "evaluation",
+                  "value": null,
+                  "line": "- Reference-keyframe policy seam and evaluation harness (`scripts/eval_reference_policies.sh`).",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CHANGELOG.md"
+                },
+                {
+                  "kind": "report",
+                  "value": null,
+                  "line": "- `run_mono --version` reporting CMake `PROJECT_VERSION`.",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CHANGELOG.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "set(BUILD_BENCHMARKS OFF CACHE BOOL \"\" FORCE)",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "# Deep Learning Depth Estimation (ONNX Runtime)",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "option(USE_DEPTH_DL \"Enable deep learning depth estimation (ONNX Runtime)\" OFF)",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "# Try system-installed ONNX Runtime first",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "find_library(ONNXRUNTIME_LIB onnxruntime)",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "find_path(ONNXRUNTIME_INCLUDE onnxruntime_cxx_api.h PATH_SUFFIXES onnxruntime)",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "if(ONNXRUNTIME_LIB AND ONNXRUNTIME_INCLUDE)",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                },
+                {
+                  "kind": "runtime",
+                  "value": null,
+                  "line": "message(STATUS \"Found system ONNX Runtime: ${ONNXRUNTIME_LIB}\")",
+                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
+                }
+              ],
+              "metric_count": 118,
+              "quality_signal": 100.0,
+              "score": 100.0
+            },
+            "readability": {
+              "source_files": 5,
+              "nonempty_loc": 2037,
+              "comment_ratio": 0.051,
+              "branch_keywords": 219,
+              "import_count": 61,
+              "function_count": 32,
+              "largest_file_loc": 679,
+              "largest_function_span": 568,
+              "score": 31.95
+            },
+            "extensibility": {
+              "module_dirs": 2,
+              "config_files": 2,
+              "helper_units": 860,
+              "public_surface_markers": 144,
+              "hard_coded_topics": 0,
+              "orchestration_split": 0.4,
+              "score": 84.0
+            },
+            "overall_score": 78.99,
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
+          }
+        },
+        {
+          "repo": "NormalDistributionTransform2D",
+          "description": "2D NDT スキャンマッチングの Python サンプルコード",
+          "language": "Python",
+          "track": "scan_matching",
+          "local_path": "rsasaki-hub/.cache/repos/NormalDistributionTransform2D",
+          "match_score": 10,
+          "summary": "scan_matching: 入力不明 -> 出力不明 / NDT, SLAM",
+          "functions": [
+            "generate_src_points",
+            "apply_transformation",
+            "add_noise",
+            "ndt_match",
+            "objective_func",
+            "objective_func_vectorized",
+            "plot_results",
+            "main"
+          ],
+          "ros_topics": [],
+          "io": {
+            "inputs": [],
+            "outputs": []
+          },
+          "algorithms": [
+            "NDT",
+            "SLAM"
+          ],
+          "relevant_files": [
+            "script/normal_distributions_transform.py"
+          ],
+          "evaluation": {
+            "benchmark": {
+              "analysis_runtime_seconds": 0.0002,
+              "benchmark_artifacts": [],
+              "benchmark_artifact_count": 0,
+              "metric_mentions": [],
+              "metric_count": 0,
+              "quality_signal": 0.0,
+              "score": 0.0
+            },
+            "readability": {
+              "source_files": 1,
+              "nonempty_loc": 85,
+              "comment_ratio": 0.059,
+              "branch_keywords": 9,
+              "import_count": 3,
+              "function_count": 8,
+              "largest_file_loc": 85,
+              "largest_function_span": 25,
+              "score": 97.77
+            },
+            "extensibility": {
+              "module_dirs": 1,
+              "config_files": 0,
+              "helper_units": 66,
+              "public_surface_markers": 0,
+              "hard_coded_topics": 0,
+              "orchestration_split": 1.0,
+              "score": 48.0
+            },
+            "overall_score": 36.44,
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 1,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "roboclaw-rs",
-          "description": "Rust-first, agent-first robotics workspace with ROS 2 hooks, YAML skills, simulator/hardware backends, and LLM-plannable execution.",
+          "description": "Rust-first・agent-first のロボティクスワークスペース。ROS 2 フック、YAML スキル、シミュレータ / 実機バックエンド、LLM で計画可能な実行基盤を備える。",
           "language": "Rust",
-          "track": "path_planning",
+          "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/roboclaw-rs",
-          "match_score": 7,
-          "summary": "path_planning: unknown input -> Path via CLAS, LoopClosure, ICP",
+          "match_score": 4,
+          "summary": "scan_matching: 入力不明 -> Path / CLAS, LoopClosure, ICP",
           "functions": [
             "Some",
             "name",
@@ -3181,8 +3470,7 @@
           "algorithms": [
             "CLAS",
             "LoopClosure",
-            "ICP",
-            "DWA"
+            "ICP"
           ],
           "relevant_files": [
             "crates/agent/src/lib.rs",
@@ -3237,245 +3525,19 @@
               "score": 75.0
             },
             "overall_score": 27.62,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
-          }
-        },
-        {
-          "repo": "simple_visual_slam",
-          "description": "",
-          "language": "C++",
-          "track": "path_planning",
-          "local_path": "rsasaki-hub/.cache/repos/simple_visual_slam",
-          "match_score": 6,
-          "summary": "path_planning: unknown input -> Path via CLAS, LoopClosure, SLAM",
-          "functions": [
-            "main",
-            "Create",
-            "id_",
-            "quaternion_to_rotation_matrix",
-            "load_positions",
-            "associate",
-            "umeyama_alignment",
-            "sample_indices",
-            "build_html",
-            "clampConfidence",
-            "load_map",
-            "align_to_gt"
-          ],
-          "ros_topics": [
-            "$HOME/workspace/ceres-bin",
-            "//"
-          ],
-          "io": {
-            "inputs": [],
-            "outputs": [
-              "Path"
-            ]
-          },
-          "algorithms": [
-            "CLAS",
-            "LoopClosure",
-            "SLAM",
-            "NDT",
-            "PID",
-            "PoseGraph",
-            "RTK",
-            "MPC",
-            "RANSAC",
-            "EKF"
-          ],
-          "relevant_files": [
-            "CMakeLists.txt",
-            "README.md",
-            "apps/run_mono.cc",
-            "docs/decisions.md",
-            "docs/experiments.md",
-            "docs/index.md",
-            "docs/interfaces.md",
-            "plan.md",
-            "scripts/eval_all.sh",
-            "scripts/eval_ate.sh",
-            "scripts/eval_reference_policies.sh",
-            "scripts/extract_keyframe_trajectory.py",
-            "scripts/generate_map_report.py",
-            "scripts/generate_tum_report.py",
-            "scripts/update_reference_policy_docs.py",
-            "src/backend/local_mapping.cc",
-            "src/backend/local_mapping.h",
-            "src/backend/optimizer.cc",
-            "src/backend/optimizer.h",
-            "src/core/camera.cc"
-          ],
-          "evaluation": {
-            "benchmark": {
-              "analysis_runtime_seconds": 0.0034,
-              "benchmark_artifacts": [
-                "rsasaki-hub/.cache/repos/simple_visual_slam/scripts/generate_map_report.py",
-                "rsasaki-hub/.cache/repos/simple_visual_slam/scripts/generate_tum_report.py"
-              ],
-              "benchmark_artifact_count": 2,
-              "metric_mentions": [
-                {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "set(BUILD_BENCHMARKS OFF CACHE BOOL \"\" FORCE)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "# Deep Learning Depth Estimation (ONNX Runtime)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "option(USE_DEPTH_DL \"Enable deep learning depth estimation (ONNX Runtime)\" OFF)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "# Try system-installed ONNX Runtime first",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "find_library(ONNXRUNTIME_LIB onnxruntime)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "find_path(ONNXRUNTIME_INCLUDE onnxruntime_cxx_api.h PATH_SUFFIXES onnxruntime)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "if(ONNXRUNTIME_LIB AND ONNXRUNTIME_INCLUDE)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "message(STATUS \"Found system ONNX Runtime: ${ONNXRUNTIME_LIB}\")",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "add_library(onnxruntime::onnxruntime SHARED IMPORTED)",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                },
-                {
-                  "kind": "runtime",
-                  "value": null,
-                  "line": "set_target_properties(onnxruntime::onnxruntime PROPERTIES",
-                  "source": "rsasaki-hub/.cache/repos/simple_visual_slam/CMakeLists.txt"
-                }
-              ],
-              "metric_count": 151,
-              "quality_signal": 100.0,
-              "score": 100.0
-            },
-            "readability": {
-              "source_files": 10,
-              "nonempty_loc": 3756,
-              "comment_ratio": 0.056,
-              "branch_keywords": 488,
-              "import_count": 88,
-              "function_count": 65,
-              "largest_file_loc": 886,
-              "largest_function_span": 594,
-              "score": 30.25
-            },
-            "extensibility": {
-              "module_dirs": 4,
-              "config_files": 0,
-              "helper_units": 1646,
-              "public_surface_markers": 155,
-              "hard_coded_topics": 1,
-              "orchestration_split": 0.4,
-              "score": 82.5
-            },
-            "overall_score": 78.19,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
-          }
-        },
-        {
-          "repo": "NormalDistributionTransform2D",
-          "description": "Python sample code of 2D NDT Scan Matching",
-          "language": "Python",
-          "track": "scan_matching",
-          "local_path": "rsasaki-hub/.cache/repos/NormalDistributionTransform2D",
-          "match_score": 10,
-          "summary": "scan_matching: unknown input -> unknown output via NDT, SLAM",
-          "functions": [
-            "generate_src_points",
-            "apply_transformation",
-            "add_noise",
-            "ndt_match",
-            "objective_func",
-            "objective_func_vectorized",
-            "plot_results",
-            "main"
-          ],
-          "ros_topics": [],
-          "io": {
-            "inputs": [],
-            "outputs": []
-          },
-          "algorithms": [
-            "NDT",
-            "SLAM"
-          ],
-          "relevant_files": [
-            "script/normal_distributions_transform.py"
-          ],
-          "evaluation": {
-            "benchmark": {
-              "analysis_runtime_seconds": 0.0001,
-              "benchmark_artifacts": [],
-              "benchmark_artifact_count": 0,
-              "metric_mentions": [],
-              "metric_count": 0,
-              "quality_signal": 0.0,
-              "score": 0.0
-            },
-            "readability": {
-              "source_files": 1,
-              "nonempty_loc": 85,
-              "comment_ratio": 0.059,
-              "branch_keywords": 9,
-              "import_count": 3,
-              "function_count": 8,
-              "largest_file_loc": 85,
-              "largest_function_span": 25,
-              "score": 97.77
-            },
-            "extensibility": {
-              "module_dirs": 1,
-              "config_files": 0,
-              "helper_units": 66,
-              "public_surface_markers": 0,
-              "hard_coded_topics": 0,
-              "orchestration_split": 1.0,
-              "score": 48.0
-            },
-            "overall_score": 36.44,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "gaussian_particle_filter",
-          "description": "Python sample of Gaussian Particle Filter localization",
+          "description": "Gaussian Particle Filter 自己位置推定の Python サンプル",
           "language": "Python",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/gaussian_particle_filter",
           "match_score": 17,
-          "summary": "state_estimation: unknown input -> unknown output via ParticleFilter, Kalman",
+          "summary": "state_estimation: 入力不明 -> 出力不明 / ParticleFilter, Kalman",
           "functions": [
             "calc_input",
             "observation",
@@ -3501,7 +3563,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0002,
+              "analysis_runtime_seconds": 0.0004,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -3530,17 +3592,19 @@
               "score": 40.0
             },
             "overall_score": 33.64,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 2,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "particle_filtering_model_predictive_control",
-          "description": "Particle filtering model predictive control simulation.",
+          "description": "Particle Filter とモデル予測制御のシミュレーション",
           "language": "Python",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/particle_filtering_model_predictive_control",
           "match_score": 16,
-          "summary": "state_estimation: unknown input -> Path via MPC, ParticleFilter, CLAS",
+          "summary": "state_estimation: 入力不明 -> Path / MPC, ParticleFilter, CLAS",
           "functions": [
             "__init__",
             "motion_model",
@@ -3572,7 +3636,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0002,
+              "analysis_runtime_seconds": 0.0003,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -3601,7 +3665,9 @@
               "score": 50.0
             },
             "overall_score": 35.44,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 2,
+            "missing_relevant_files": []
           }
         },
         {
@@ -3611,7 +3677,7 @@
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/quaternion-based_kalman_filter",
           "match_score": 15,
-          "summary": "state_estimation: unknown input -> unknown output via Kalman, CLAS",
+          "summary": "state_estimation: 入力不明 -> 出力不明 / Kalman, CLAS",
           "functions": [
             "skew_symmetric",
             "__init__",
@@ -3636,7 +3702,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0002,
+              "analysis_runtime_seconds": 0.0003,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -3684,17 +3750,19 @@
               "score": 50.0
             },
             "overall_score": 38.64,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 2,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "mathematical_robotics",
-          "description": "A C++ port of the MathematicalRobotics library",
+          "description": "MathematicalRobotics ライブラリの C++ 移植",
           "language": "C++",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/mathematical_robotics",
           "match_score": 10,
-          "summary": "state_estimation: Imu, Odometry -> Path, Pose via IMUPreintegration, EKF, PoseGraph",
+          "summary": "state_estimation: Imu, Odometry -> Path, Pose / IMUPreintegration, EKF, PoseGraph",
           "functions": [
             "main",
             "timestamp",
@@ -3756,7 +3824,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.1708,
+              "analysis_runtime_seconds": 0.4239,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -3834,17 +3902,19 @@
               "score": 52.0
             },
             "overall_score": 32.91,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "imu_estimator",
-          "description": "attitude estimator with gyro bias correction",
+          "description": "ジャイロバイアス補正付き姿勢推定器",
           "language": "C++",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/imu_estimator",
           "match_score": 7,
-          "summary": "state_estimation: Imu -> unknown output via EKF, CLAS",
+          "summary": "state_estimation: Imu -> 出力不明 / EKF, CLAS",
           "functions": [
             "EKFEstimator",
             "predictionUpdate",
@@ -3878,7 +3948,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0004,
+              "analysis_runtime_seconds": 0.0012,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -3907,19 +3977,21 @@
               "score": 66.0
             },
             "overall_score": 41.5,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 7,
+            "missing_relevant_files": []
           }
         }
       ],
       "rejected_candidates": [
         {
           "repo": "kalman_filter_localization_ros2",
-          "description": "gnss/imu localization using kalman filter",
+          "description": "Kalman Filter による GNSS / IMU 測位。",
           "language": "C++",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/kalman_filter_localization_ros2",
           "match_score": 17,
-          "summary": "state_estimation: Imu, Odometry, Pose -> Pose via EKF, Kalman, Odometry",
+          "summary": "state_estimation: Imu, Odometry, Pose -> Pose / EKF, Kalman, Odometry",
           "functions": [
             "getX",
             "predictionUpdate",
@@ -3988,12 +4060,12 @@
         },
         {
           "repo": "amcl_3d",
-          "description": "AMCL(Adaptive Monte Carlo Localization) using 3D LiDAR for ROS.",
+          "description": "ROS 向け 3D LiDAR を使う AMCL（Adaptive Monte Carlo Localization）実装",
           "language": "C++",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/amcl_3d",
           "match_score": 11,
-          "summary": "state_estimation: Imu, Odometry, Path -> Path, PointCloud2, Pose via AMCL, CLAS, PID",
+          "summary": "state_estimation: Imu, Odometry, Path -> Path, PointCloud2, Pose / AMCL, CLAS, PID",
           "functions": [
             "main",
             "yaw_from_quaternion",
@@ -4072,12 +4144,12 @@
         },
         {
           "repo": "glim",
-          "description": "GLIM: versatile and extensible range-based 3D localization and mapping framework",
+          "description": "GLIM: 汎用性と拡張性を重視した range-based 3D 自己位置推定・地図構築フレームワーク",
           "language": "C++",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/glim",
           "match_score": 5,
-          "summary": "scan_matching: Imu, Odometry, PointCloud2 -> Pose via Submap, Odometry, CLAS",
+          "summary": "scan_matching: Imu, Odometry, PointCloud2 -> Pose / Submap, Odometry, CLAS",
           "functions": [
             "convert",
             "invert",
@@ -4141,12 +4213,12 @@
         },
         {
           "repo": "li_slam_ros2",
-          "description": "ROS 2 package of tightly-coupled lidar inertial ndt/gicp slam",
+          "description": "密結合な LiDAR 慣性 NDT/GICP SLAM の ROS 2 パッケージ",
           "language": "C++",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/li_slam_ros2",
           "match_score": 16,
-          "summary": "scan_matching: Imu, MapArray, Odometry -> Imu, MapArray, Odometry via VoxelGrid, Submap, SLAM",
+          "summary": "scan_matching: Imu, MapArray, Odometry -> Imu, MapArray, Odometry / VoxelGrid, Submap, SLAM",
           "functions": [
             "Agreement",
             "main",
@@ -4222,12 +4294,12 @@
         },
         {
           "repo": "lidar_localization_ros2",
-          "description": "3D LIDAR Localization using NDT/GICP and pointcloud map in ROS 2 (Not SLAM)",
+          "description": "ROS 2 上で NDT/GICP と点群地図を用いる 3D LiDAR 自己位置推定（SLAM ではない）",
           "language": "C++",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/lidar_localization_ros2",
           "match_score": 12,
-          "summary": "scan_matching: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose via NDT, VoxelGrid, GICP",
+          "summary": "scan_matching: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose / NDT, VoxelGrid, GICP",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -4278,12 +4350,12 @@
         },
         {
           "repo": "lidarslam_ros2",
-          "description": "ROS 2 LiDAR SLAM for pointcloud-map authoring, benchmarking, and Autoware-compatible map workflows.",
+          "description": "点群地図の作成、ベンチマーク、Autoware 互換の地図ワークフローに対応した ROS 2 LiDAR SLAM",
           "language": "HTML",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/lidarslam_ros2",
           "match_score": 6,
-          "summary": "scan_matching: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path via Submap, LoopClosure, SLAM",
+          "summary": "scan_matching: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path / Submap, LoopClosure, SLAM",
           "functions": [
             "add",
             "_load_module",
@@ -4360,12 +4432,12 @@
         },
         {
           "repo": "littleslam_ros2",
-          "description": "A ROS2 Wrapper for LittleSLAM, which is a 2D-LiDAR SLAM for educational use",
+          "description": "教育用途の 2D LiDAR SLAM である LittleSLAM の ROS2 ラッパー",
           "language": "C++",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/littleslam_ros2",
           "match_score": 5,
-          "summary": "scan_matching: LaserScan, PointCloud2 -> Path, PointCloud2, Pose via SLAM, CLAS, ICP",
+          "summary": "scan_matching: LaserScan, PointCloud2 -> Path, PointCloud2, Pose / SLAM, CLAS, ICP",
           "functions": [
             "generate_launch_description",
             "main",
@@ -4405,55 +4477,51 @@
         },
         {
           "repo": "localization_zoo",
-          "description": "C++ implementations, derived variants, and compact baselines for localization papers with ROS 2, tests, and benchmarks.",
+          "description": "ROS 2・テスト・ベンチマーク付きで、自己位置推定論文の C++ 実装、派生バリアント、コンパクトなベースラインをまとめたリポジトリ。",
           "language": "C++",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/localization_zoo",
-          "match_score": 10,
-          "summary": "scan_matching: Imu, Odometry, Path -> Odometry, Path, Pose via ICP, LIO, GICP",
+          "match_score": 8,
+          "summary": "scan_matching: Imu, Odometry, PointCloud2 -> Path / ICP, GICP, LIO",
           "functions": [
             "main",
-            "Create",
-            "curr_point_",
-            "computeATE",
-            "compute_ate",
             "parse_args",
-            "loadImuCsv",
-            "load_poses",
+            "load_json",
+            "write_binary_pcd",
+            "compute_ate",
+            "relpath",
+            "render_metric",
             "stamp_to_sec",
             "extract_points",
-            "write_binary_pcd",
-            "export_pointclouds"
+            "export_pointclouds",
+            "export_imu",
+            "fmt"
           ],
           "ros_topics": [
             "/lidar/0/pandar_packets",
-            "/imu/0/data_raw/corrected",
-            "/velodyne"
+            "/imu/0/data_raw/corrected"
           ],
           "io": {
             "inputs": [
               "Imu",
               "Odometry",
-              "Path",
               "PointCloud2"
             ],
             "outputs": [
-              "Odometry",
-              "Path",
-              "Pose"
+              "Path"
             ]
           },
           "algorithms": [
             "ICP",
-            "LIO",
             "GICP",
-            "VoxelGrid",
-            "Odometry",
+            "LIO",
             "NDT",
             "SLAM",
-            "IMUPreintegration",
-            "Inertial",
-            "LoopClosure"
+            "VoxelGrid",
+            "Odometry",
+            "VGICP",
+            "SMALL_GICP",
+            "Inertial"
           ],
           "relevant_files": [
             ".github/workflows/ci.yml",
@@ -4462,31 +4530,31 @@
             "PLAN.md",
             "README.md",
             "common/CMakeLists.txt",
+            "common/include/common/ceres_compat.h",
             "common/include/common/io.h",
             "common/include/common/math_utils.h",
             "common/include/common/types.h",
             "common/src/io.cpp",
             "common/src/math_utils.cpp",
             "docs/benchmarks/latest/results.json",
-            "evaluation/CMakeLists.txt",
-            "evaluation/scripts/benchmark.py",
-            "evaluation/scripts/export_benchmark_site.py",
-            "evaluation/scripts/extract_ros1_lidar_imu.py",
-            "evaluation/scripts/extract_ros2_lidar_imu.py",
-            "evaluation/scripts/plot_trajectory.py",
-            "evaluation/scripts/reference_pose_to_gt_csv.py",
-            "evaluation/src/dataset_loader.h"
+            "docs/decisions.md",
+            "docs/experiments.md",
+            "docs/interfaces.md",
+            "docs/paper_assets.md",
+            "docs/paper_captions.md",
+            "docs/paper_claim.md",
+            "docs/paper_comparison.md"
           ],
           "reason": "belongs_to_lidar_family"
         },
         {
           "repo": "ndt_omp_ros2",
-          "description": "ROS2 porting of ndt_omp",
+          "description": "ndt_omp の ROS2 移植版",
           "language": "C++",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/ndt_omp_ros2",
           "match_score": 16,
-          "summary": "scan_matching: unknown input -> Path via VoxelGrid, ICP, GICP",
+          "summary": "scan_matching: 入力不明 -> Path / VoxelGrid, ICP, GICP",
           "functions": [
             "Agreement",
             "getLeaf",
@@ -4544,12 +4612,12 @@
         },
         {
           "repo": "CloudAnalyzer",
-          "description": "AI-friendly CLI tool for point cloud analysis and evaluation — F1/Chamfer/Hausdorff metrics, ICP/GICP registration, 22 commands",
+          "description": "AI フレンドリーな点群分析・評価 CLI。F1 / Chamfer / Hausdorff 指標、ICP / GICP レジストレーション、22 コマンドを提供。",
           "language": "Python",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/CloudAnalyzer",
-          "match_score": 13,
-          "summary": "scan_matching: Path -> Path via CLAS, ICP, VoxelGrid",
+          "match_score": 11,
+          "summary": "scan_matching: Path -> Path / CLAS, ICP, VoxelGrid",
           "functions": [
             "test_file_not_found",
             "test_custom_thresholds",
@@ -4611,12 +4679,12 @@
         },
         {
           "repo": "construction-diff",
-          "description": "Detect construction progress by comparing point cloud scans over time",
+          "description": "時系列の点群スキャン比較で建設進捗を検出",
           "language": "Python",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/construction-diff",
           "match_score": 11,
-          "summary": "scan_matching: unknown input -> Path via VoxelGrid, ICP, CLAS",
+          "summary": "scan_matching: 入力不明 -> Path / VoxelGrid, ICP, CLAS",
           "functions": [
             "_sample_report",
             "cli",
@@ -4673,12 +4741,12 @@
         },
         {
           "repo": "dynamic-3d-object-removal",
-          "description": "Numpy-only dynamic object removal for LiDAR point clouds. 3D box crop + temporal filtering, ROS2 realtime node, public AV2 demos.",
+          "description": "NumPy のみで動く LiDAR 点群向け動的物体除去。3D box crop + 時系列フィルタ、ROS2 リアルタイムノード、公開 AV2 デモ付き。",
           "language": "Python",
-          "track": "state_estimation",
+          "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal",
-          "match_score": 6,
-          "summary": "state_estimation: Path, PointCloud2 -> Path, PointCloud2 via VoxelGrid, CLAS, NDT",
+          "match_score": 5,
+          "summary": "scan_matching: Path, PointCloud2 -> Path, PointCloud2 / VoxelGrid, CLAS, NDT",
           "functions": [
             "main",
             "_build_parser",
@@ -4733,12 +4801,12 @@
         },
         {
           "repo": "rsasaki0109-tweet-summaries",
-          "description": "ロボティクス・自動運転・3D再構成・VLA関連の技術ポストを月次でアーカイブ | Monthly archive of robotics, autonomous driving, 3D reconstruction & VLA posts",
+          "description": "ロボティクス・自動運転・3D 再構成・VLA 関連の技術ポストを月次でアーカイブ | ロボティクス、自動運転、3D 再構成、VLA 投稿の月次アーカイブ",
           "language": "HTML",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/rsasaki0109-tweet-summaries",
           "match_score": 0,
-          "summary": "state_estimation: unknown input -> unknown output via SLAM",
+          "summary": "state_estimation: 入力不明 -> 出力不明 / SLAM",
           "functions": [],
           "ros_topics": [],
           "io": {
@@ -4753,12 +4821,12 @@
         },
         {
           "repo": "slam-handbook-public-release",
-          "description": "Release repo for our SLAM Handbook",
+          "description": "SLAM Handbook の公開用リポジトリ",
           "language": null,
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/slam-handbook-public-release",
           "match_score": 0,
-          "summary": "state_estimation: Odometry -> unknown output via SLAM, LIO, Odometry",
+          "summary": "state_estimation: Odometry -> 出力不明 / SLAM, LIO, Odometry",
           "functions": [],
           "ros_topics": [],
           "io": {
@@ -4783,12 +4851,12 @@
         },
         {
           "repo": "bagx",
-          "description": "Post-processing analysis engine for ROS2 rosbag — eval, compare, sync, anomaly detection, AI export",
+          "description": "ROS2 rosbag 向け後処理解析エンジン。評価、比較、同期、異常検出、AI エクスポートに対応",
           "language": "Python",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/bagx",
           "match_score": 5,
-          "summary": "scan_matching: Imu, LaserScan, Odometry -> NavSatFix, Path via CLAS, Odometry, AMCL",
+          "summary": "scan_matching: Imu, LaserScan, Odometry -> NavSatFix, Path / CLAS, Odometry, AMCL",
           "functions": [
             "to_dict",
             "main",
@@ -4867,12 +4935,12 @@
         },
         {
           "repo": "company-technology-genealogy",
-          "description": "Interactive genealogy of robotics & AI companies and their technology evolution",
+          "description": "ロボティクス / AI 企業とその技術進化をたどるインタラクティブ系譜図",
           "language": "Python",
           "track": "path_planning",
           "local_path": "rsasaki-hub/.cache/repos/company-technology-genealogy",
           "match_score": 5,
-          "summary": "path_planning: unknown input -> Path via SLAM, CLAS, DWA",
+          "summary": "path_planning: 入力不明 -> Path / SLAM, CLAS, DWA",
           "functions": [
             "build_stats",
             "main",
@@ -4906,12 +4974,12 @@
         },
         {
           "repo": "crossdomain-object-tracker",
-          "description": "Cross-domain object detection/tracking evaluation tool for robotics datasets (YOLOv8, Grounding DINO, ByteTrack, COCO mAP)",
+          "description": "ロボティクス向けデータセットのクロスドメイン物体検出・追跡評価ツール（YOLOv8、Grounding DINO、ByteTrack、COCO mAP）",
           "language": "Python",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/crossdomain-object-tracker",
           "match_score": 4,
-          "summary": "scan_matching: Path -> Path via CLAS, NDT, LoopClosure",
+          "summary": "scan_matching: Path -> Path / CLAS, NDT, LoopClosure",
           "functions": [
             "main",
             "test_empty_results",
@@ -4966,12 +5034,12 @@
         },
         {
           "repo": "gs-sim2real",
-          "description": "Multi-dataset 3D Gaussian Splatting reconstruction playground (COLMAP, gsplat, nerfstudio, Waymo)",
+          "description": "複数データセット対応の 3D Gaussian Splatting 再構成プレイグラウンド（COLMAP、gsplat、nerfstudio、Waymo）。",
           "language": "JavaScript",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/gs-sim2real",
           "match_score": 5,
-          "summary": "scan_matching: Path -> Path via CLAS, NDT, LoopClosure",
+          "summary": "scan_matching: Path -> Path / CLAS, NDT, LoopClosure",
           "functions": [
             "align",
             "main",
@@ -5036,7 +5104,7 @@
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/kinematicPOST",
           "match_score": 12,
-          "summary": "scan_matching: unknown input -> unknown output via RTK, RINEX, QZSS",
+          "summary": "scan_matching: 入力不明 -> 出力不明 / RTK, RINEX, QZSS",
           "functions": [
             "pointer",
             "matrix",
@@ -5094,12 +5162,12 @@
         },
         {
           "repo": "robotics-technology-genealogy",
-          "description": "Interactive genealogy tree of Robotics & AI technologies. Live demo available.",
+          "description": "ロボティクス / AI 技術のインタラクティブ系譜図。ライブデモあり。",
           "language": "Python",
           "track": "path_planning",
           "local_path": "rsasaki-hub/.cache/repos/robotics-technology-genealogy",
           "match_score": 6,
-          "summary": "path_planning: Odometry, Path -> Path, Pose via SLAM, Odometry, CLAS",
+          "summary": "path_planning: Odometry, Path -> Path, Pose / SLAM, Odometry, CLAS",
           "functions": [
             "_resolve_domains_dir",
             "show",
@@ -5160,21 +5228,21 @@
           "language": "Jupyter Notebook",
           "track": "scan_matching",
           "local_path": "rsasaki-hub/.cache/repos/slam-handbook-python",
-          "match_score": 4,
-          "summary": "scan_matching: Odometry -> Pose via SLAM, Odometry, IMUPreintegration",
+          "match_score": 5,
+          "summary": "scan_matching: Odometry -> Pose / SLAM, CLAS, Odometry",
           "functions": [
+            "test_exp_log_roundtrip",
+            "test_returns_axes",
+            "test_shape",
             "__init__",
-            "residual",
-            "cost",
-            "add_variable",
-            "add_factor",
-            "get_state_vector",
-            "total_cost",
-            "skew_2d",
-            "skew_3d",
-            "rotation_matrix_2d",
-            "homogeneous",
-            "dehomogeneous"
+            "test_residual",
+            "test_cost_zero_residual",
+            "test_antisymmetric",
+            "test_orthogonal",
+            "test_det_one",
+            "test_exp_identity",
+            "test_wedge_vee_roundtrip",
+            "test_inv"
           ],
           "ros_topics": [],
           "io": {
@@ -5187,36 +5255,48 @@
           },
           "algorithms": [
             "SLAM",
-            "Odometry",
-            "IMUPreintegration",
             "CLAS",
+            "Odometry",
             "Semantic",
+            "IMUPreintegration",
+            "NDT",
             "ICP",
             "Inertial",
             "RANSAC",
             "PoseGraph"
           ],
           "relevant_files": [
+            ".github/ISSUE_TEMPLATE/bug_report.md",
+            ".github/ISSUE_TEMPLATE/feature_request.md",
+            ".github/dependabot.yml",
+            ".github/workflows/ci.yml",
+            ".github/workflows/pages.yml",
+            ".pre-commit-config.yaml",
+            "CONTRIBUTING.md",
             "README.md",
+            "README_ja.md",
+            "_config.yml",
+            "_toc.yml",
             "data/README.md",
             "pyproject.toml",
             "requirements.txt",
-            "utils/__init__.py",
-            "utils/factor_graph.py",
-            "utils/geometry.py",
-            "utils/lie_groups.py",
-            "utils/plotting.py"
+            "tests/__init__.py",
+            "tests/test_factor_graph.py",
+            "tests/test_geometry.py",
+            "tests/test_lie_groups.py",
+            "tests/test_plotting.py",
+            "utils/__init__.py"
           ],
           "reason": "not_algorithm_implementation"
         },
         {
           "repo": "PoseOptimizationSLAM3D",
-          "description": "Python sample code of 3D pose optimization SLAM",
+          "description": "3D ポーズ最適化 SLAM の Python サンプルコード",
           "language": "Python",
           "track": "state_estimation",
           "local_path": "rsasaki-hub/.cache/repos/PoseOptimizationSLAM3D",
           "match_score": 0,
-          "summary": "state_estimation: unknown input -> Pose via SLAM, PoseGraph, CLAS",
+          "summary": "state_estimation: 入力不明 -> Pose / SLAM, PoseGraph, CLAS",
           "functions": [
             "__init__",
             "main",
@@ -5255,12 +5335,12 @@
         },
         {
           "repo": "gnssplusplus-library",
-          "description": "Modern C++ GNSS/RTK/PPP/CLAS toolkit.",
+          "description": "モダン C++ による GNSS / RTK / PPP / CLAS ツールキット。",
           "language": "C++",
           "track": "path_planning",
           "local_path": "rsasaki-hub/.cache/repos/gnssplusplus-library",
           "match_score": 1,
-          "summary": "path_planning: Path -> Path via RTK, PPP, CLAS",
+          "summary": "path_planning: Path -> Path / RTK, PPP, CLAS",
           "functions": [
             "main",
             "parse_args",
@@ -5336,7 +5416,7 @@
           "track": "path_planning",
           "local_path": "rsasaki-hub/.cache/repos/robotics-datasets-hub",
           "match_score": 1,
-          "summary": "path_planning: unknown input -> Path via SLAM, Segmentation, CLAS",
+          "summary": "path_planning: 入力不明 -> Path / SLAM, Segmentation, CLAS",
           "functions": [
             "list_sequences",
             "generate_synthetic_covla_scenes",
@@ -5390,12 +5470,12 @@
           "reason": "weak_problem_match"
         }
       ],
-      "generated_at": "2026-04-04T04:01:31+00:00",
+      "generated_at": "2026-04-10T05:40:05+00:00",
       "track_rankings": {
         "path_planning": [
           {
             "repo": "simple_visual_slam",
-            "overall_score": 78.19
+            "overall_score": 78.99
           },
           {
             "repo": "CudaRobotics",
@@ -5403,17 +5483,17 @@
           },
           {
             "repo": "rust_robotics",
-            "overall_score": 41.34
-          },
-          {
-            "repo": "roboclaw-rs",
-            "overall_score": 27.62
+            "overall_score": 48.75
           }
         ],
         "scan_matching": [
           {
             "repo": "NormalDistributionTransform2D",
             "overall_score": 36.44
+          },
+          {
+            "repo": "roboclaw-rs",
+            "overall_score": 27.62
           }
         ],
         "state_estimation": [
@@ -5467,24 +5547,31 @@
           "output": [
             "Path"
           ],
-          "optional_output": [],
+          "optional_output": [
+            "Pose"
+          ],
           "algorithm_markers": [
-            "LoopClosure",
             "SLAM",
-            "DWA",
-            "CLAS",
-            "MPC"
+            "MPC",
+            "AStar",
+            "LoopClosure",
+            "EKF"
           ]
         },
         "scan_matching": {
           "track": "scan_matching",
           "input": [],
           "optional_input": [],
-          "output": [],
+          "output": [
+            "Path"
+          ],
           "optional_output": [],
           "algorithm_markers": [
             "NDT",
-            "SLAM"
+            "SLAM",
+            "CLAS",
+            "LoopClosure",
+            "ICP"
           ]
         }
       }
@@ -5492,7 +5579,7 @@
     {
       "name": "gnss_positioning_exploration",
       "status": "synthesized",
-      "problem_statement": "Compare GNSS and multi-sensor positioning implementations.",
+      "problem_statement": "GNSS および複合センサ測位の実装を比較する。",
       "notes": [
         "Ranges from raw signal processing (gnss_gpu) to full RTK/PPP toolkit (gnssplusplus-library) to ROS2 fusion nodes.",
         "Comparison axes: positioning method, sensor fusion level, accuracy target."
@@ -5518,7 +5605,7 @@
       "tracks": [
         {
           "name": "gnss_processing",
-          "description": "Raw GNSS signal processing and positioning (RTK, PPP, code/carrier).",
+          "description": "GNSS 生信号処理と測位（RTK、PPP、コード / 搬送波）。",
           "keywords": [
             "gnss",
             "gps",
@@ -5534,7 +5621,7 @@
         },
         {
           "name": "multi_sensor_positioning",
-          "description": "GNSS fused with IMU, wheel odometry, or other sensors.",
+          "description": "GNSS を IMU、車輪オドメトリ、その他センサと融合した測位。",
           "keywords": [
             "imu",
             "wheel",
@@ -5551,25 +5638,25 @@
       "implementations": [
         {
           "repo": "gnssplusplus-library",
-          "description": "Modern C++ GNSS/RTK/PPP/CLAS toolkit.",
+          "description": "モダン C++ による GNSS / RTK / PPP / CLAS ツールキット。",
           "language": "C++",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/gnssplusplus-library",
           "match_score": 31,
-          "summary": "gnss_processing: NavSatFix, Path, Pose -> NavSatFix, Path, Pose via PPP, RTK, CLAS",
+          "summary": "gnss_processing: Path -> Path / PPP, RTK, CLAS",
           "functions": [
             "main",
             "parse_args",
             "__init__",
-            "run_command",
-            "build_summary_payload",
-            "rounded",
-            "printUsage",
-            "parseArguments",
             "parse_serial_path",
             "configure_serial",
-            "read_pos_records",
-            "enforce_summary_requirements"
+            "run_command",
+            "build_summary_payload",
+            "close",
+            "read",
+            "rounded",
+            "printUsage",
+            "parseArguments"
           ],
           "ros_topics": [
             "/dev/tty",
@@ -5583,14 +5670,10 @@
           ],
           "io": {
             "inputs": [
-              "NavSatFix",
-              "Path",
-              "Pose"
+              "Path"
             ],
             "outputs": [
-              "NavSatFix",
-              "Path",
-              "Pose"
+              "Path"
             ]
           },
           "algorithms": [
@@ -5603,17 +5686,15 @@
             "Ionosphere",
             "PID",
             "Pseudorange",
-            "Troposphere"
+            "AmbiguityResolution"
           ],
           "relevant_files": [
             ".github/PULL_REQUEST_TEMPLATE.md",
             ".github/workflows/ci.yml",
             ".github/workflows/docker.yml",
             ".github/workflows/docs.yml",
-            "CLAUDE.md",
             "CMakeLists.txt",
             "CONTRIBUTING.md",
-            "PLAN.md",
             "README.md",
             "apps/CMakeLists.txt",
             "apps/gnss.py",
@@ -5625,11 +5706,13 @@
             "apps/gnss_fetch_products.py",
             "apps/gnss_ionex_info.py",
             "apps/gnss_live.cpp",
-            "apps/gnss_live_signoff.py"
+            "apps/gnss_live_signoff.py",
+            "apps/gnss_moving_base_plot.py",
+            "apps/gnss_moving_base_prepare.py"
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.005,
+              "analysis_runtime_seconds": 0.0127,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -5676,60 +5759,62 @@
                   "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/CONTRIBUTING.md"
                 },
                 {
-                  "kind": "benchmark",
+                  "kind": "runtime",
                   "value": null,
-                  "line": "- **Benchmark / 描画回帰**: `tests/test_benchmark_scripts.py`",
-                  "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/PLAN.md"
+                  "line": "The point of this repo is simple: ship a usable GNSS toolchain without depending on an external RTKLIB runtime.",
+                  "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/README.md"
                 },
                 {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "**目標**: Odaiba moving benchmark を README と回帰で維持する",
-                  "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/PLAN.md"
+                  "kind": "accuracy",
+                  "value": 100.0,
+                  "line": "| Converged accuracy (last 100s) | **14.6 cm** | **14.6 cm** | 5.1 cm |",
+                  "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/README.md"
                 },
                 {
-                  "kind": "benchmark",
-                  "value": 3.0,
-                  "line": "- [x] お台場データ (RINEX 3, multi-GNSS) での solver/benchmark 導線",
-                  "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/PLAN.md"
+                  "kind": "accuracy",
+                  "value": 6.0,
+                  "line": "gnssplusplus includes a native C++ QZSS L6 CSSR decoder (ST1–ST9, ST11) that reads `.l6` binary files directly via `--ssr file.l6`. The C++ native decoder achieves **identical 14.6",
+                  "source": "rsasaki-hub/.cache/repos/gnssplusplus-library/README.md"
                 }
               ],
-              "metric_count": 66,
-              "quality_signal": 95.0,
-              "score": 97.0
+              "metric_count": 65,
+              "quality_signal": 100.0,
+              "score": 100.0
             },
             "readability": {
-              "source_files": 10,
-              "nonempty_loc": 5626,
-              "comment_ratio": 0.016,
-              "branch_keywords": 848,
-              "import_count": 108,
-              "function_count": 163,
+              "source_files": 12,
+              "nonempty_loc": 6209,
+              "comment_ratio": 0.015,
+              "branch_keywords": 911,
+              "import_count": 133,
+              "function_count": 187,
               "largest_file_loc": 1789,
               "largest_function_span": 871,
-              "score": 28.12
+              "score": 26.43
             },
             "extensibility": {
               "module_dirs": 1,
               "config_files": 3,
-              "helper_units": 2627,
-              "public_surface_markers": 21,
-              "hard_coded_topics": 1,
-              "orchestration_split": 0.1,
-              "score": 78.5
+              "helper_units": 2956,
+              "public_surface_markers": 50,
+              "hard_coded_topics": 6,
+              "orchestration_split": 0.083,
+              "score": 71.0
             },
-            "overall_score": 75.16,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "overall_score": 74.36,
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "gnss_gpu",
-          "description": "GPU-accelerated GNSS signal processing library (CUDA + Python)",
+          "description": "GPU 加速 GNSS 信号処理ライブラリ（CUDA + Python）",
           "language": "Python",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/gnss_gpu",
           "match_score": 18,
-          "summary": "gnss_processing: PointCloud2 -> Path via EKF, Pseudorange, RTK",
+          "summary": "gnss_processing: PointCloud2 -> Path / EKF, Pseudorange, RTK",
           "functions": [
             "main",
             "__init__",
@@ -5793,7 +5878,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0039,
+              "analysis_runtime_seconds": 0.0109,
               "benchmark_artifacts": [
                 "rsasaki-hub/.cache/repos/gnss_gpu/benchmarks/RESULTS.md",
                 "rsasaki-hub/.cache/repos/gnss_gpu/benchmarks/bench_acquisition.py",
@@ -5892,7 +5977,9 @@
               "score": 72.0
             },
             "overall_score": 53.86,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
@@ -5902,7 +5989,7 @@
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/RTKLIB",
           "match_score": 16,
-          "summary": "gnss_processing: unknown input -> Path via RTK, RTCM, RINEX",
+          "summary": "gnss_processing: 入力不明 -> Path / RTK, RTCM, RINEX",
           "functions": [
             "QDialog",
             "status",
@@ -5961,7 +6048,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0008,
+              "analysis_runtime_seconds": 0.0013,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -5990,17 +6077,19 @@
               "score": 82.5
             },
             "overall_score": 31.51,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "q-method",
-          "description": "estimator to minimize Wahba's loss function for satellite attitude ",
+          "description": "衛星姿勢に対する Wahba 損失関数最小化推定器",
           "language": "Python",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/q-method",
           "match_score": 4,
-          "summary": "gnss_processing: unknown input -> unknown output via generic pipeline",
+          "summary": "gnss_processing: 入力不明 -> 出力不明 / 主要アルゴリズム不明",
           "functions": [
             "estimate_quaternion",
             "plot_vectors",
@@ -6017,7 +6106,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0001,
+              "analysis_runtime_seconds": 0.0003,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -6046,17 +6135,19 @@
               "score": 48.0
             },
             "overall_score": 35.98,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 1,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "gnss_imu_wheel_localizer",
-          "description": "gnss/imu/wheel localizer for autoware",
+          "description": "Autoware 向け GNSS / IMU / Wheel 自己位置推定器",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/gnss_imu_wheel_localizer",
           "match_score": 25,
-          "summary": "multi_sensor_positioning: Imu, NavSatFix, Odometry -> Imu, Odometry, Path via Kalman, EKF, Odometry",
+          "summary": "multi_sensor_positioning: Imu, NavSatFix, Odometry -> Imu, Odometry, Path / Kalman, EKF, Odometry",
           "functions": [
             "main",
             "quaternion_to_yaw",
@@ -6125,7 +6216,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0014,
+              "analysis_runtime_seconds": 0.0033,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -6167,17 +6258,19 @@
               "score": 86.5
             },
             "overall_score": 37.33,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 17,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "kalman_filter_localization_ros2",
-          "description": "gnss/imu localization using kalman filter",
+          "description": "Kalman Filter による GNSS / IMU 測位。",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/kalman_filter_localization_ros2",
           "match_score": 24,
-          "summary": "multi_sensor_positioning: Imu, Odometry, Pose -> Pose via EKF, Kalman, Odometry",
+          "summary": "multi_sensor_positioning: Imu, Odometry, Pose -> Pose / EKF, Kalman, Odometry",
           "functions": [
             "getX",
             "predictionUpdate",
@@ -6244,7 +6337,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0014,
+              "analysis_runtime_seconds": 0.0026,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -6304,87 +6397,21 @@
               "score": 88.0
             },
             "overall_score": 45.77,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         }
       ],
       "rejected_candidates": [
         {
-          "repo": "CudaRobotics",
-          "description": "CUDA-accelerated robotics algorithms in C++. 20+ algorithms for SLAM, Path Planning, and Localization.",
-          "language": "Cuda",
-          "track": "gnss_processing",
-          "local_path": "rsasaki-hub/.cache/repos/CudaRobotics",
-          "match_score": 3,
-          "summary": "gnss_processing: unknown input -> Path via CLAS, LIO, RRT",
-          "functions": [
-            "recommend",
-            "parse_args",
-            "main",
-            "__init__",
-            "compare",
-            "build_requests",
-            "build_variants",
-            "evaluate_variant",
-            "build_report",
-            "load_policy",
-            "rank",
-            "calc_point"
-          ],
-          "ros_topics": [
-            "/odom",
-            "/goal",
-            "/obstacles",
-            "/landmarks"
-          ],
-          "io": {
-            "inputs": [],
-            "outputs": [
-              "Path"
-            ]
-          },
-          "algorithms": [
-            "CLAS",
-            "LIO",
-            "RRT",
-            "ICP",
-            "ParticleFilter",
-            "DWA",
-            "CubicSpline",
-            "SLAM"
-          ],
-          "relevant_files": [
-            "core/fixture_promotion_interface.py",
-            "core/planner_selector_interface.py",
-            "core/time_budget_selector_interface.py",
-            "experiments/fixture_promotion/__init__.py",
-            "experiments/fixture_promotion/common.py",
-            "experiments/fixture_promotion/functional_fixture_promoter.py",
-            "experiments/fixture_promotion/oop_fixture_promoter.py",
-            "experiments/fixture_promotion/pipeline_fixture_promoter.py",
-            "experiments/planner_selection/__init__.py",
-            "experiments/planner_selection/functional_selector.py",
-            "experiments/planner_selection/oop_selector.py",
-            "experiments/planner_selection/pipeline_selector.py",
-            "experiments/support.py",
-            "experiments/time_budget_selection/__init__.py",
-            "experiments/time_budget_selection/functional_budget_selector.py",
-            "experiments/time_budget_selection/oop_budget_selector.py",
-            "experiments/time_budget_selection/pipeline_budget_selector.py",
-            "include/csv_reader.h",
-            "include/cubic_spline.h",
-            "include/frenet_path.h"
-          ],
-          "reason": "no_gnss_signal"
-        },
-        {
           "repo": "PoseOptimizationSLAM3D",
-          "description": "Python sample code of 3D pose optimization SLAM",
+          "description": "3D ポーズ最適化 SLAM の Python サンプルコード",
           "language": "Python",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/PoseOptimizationSLAM3D",
           "match_score": 3,
-          "summary": "gnss_processing: unknown input -> Pose via SLAM, PoseGraph, CLAS",
+          "summary": "gnss_processing: 入力不明 -> Pose / SLAM, PoseGraph, CLAS",
           "functions": [
             "__init__",
             "main",
@@ -6423,12 +6450,12 @@
         },
         {
           "repo": "amcl_3d",
-          "description": "AMCL(Adaptive Monte Carlo Localization) using 3D LiDAR for ROS.",
+          "description": "ROS 向け 3D LiDAR を使う AMCL（Adaptive Monte Carlo Localization）実装",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/amcl_3d",
           "match_score": 5,
-          "summary": "multi_sensor_positioning: Imu, Odometry, Path -> Path, PointCloud2, Pose via AMCL, CLAS, PID",
+          "summary": "multi_sensor_positioning: Imu, Odometry, Path -> Path, PointCloud2, Pose / AMCL, CLAS, PID",
           "functions": [
             "main",
             "yaw_from_quaternion",
@@ -6507,12 +6534,12 @@
         },
         {
           "repo": "gaussian_particle_filter",
-          "description": "Python sample of Gaussian Particle Filter localization",
+          "description": "Gaussian Particle Filter 自己位置推定の Python サンプル",
           "language": "Python",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/gaussian_particle_filter",
           "match_score": 5,
-          "summary": "multi_sensor_positioning: unknown input -> unknown output via ParticleFilter, Kalman",
+          "summary": "multi_sensor_positioning: 入力不明 -> 出力不明 / ParticleFilter, Kalman",
           "functions": [
             "calc_input",
             "observation",
@@ -6540,12 +6567,12 @@
         },
         {
           "repo": "glim",
-          "description": "GLIM: versatile and extensible range-based 3D localization and mapping framework",
+          "description": "GLIM: 汎用性と拡張性を重視した range-based 3D 自己位置推定・地図構築フレームワーク",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/glim",
           "match_score": 7,
-          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> Pose via Submap, Odometry, CLAS",
+          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> Pose / Submap, Odometry, CLAS",
           "functions": [
             "convert",
             "invert",
@@ -6609,12 +6636,12 @@
         },
         {
           "repo": "imu_estimator",
-          "description": "attitude estimator with gyro bias correction",
+          "description": "ジャイロバイアス補正付き姿勢推定器",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/imu_estimator",
           "match_score": 17,
-          "summary": "multi_sensor_positioning: Imu -> unknown output via EKF, CLAS",
+          "summary": "multi_sensor_positioning: Imu -> 出力不明 / EKF, CLAS",
           "functions": [
             "EKFEstimator",
             "predictionUpdate",
@@ -6650,12 +6677,12 @@
         },
         {
           "repo": "lidar_localization_ros2",
-          "description": "3D LIDAR Localization using NDT/GICP and pointcloud map in ROS 2 (Not SLAM)",
+          "description": "ROS 2 上で NDT/GICP と点群地図を用いる 3D LiDAR 自己位置推定（SLAM ではない）",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/lidar_localization_ros2",
           "match_score": 11,
-          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose via NDT, VoxelGrid, GICP",
+          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose / NDT, VoxelGrid, GICP",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -6706,12 +6733,12 @@
         },
         {
           "repo": "lidar_localizer",
-          "description": "lidar localizer in Autoware AI",
+          "description": "Autoware AI 向け LiDAR ローカライザ",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/lidar_localizer",
           "match_score": 11,
-          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> PointCloud2, Pose via NDT, VoxelGrid, Submap",
+          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> PointCloud2, Pose / NDT, VoxelGrid, Submap",
           "functions": [
             "main",
             "points_callback",
@@ -6775,12 +6802,12 @@
         },
         {
           "repo": "lidar_undistortion",
-          "description": "A header-only program of 3d rotary lidar undistortion using 9-axis imu",
+          "description": "9 軸 IMU を用いた 3D 回転 LiDAR 歪み補正の header-only 実装",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/lidar_undistortion",
           "match_score": 5,
-          "summary": "multi_sensor_positioning: Imu -> unknown output via CLAS",
+          "summary": "multi_sensor_positioning: Imu -> 出力不明 / CLAS",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -6803,12 +6830,12 @@
         },
         {
           "repo": "littleslam_ros2",
-          "description": "A ROS2 Wrapper for LittleSLAM, which is a 2D-LiDAR SLAM for educational use",
+          "description": "教育用途の 2D LiDAR SLAM である LittleSLAM の ROS2 ラッパー",
           "language": "C++",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/littleslam_ros2",
           "match_score": 3,
-          "summary": "gnss_processing: LaserScan, PointCloud2 -> Path, PointCloud2, Pose via SLAM, CLAS, ICP",
+          "summary": "gnss_processing: LaserScan, PointCloud2 -> Path, PointCloud2, Pose / SLAM, CLAS, ICP",
           "functions": [
             "generate_launch_description",
             "main",
@@ -6848,55 +6875,51 @@
         },
         {
           "repo": "localization_zoo",
-          "description": "C++ implementations, derived variants, and compact baselines for localization papers with ROS 2, tests, and benchmarks.",
+          "description": "ROS 2・テスト・ベンチマーク付きで、自己位置推定論文の C++ 実装、派生バリアント、コンパクトなベースラインをまとめたリポジトリ。",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/localization_zoo",
-          "match_score": 16,
-          "summary": "multi_sensor_positioning: Imu, Odometry, Path -> Odometry, Path, Pose via ICP, LIO, GICP",
+          "match_score": 14,
+          "summary": "multi_sensor_positioning: Imu, Odometry, PointCloud2 -> Path / ICP, GICP, LIO",
           "functions": [
             "main",
-            "Create",
-            "curr_point_",
-            "computeATE",
-            "compute_ate",
             "parse_args",
-            "loadImuCsv",
-            "load_poses",
+            "load_json",
+            "write_binary_pcd",
+            "compute_ate",
+            "relpath",
+            "render_metric",
             "stamp_to_sec",
             "extract_points",
-            "write_binary_pcd",
-            "export_pointclouds"
+            "export_pointclouds",
+            "export_imu",
+            "fmt"
           ],
           "ros_topics": [
             "/lidar/0/pandar_packets",
-            "/imu/0/data_raw/corrected",
-            "/velodyne"
+            "/imu/0/data_raw/corrected"
           ],
           "io": {
             "inputs": [
               "Imu",
               "Odometry",
-              "Path",
               "PointCloud2"
             ],
             "outputs": [
-              "Odometry",
-              "Path",
-              "Pose"
+              "Path"
             ]
           },
           "algorithms": [
             "ICP",
-            "LIO",
             "GICP",
-            "VoxelGrid",
-            "Odometry",
+            "LIO",
             "NDT",
             "SLAM",
-            "IMUPreintegration",
-            "Inertial",
-            "LoopClosure"
+            "VoxelGrid",
+            "Odometry",
+            "VGICP",
+            "SMALL_GICP",
+            "Inertial"
           ],
           "relevant_files": [
             ".github/workflows/ci.yml",
@@ -6905,31 +6928,31 @@
             "PLAN.md",
             "README.md",
             "common/CMakeLists.txt",
+            "common/include/common/ceres_compat.h",
             "common/include/common/io.h",
             "common/include/common/math_utils.h",
             "common/include/common/types.h",
             "common/src/io.cpp",
             "common/src/math_utils.cpp",
             "docs/benchmarks/latest/results.json",
-            "evaluation/CMakeLists.txt",
-            "evaluation/scripts/benchmark.py",
-            "evaluation/scripts/export_benchmark_site.py",
-            "evaluation/scripts/extract_ros1_lidar_imu.py",
-            "evaluation/scripts/extract_ros2_lidar_imu.py",
-            "evaluation/scripts/plot_trajectory.py",
-            "evaluation/scripts/reference_pose_to_gt_csv.py",
-            "evaluation/src/dataset_loader.h"
+            "docs/decisions.md",
+            "docs/experiments.md",
+            "docs/interfaces.md",
+            "docs/paper_assets.md",
+            "docs/paper_captions.md",
+            "docs/paper_claim.md",
+            "docs/paper_comparison.md"
           ],
           "reason": "no_gnss_signal"
         },
         {
           "repo": "mathematical_robotics",
-          "description": "A C++ port of the MathematicalRobotics library",
+          "description": "MathematicalRobotics ライブラリの C++ 移植",
           "language": "C++",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/mathematical_robotics",
           "match_score": 11,
-          "summary": "multi_sensor_positioning: Imu, Odometry -> Path, Pose via IMUPreintegration, CLAS, PoseGraph",
+          "summary": "multi_sensor_positioning: Imu, Odometry -> Path, Pose / IMUPreintegration, CLAS, PoseGraph",
           "functions": [
             "main",
             "timestamp",
@@ -6993,12 +7016,12 @@
         },
         {
           "repo": "particle_filtering_model_predictive_control",
-          "description": "Particle filtering model predictive control simulation.",
+          "description": "Particle Filter とモデル予測制御のシミュレーション",
           "language": "Python",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/particle_filtering_model_predictive_control",
           "match_score": 4,
-          "summary": "multi_sensor_positioning: unknown input -> Path via MPC, ParticleFilter, CLAS",
+          "summary": "multi_sensor_positioning: 入力不明 -> Path / MPC, ParticleFilter, CLAS",
           "functions": [
             "__init__",
             "motion_model",
@@ -7037,7 +7060,7 @@
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/quaternion-based_kalman_filter",
           "match_score": 6,
-          "summary": "multi_sensor_positioning: unknown input -> unknown output via Kalman, CLAS",
+          "summary": "multi_sensor_positioning: 入力不明 -> 出力不明 / Kalman, CLAS",
           "functions": [
             "skew_symmetric",
             "__init__",
@@ -7064,12 +7087,12 @@
         },
         {
           "repo": "roboclaw-rs",
-          "description": "Rust-first, agent-first robotics workspace with ROS 2 hooks, YAML skills, simulator/hardware backends, and LLM-plannable execution.",
+          "description": "Rust-first・agent-first のロボティクスワークスペース。ROS 2 フック、YAML スキル、シミュレータ / 実機バックエンド、LLM で計画可能な実行基盤を備える。",
           "language": "Rust",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/roboclaw-rs",
           "match_score": 5,
-          "summary": "multi_sensor_positioning: unknown input -> Path via CLAS, LoopClosure, ICP",
+          "summary": "multi_sensor_positioning: 入力不明 -> Path / CLAS, LoopClosure, ICP",
           "functions": [
             "Some",
             "name",
@@ -7100,8 +7123,7 @@
           "algorithms": [
             "CLAS",
             "LoopClosure",
-            "ICP",
-            "DWA"
+            "ICP"
           ],
           "relevant_files": [
             "crates/agent/src/lib.rs",
@@ -7129,25 +7151,25 @@
         },
         {
           "repo": "rust_robotics",
-          "description": "Rust implementation of PythonRobotics, sample codes for robotics algorithms",
+          "description": "PythonRobotics の Rust 実装。ロボティクスアルゴリズムのサンプルコード集。",
           "language": "Rust",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/rust_robotics",
-          "match_score": 11,
-          "summary": "multi_sensor_positioning: unknown input -> Path via UKF, MPC, EKF",
+          "match_score": 7,
+          "summary": "multi_sensor_positioning: 入力不明 -> Path / MPC, AStar, LQR",
           "functions": [
-            "new",
             "in",
+            "new",
+            "main",
             "default",
             "Some",
-            "main",
             "calc_position",
             "let",
-            "update",
             "get_path",
             "compute_control",
             "check_goal",
-            "with_defaults"
+            "to_state2d",
+            "compute_steering"
           ],
           "ros_topics": [],
           "io": {
@@ -7157,19 +7179,20 @@
             ]
           },
           "algorithms": [
-            "UKF",
             "MPC",
-            "EKF",
-            "LQR",
             "AStar",
+            "LQR",
             "LoopClosure",
-            "Kalman",
+            "EKF",
             "RRT",
-            "ParticleFilter",
-            "CLAS"
+            "UKF",
+            "CLAS",
+            "DWA",
+            "CubicSpline"
           ],
           "relevant_files": [
             "crates/rust_robotics/examples/a_star.rs",
+            "crates/rust_robotics/examples/any_angle_comparison.rs",
             "crates/rust_robotics/examples/headless_grid_planners.rs",
             "crates/rust_robotics/examples/headless_localizers.rs",
             "crates/rust_robotics/examples/headless_navigation_loop.rs",
@@ -7179,27 +7202,26 @@
             "crates/rust_robotics/examples/state_lattice.rs",
             "crates/rust_robotics/examples/theta_star.rs",
             "crates/rust_robotics/src/lib.rs",
+            "crates/rust_robotics_control/examples/update_path_tracking_accuracy_docs.rs",
             "crates/rust_robotics_control/src/arm_obstacle_navigation.rs",
             "crates/rust_robotics_control/src/behavior_tree.rs",
             "crates/rust_robotics_control/src/cgmres_nmpc.rs",
             "crates/rust_robotics_control/src/drone_3d_trajectory.rs",
-            "crates/rust_robotics_control/src/lib.rs",
-            "crates/rust_robotics_control/src/lqr_control.rs",
-            "crates/rust_robotics_control/src/lqr_speed_steer_control.rs",
-            "crates/rust_robotics_control/src/lqr_steer_control.rs",
-            "crates/rust_robotics_control/src/model_predictive_trajectory_generator.rs",
-            "crates/rust_robotics_control/src/move_to_pose.rs"
+            "crates/rust_robotics_control/src/experiments/mod.rs",
+            "crates/rust_robotics_control/src/experiments/path_tracking_accuracy/first_scenario.rs",
+            "crates/rust_robotics_control/src/experiments/path_tracking_accuracy/full_bucket.rs",
+            "crates/rust_robotics_control/src/experiments/path_tracking_accuracy/mod.rs"
           ],
           "reason": "no_gnss_signal"
         },
         {
           "repo": "GNSS-Radar",
-          "description": "GNSS-Radar is a web application to show the current GNSS constellation",
+          "description": "現在の GNSS コンステレーションを表示する Web アプリ",
           "language": "HTML",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/GNSS-Radar",
           "match_score": 12,
-          "summary": "gnss_processing: unknown input -> unknown output via QZSS",
+          "summary": "gnss_processing: 入力不明 -> 出力不明 / QZSS",
           "functions": [],
           "ros_topics": [],
           "io": {
@@ -7216,12 +7238,12 @@
         },
         {
           "repo": "lidarslam_ros2",
-          "description": "ROS 2 LiDAR SLAM for pointcloud-map authoring, benchmarking, and Autoware-compatible map workflows.",
+          "description": "点群地図の作成、ベンチマーク、Autoware 互換の地図ワークフローに対応した ROS 2 LiDAR SLAM",
           "language": "HTML",
           "track": "gnss_processing",
           "local_path": "rsasaki-hub/.cache/repos/lidarslam_ros2",
           "match_score": 7,
-          "summary": "gnss_processing: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path via Submap, LoopClosure, SLAM",
+          "summary": "gnss_processing: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path / Submap, LoopClosure, SLAM",
           "functions": [
             "add",
             "_load_module",
@@ -7298,12 +7320,12 @@
         },
         {
           "repo": "NormalDistributionTransform2D",
-          "description": "Python sample code of 2D NDT Scan Matching",
+          "description": "2D NDT スキャンマッチングの Python サンプルコード",
           "language": "Python",
           "track": "multi_sensor_positioning",
           "local_path": "rsasaki-hub/.cache/repos/NormalDistributionTransform2D",
           "match_score": 2,
-          "summary": "multi_sensor_positioning: unknown input -> unknown output via NDT, SLAM",
+          "summary": "multi_sensor_positioning: 入力不明 -> 出力不明 / NDT, SLAM",
           "functions": [
             "generate_src_points",
             "apply_transformation",
@@ -7329,12 +7351,12 @@
           "reason": "weak_problem_match"
         }
       ],
-      "generated_at": "2026-04-04T04:01:43+00:00",
+      "generated_at": "2026-04-10T05:40:09+00:00",
       "track_rankings": {
         "gnss_processing": [
           {
             "repo": "gnssplusplus-library",
-            "overall_score": 75.16
+            "overall_score": 74.36
           },
           {
             "repo": "gnss_gpu",
@@ -7364,20 +7386,14 @@
         "gnss_processing": {
           "track": "gnss_processing",
           "input": [
-            "NavSatFix",
             "Path",
-            "Pose"
-          ],
-          "optional_input": [
             "PointCloud2"
           ],
+          "optional_input": [],
           "output": [
-            "Path",
-            "NavSatFix"
+            "Path"
           ],
-          "optional_output": [
-            "Pose"
-          ],
+          "optional_output": [],
           "algorithm_markers": [
             "RTK",
             "CLAS",
@@ -7417,7 +7433,7 @@
     {
       "name": "pointcloud_processing_exploration",
       "status": "synthesized",
-      "problem_statement": "Compare point cloud analysis, transformation, and processing tools.",
+      "problem_statement": "点群の分析・変換・処理ツールを比較する。",
       "notes": [
         "Includes analysis (CloudAnalyzer), object removal (dynamic-3d-object-removal), diff detection (construction-diff), format conversion (npy2pointcloud), BIM (pointcloud2ifc, bim-quality-checker).",
         "Comparison axes: input format, processing method, output artifact."
@@ -7443,7 +7459,7 @@
       "tracks": [
         {
           "name": "pointcloud_analysis",
-          "description": "Point cloud inspection, evaluation, and visualization.",
+          "description": "点群の検査・評価・可視化。",
           "keywords": [
             "analysis",
             "analyzer",
@@ -7456,7 +7472,7 @@
         },
         {
           "name": "pointcloud_transformation",
-          "description": "Point cloud filtering, object removal, diff, and format conversion.",
+          "description": "点群のフィルタリング、物体除去、差分検出、形式変換。",
           "keywords": [
             "removal",
             "filter",
@@ -7473,7 +7489,7 @@
         },
         {
           "name": "pointcloud_to_model",
-          "description": "Point cloud to BIM/IFC or semantic model conversion.",
+          "description": "点群から BIM / IFC またはセマンティックモデルへの変換。",
           "keywords": [
             "bim",
             "ifc",
@@ -7489,12 +7505,12 @@
       "implementations": [
         {
           "repo": "CloudAnalyzer",
-          "description": "AI-friendly CLI tool for point cloud analysis and evaluation — F1/Chamfer/Hausdorff metrics, ICP/GICP registration, 22 commands",
+          "description": "AI フレンドリーな点群分析・評価 CLI。F1 / Chamfer / Hausdorff 指標、ICP / GICP レジストレーション、22 コマンドを提供。",
           "language": "Python",
           "track": "pointcloud_analysis",
           "local_path": "rsasaki-hub/.cache/repos/CloudAnalyzer",
-          "match_score": 13,
-          "summary": "pointcloud_analysis: Path -> Path via CLAS, VoxelGrid, ICP",
+          "match_score": 11,
+          "summary": "pointcloud_analysis: Path -> Path / CLAS, VoxelGrid, ICP",
           "functions": [
             "_find_point_cloud_files",
             "_find_trajectory_files",
@@ -7554,7 +7570,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0023,
+              "analysis_runtime_seconds": 0.0035,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -7644,17 +7660,19 @@
               "score": 56.0
             },
             "overall_score": 79.22,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "pointcloud2ifc",
-          "description": "Automatic point cloud to IFC (BIM) conversion using semantic segmentation",
+          "description": "セマンティックセグメンテーションを用いた点群から IFC（BIM）への自動変換",
           "language": "Python",
           "track": "pointcloud_to_model",
           "local_path": "rsasaki-hub/.cache/repos/pointcloud2ifc",
           "match_score": 22,
-          "summary": "pointcloud_to_model: Path, PointCloud2 -> Path via CLAS, VoxelGrid, Segmentation",
+          "summary": "pointcloud_to_model: Path, PointCloud2 -> Path / CLAS, VoxelGrid, Segmentation",
           "functions": [
             "predict",
             "__init__",
@@ -7713,7 +7731,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0013,
+              "analysis_runtime_seconds": 0.0027,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -7803,17 +7821,19 @@
               "score": 88.0
             },
             "overall_score": 59.48,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "rohbau-annotator",
-          "description": "Annotate Rohbau3D construction site point clouds via panorama back-projection",
+          "description": "パノラマ逆投影で Rohbau3D 建設現場点群にアノテーションを付与",
           "language": "Python",
           "track": "pointcloud_to_model",
           "local_path": "rsasaki-hub/.cache/repos/rohbau-annotator",
           "match_score": 15,
-          "summary": "pointcloud_to_model: unknown input -> Path via CLAS, Semantic, Segmentation",
+          "summary": "pointcloud_to_model: 入力不明 -> Path / CLAS, Semantic, Segmentation",
           "functions": [
             "__init__",
             "scan_dir",
@@ -7863,7 +7883,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0016,
+              "analysis_runtime_seconds": 0.0031,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -7935,17 +7955,19 @@
               "score": 73.0
             },
             "overall_score": 36.59,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 16,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "bim-quality-checker",
-          "description": "Evaluate BIM model quality against point cloud measurements",
+          "description": "点群計測に対して BIM モデル品質を評価",
           "language": "Python",
           "track": "pointcloud_to_model",
           "local_path": "rsasaki-hub/.cache/repos/bim-quality-checker",
           "match_score": 12,
-          "summary": "pointcloud_to_model: unknown input -> Path via CLAS, NDT",
+          "summary": "pointcloud_to_model: 入力不明 -> Path / CLAS, NDT",
           "functions": [
             "test_contains_header",
             "check",
@@ -7995,7 +8017,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0016,
+              "analysis_runtime_seconds": 0.0033,
               "benchmark_artifacts": [
                 "rsasaki-hub/.cache/repos/bim-quality-checker/src/bim_quality_checker/report.py"
               ],
@@ -8087,17 +8109,19 @@
               "score": 88.0
             },
             "overall_score": 58.59,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "gs-sim2real",
-          "description": "Multi-dataset 3D Gaussian Splatting reconstruction playground (COLMAP, gsplat, nerfstudio, Waymo)",
+          "description": "複数データセット対応の 3D Gaussian Splatting 再構成プレイグラウンド（COLMAP、gsplat、nerfstudio、Waymo）。",
           "language": "JavaScript",
           "track": "pointcloud_to_model",
           "local_path": "rsasaki-hub/.cache/repos/gs-sim2real",
           "match_score": 6,
-          "summary": "pointcloud_to_model: Path -> Path via CLAS, NDT, LoopClosure",
+          "summary": "pointcloud_to_model: Path -> Path / CLAS, NDT, LoopClosure",
           "functions": [
             "run_cli",
             "align",
@@ -8155,7 +8179,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0033,
+              "analysis_runtime_seconds": 0.0068,
               "benchmark_artifacts": [
                 "rsasaki-hub/.cache/repos/gs-sim2real/src/gs_sim2real/benchmark.py"
               ],
@@ -8247,17 +8271,19 @@
               "score": 90.0
             },
             "overall_score": 48.67,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "npy2pointcloud",
-          "description": "Convert Rohbau3D .npy point clouds to PLY/PCD/LAS formats",
+          "description": "Rohbau3D の .npy 点群を PLY / PCD / LAS 形式へ変換",
           "language": "Python",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/npy2pointcloud",
           "match_score": 18,
-          "summary": "pointcloud_transformation: Path -> Path via CLAS, NDT",
+          "summary": "pointcloud_transformation: Path -> Path / CLAS, NDT",
           "functions": [
             "test_roundtrip_coords",
             "convert",
@@ -8309,7 +8335,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.001,
+              "analysis_runtime_seconds": 0.0019,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -8338,177 +8364,19 @@
               "score": 84.0
             },
             "overall_score": 40.05,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
-          }
-        },
-        {
-          "repo": "dynamic-3d-object-removal",
-          "description": "Numpy-only dynamic object removal for LiDAR point clouds. 3D box crop + temporal filtering, ROS2 realtime node, public AV2 demos.",
-          "language": "Python",
-          "track": "pointcloud_transformation",
-          "local_path": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal",
-          "match_score": 16,
-          "summary": "pointcloud_transformation: Path, PointCloud2 -> Path, PointCloud2 via VoxelGrid, CLAS, NDT",
-          "functions": [
-            "main",
-            "_build_parser",
-            "_percentile",
-            "parse_args",
-            "_sample_points",
-            "_eprint",
-            "_to_float",
-            "_as_vec3",
-            "__post_init__",
-            "test_unsupported_format",
-            "_run_box",
-            "_run_temporal"
-          ],
-          "ros_topics": [
-            "/points_raw",
-            "/dynamic_objects",
-            "/points_static"
-          ],
-          "io": {
-            "inputs": [
-              "Path",
-              "PointCloud2"
-            ],
-            "outputs": [
-              "Path",
-              "PointCloud2"
-            ]
-          },
-          "algorithms": [
-            "VoxelGrid",
-            "CLAS",
-            "NDT",
-            "SLAM",
-            "LoopClosure",
-            "EKF",
-            "Downsampling"
-          ],
-          "relevant_files": [
-            ".github/workflows/gh-pages.yml",
-            ".github/workflows/test.yml",
-            "AGENTS.md",
-            "README.md",
-            "bench.py",
-            "demo/actual_scan_20240820_objects.json",
-            "demo/run_scan_demo.py",
-            "demo/run_scan_sequence_demo.py",
-            "dynamic_object_removal.py",
-            "plan.md",
-            "pyproject.toml",
-            "realtime.py",
-            "scripts/download_av2_sample.py",
-            "scripts/download_kitti_sample.py",
-            "tests/conftest.py",
-            "tests/test_dynamic_object_removal.py",
-            "tests/test_sequence_demo.py"
-          ],
-          "evaluation": {
-            "benchmark": {
-              "analysis_runtime_seconds": 0.0039,
-              "benchmark_artifacts": [],
-              "benchmark_artifact_count": 0,
-              "metric_mentions": [
-                {
-                  "kind": "fps",
-                  "value": 4.0,
-                  "line": "--fps 4 \\",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/AGENTS.md"
-                },
-                {
-                  "kind": "fps",
-                  "value": 4.0,
-                  "line": "--fps 4 \\",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/README.md"
-                },
-                {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "\"\"\"Benchmark utility for dynamic object removal.\"\"\"",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
-                },
-                {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "parser = argparse.ArgumentParser(description=\"Benchmark dynamic object removal algorithms.\")",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
-                },
-                {
-                  "kind": "benchmark",
-                  "value": 200.0,
-                  "line": "parser.add_argument(\"--iterations\", type=int, default=200, help=\"Number of frames to benchmark.\")",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
-                },
-                {
-                  "kind": "benchmark",
-                  "value": null,
-                  "line": "parser.add_argument(\"--summary-json\", help=\"Write benchmark summary JSON to this file.\")",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
-                },
-                {
-                  "kind": "fps",
-                  "value": 1000.0,
-                  "line": "fps = total_points / (summary[\"elapsed_ms_mean\"] / 1000.0) if summary[\"elapsed_ms_mean\"] > 0 else 0.0",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
-                },
-                {
-                  "kind": "fps",
-                  "value": 1000.0,
-                  "line": "summary[\"throughput_kpps_mean\"] = fps / 1000.0",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
-                },
-                {
-                  "kind": "fps",
-                  "value": 4.0,
-                  "line": "DEFAULT_FPS = 4.0",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/demo/run_scan_sequence_demo.py"
-                },
-                {
-                  "kind": "fps",
-                  "value": 0.5,
-                  "line": "const fps = Math.max(0.5, Number(DEMO_DATA.meta.default_fps) * state.speed);",
-                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/demo/run_scan_sequence_demo.py"
-                }
-              ],
-              "metric_count": 22,
-              "quality_signal": 0.0,
-              "score": 35.2
-            },
-            "readability": {
-              "source_files": 10,
-              "nonempty_loc": 4863,
-              "comment_ratio": 0.016,
-              "branch_keywords": 619,
-              "import_count": 95,
-              "function_count": 178,
-              "largest_file_loc": 2244,
-              "largest_function_span": 197,
-              "score": 39.14
-            },
-            "extensibility": {
-              "module_dirs": 3,
-              "config_files": 4,
-              "helper_units": 2764,
-              "public_surface_markers": 96,
-              "hard_coded_topics": 3,
-              "orchestration_split": 0.3,
-              "score": 95.5
-            },
-            "overall_score": 51.26,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 18,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "construction-diff",
-          "description": "Detect construction progress by comparing point cloud scans over time",
+          "description": "時系列の点群スキャン比較で建設進捗を検出",
           "language": "Python",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/construction-diff",
           "match_score": 14,
-          "summary": "pointcloud_transformation: unknown input -> Path via VoxelGrid, ICP, CLAS",
+          "summary": "pointcloud_transformation: 入力不明 -> Path / VoxelGrid, ICP, CLAS",
           "functions": [
             "_sample_report",
             "cli",
@@ -8570,7 +8438,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0015,
+              "analysis_runtime_seconds": 0.003,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [
@@ -8660,17 +8528,181 @@
               "score": 70.0
             },
             "overall_score": 83.92,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 20,
+            "missing_relevant_files": []
+          }
+        },
+        {
+          "repo": "dynamic-3d-object-removal",
+          "description": "NumPy のみで動く LiDAR 点群向け動的物体除去。3D box crop + 時系列フィルタ、ROS2 リアルタイムノード、公開 AV2 デモ付き。",
+          "language": "Python",
+          "track": "pointcloud_transformation",
+          "local_path": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal",
+          "match_score": 14,
+          "summary": "pointcloud_transformation: Path, PointCloud2 -> Path, PointCloud2 / VoxelGrid, CLAS, NDT",
+          "functions": [
+            "main",
+            "_build_parser",
+            "_percentile",
+            "parse_args",
+            "_sample_points",
+            "_eprint",
+            "_to_float",
+            "_as_vec3",
+            "__post_init__",
+            "test_unsupported_format",
+            "_run_box",
+            "_run_temporal"
+          ],
+          "ros_topics": [
+            "/points_raw",
+            "/dynamic_objects",
+            "/points_static"
+          ],
+          "io": {
+            "inputs": [
+              "Path",
+              "PointCloud2"
+            ],
+            "outputs": [
+              "Path",
+              "PointCloud2"
+            ]
+          },
+          "algorithms": [
+            "VoxelGrid",
+            "CLAS",
+            "NDT",
+            "SLAM",
+            "LoopClosure",
+            "EKF",
+            "Downsampling"
+          ],
+          "relevant_files": [
+            ".github/workflows/gh-pages.yml",
+            ".github/workflows/test.yml",
+            "AGENTS.md",
+            "README.md",
+            "bench.py",
+            "demo/actual_scan_20240820_objects.json",
+            "demo/run_scan_demo.py",
+            "demo/run_scan_sequence_demo.py",
+            "dynamic_object_removal.py",
+            "plan.md",
+            "pyproject.toml",
+            "realtime.py",
+            "scripts/download_av2_sample.py",
+            "scripts/download_kitti_sample.py",
+            "tests/conftest.py",
+            "tests/test_dynamic_object_removal.py",
+            "tests/test_sequence_demo.py"
+          ],
+          "evaluation": {
+            "benchmark": {
+              "analysis_runtime_seconds": 0.0087,
+              "benchmark_artifacts": [],
+              "benchmark_artifact_count": 0,
+              "metric_mentions": [
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "Treat it as a focused proof repo, not as a generic point cloud viewer and not as a large benchmark hub.",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/AGENTS.md"
+                },
+                {
+                  "kind": "fps",
+                  "value": 4.0,
+                  "line": "--fps 4 \\",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/AGENTS.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "Benchmark spot check:",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/AGENTS.md"
+                },
+                {
+                  "kind": "fps",
+                  "value": 4.0,
+                  "line": "--fps 4 \\",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/README.md"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "\"\"\"Benchmark utility for dynamic object removal.\"\"\"",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "parser = argparse.ArgumentParser(description=\"Benchmark dynamic object removal algorithms.\")",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": 200.0,
+                  "line": "parser.add_argument(\"--iterations\", type=int, default=200, help=\"Number of frames to benchmark.\")",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
+                },
+                {
+                  "kind": "benchmark",
+                  "value": null,
+                  "line": "parser.add_argument(\"--summary-json\", help=\"Write benchmark summary JSON to this file.\")",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
+                },
+                {
+                  "kind": "fps",
+                  "value": 1000.0,
+                  "line": "fps = total_points / (summary[\"elapsed_ms_mean\"] / 1000.0) if summary[\"elapsed_ms_mean\"] > 0 else 0.0",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
+                },
+                {
+                  "kind": "fps",
+                  "value": 1000.0,
+                  "line": "summary[\"throughput_kpps_mean\"] = fps / 1000.0",
+                  "source": "rsasaki-hub/.cache/repos/dynamic-3d-object-removal/bench.py"
+                }
+              ],
+              "metric_count": 24,
+              "quality_signal": 0.0,
+              "score": 38.4
+            },
+            "readability": {
+              "source_files": 10,
+              "nonempty_loc": 4863,
+              "comment_ratio": 0.016,
+              "branch_keywords": 619,
+              "import_count": 95,
+              "function_count": 178,
+              "largest_file_loc": 2244,
+              "largest_function_span": 197,
+              "score": 39.14
+            },
+            "extensibility": {
+              "module_dirs": 3,
+              "config_files": 4,
+              "helper_units": 2764,
+              "public_surface_markers": 96,
+              "hard_coded_topics": 3,
+              "orchestration_split": 0.3,
+              "score": 95.5
+            },
+            "overall_score": 52.86,
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 17,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "laser_deskew",
-          "description": "ros1 package for 2d laser deskew using tf.",
+          "description": "tf を用いた 2D レーザ deskew の ROS1 パッケージ",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/laser_deskew",
           "match_score": 5,
-          "summary": "pointcloud_transformation: LaserScan, Odometry -> LaserScan via Deskew, NDT, Odometry",
+          "summary": "pointcloud_transformation: LaserScan, Odometry -> LaserScan / Deskew, NDT, Odometry",
           "functions": [
             "main",
             "odometryCallback"
@@ -8706,7 +8738,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0005,
+              "analysis_runtime_seconds": 0.0007,
               "benchmark_artifacts": [],
               "benchmark_artifact_count": 0,
               "metric_mentions": [],
@@ -8735,17 +8767,19 @@
               "score": 61.5
             },
             "overall_score": 39.11,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 8,
+            "missing_relevant_files": []
           }
         },
         {
           "repo": "tree-trunk-mapper",
-          "description": "Detect and map individual tree trunks from LiDAR point clouds",
+          "description": "LiDAR 点群から個々の樹幹を検出して地図化",
           "language": "Python",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/tree-trunk-mapper",
           "match_score": 3,
-          "summary": "pointcloud_transformation: Path, PointCloud2 -> Path, Pose via CLAS, RANSAC, NDT",
+          "summary": "pointcloud_transformation: Path, PointCloud2 -> Path, Pose / CLAS, RANSAC, NDT",
           "functions": [
             "__init__",
             "make_cylinder_points",
@@ -8804,7 +8838,7 @@
           ],
           "evaluation": {
             "benchmark": {
-              "analysis_runtime_seconds": 0.0019,
+              "analysis_runtime_seconds": 0.0037,
               "benchmark_artifacts": [
                 "rsasaki-hub/.cache/repos/tree-trunk-mapper/examples/benchmark.py"
               ],
@@ -8896,19 +8930,21 @@
               "score": 79.0
             },
             "overall_score": 80.03,
-            "ranking_policy": "overall = 0.50 benchmark_readiness_or_quality + 0.25 readability + 0.25 extensibility"
+            "ranking_policy": "総合 = 0.50 ベンチマーク準備度/品質 + 0.25 可読性 + 0.25 拡張性",
+            "evaluated_file_count": 18,
+            "missing_relevant_files": []
           }
         }
       ],
       "rejected_candidates": [
         {
           "repo": "amcl_3d",
-          "description": "AMCL(Adaptive Monte Carlo Localization) using 3D LiDAR for ROS.",
+          "description": "ROS 向け 3D LiDAR を使う AMCL（Adaptive Monte Carlo Localization）実装",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/amcl_3d",
           "match_score": 6,
-          "summary": "pointcloud_transformation: Imu, Odometry, Path -> Path, PointCloud2, Pose via AMCL, CLAS, PID",
+          "summary": "pointcloud_transformation: Imu, Odometry, Path -> Path, PointCloud2, Pose / AMCL, CLAS, PID",
           "functions": [
             "main",
             "yaw_from_quaternion",
@@ -8987,12 +9023,12 @@
         },
         {
           "repo": "bagx",
-          "description": "Post-processing analysis engine for ROS2 rosbag — eval, compare, sync, anomaly detection, AI export",
+          "description": "ROS2 rosbag 向け後処理解析エンジン。評価、比較、同期、異常検出、AI エクスポートに対応",
           "language": "Python",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/bagx",
           "match_score": 3,
-          "summary": "pointcloud_transformation: Imu, LaserScan, Odometry -> NavSatFix, Path via CLAS, Odometry, AMCL",
+          "summary": "pointcloud_transformation: Imu, LaserScan, Odometry -> NavSatFix, Path / CLAS, Odometry, AMCL",
           "functions": [
             "to_dict",
             "main",
@@ -9071,12 +9107,12 @@
         },
         {
           "repo": "forest-panoptic-nav",
-          "description": "Panoptic segmentation for autonomous forest navigation",
+          "description": "自律森林走行向けパノプティックセグメンテーション",
           "language": "Python",
           "track": "pointcloud_to_model",
           "local_path": "rsasaki-hub/.cache/repos/forest-panoptic-nav",
           "match_score": 4,
-          "summary": "pointcloud_to_model: Path -> Path via CLAS, Semantic, Panoptic",
+          "summary": "pointcloud_to_model: Path -> Path / CLAS, Semantic, Panoptic",
           "functions": [
             "__init__",
             "_make_costmap",
@@ -9135,12 +9171,12 @@
         },
         {
           "repo": "glim",
-          "description": "GLIM: versatile and extensible range-based 3D localization and mapping framework",
+          "description": "GLIM: 汎用性と拡張性を重視した range-based 3D 自己位置推定・地図構築フレームワーク",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/glim",
           "match_score": 4,
-          "summary": "pointcloud_transformation: Imu, Odometry -> Pose via Submap, Odometry, CLAS",
+          "summary": "pointcloud_transformation: Imu, Odometry -> Pose / Submap, Odometry, CLAS",
           "functions": [
             "convert",
             "invert",
@@ -9203,12 +9239,12 @@
         },
         {
           "repo": "transfrom_velocity",
-          "description": "C++ program for performing 3D and 2D velocity transformations using Lie algebra.",
+          "description": "Lie 代数を用いて 3D / 2D 速度変換を行う C++ プログラム",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/transfrom_velocity",
           "match_score": 4,
-          "summary": "pointcloud_transformation: unknown input -> unknown output via CLAS",
+          "summary": "pointcloud_transformation: 入力不明 -> 出力不明 / CLAS",
           "functions": [
             "main",
             "numericalDerivative",
@@ -9247,12 +9283,12 @@
         },
         {
           "repo": "rsasaki0109-tweet-summaries",
-          "description": "ロボティクス・自動運転・3D再構成・VLA関連の技術ポストを月次でアーカイブ | Monthly archive of robotics, autonomous driving, 3D reconstruction & VLA posts",
+          "description": "ロボティクス・自動運転・3D 再構成・VLA 関連の技術ポストを月次でアーカイブ | ロボティクス、自動運転、3D 再構成、VLA 投稿の月次アーカイブ",
           "language": "HTML",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/rsasaki0109-tweet-summaries",
           "match_score": 2,
-          "summary": "pointcloud_transformation: unknown input -> unknown output via SLAM",
+          "summary": "pointcloud_transformation: 入力不明 -> 出力不明 / SLAM",
           "functions": [],
           "ros_topics": [],
           "io": {
@@ -9267,12 +9303,12 @@
         },
         {
           "repo": "gnssplusplus-library",
-          "description": "Modern C++ GNSS/RTK/PPP/CLAS toolkit.",
+          "description": "モダン C++ による GNSS / RTK / PPP / CLAS ツールキット。",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/gnssplusplus-library",
           "match_score": 5,
-          "summary": "pointcloud_transformation: Path -> Path via RTK, PPP, CLAS",
+          "summary": "pointcloud_transformation: Path -> Path / RTK, PPP, CLAS",
           "functions": [
             "main",
             "parse_args",
@@ -9343,12 +9379,12 @@
         },
         {
           "repo": "lidarslam_ros2",
-          "description": "ROS 2 LiDAR SLAM for pointcloud-map authoring, benchmarking, and Autoware-compatible map workflows.",
+          "description": "点群地図の作成、ベンチマーク、Autoware 互換の地図ワークフローに対応した ROS 2 LiDAR SLAM",
           "language": "HTML",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/lidarslam_ros2",
           "match_score": 3,
-          "summary": "pointcloud_transformation: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path via Submap, LoopClosure, SLAM",
+          "summary": "pointcloud_transformation: Imu, MapArray, NavSatFix -> MapArray, NavSatFix, Path / Submap, LoopClosure, SLAM",
           "functions": [
             "add",
             "_load_module",
@@ -9424,88 +9460,13 @@
           "reason": "primarily_other_domain"
         },
         {
-          "repo": "localization_zoo",
-          "description": "C++ implementations, derived variants, and compact baselines for localization papers with ROS 2, tests, and benchmarks.",
-          "language": "C++",
-          "track": "pointcloud_transformation",
-          "local_path": "rsasaki-hub/.cache/repos/localization_zoo",
-          "match_score": 3,
-          "summary": "pointcloud_transformation: Imu, Odometry, Path -> Path, Pose via ICP, LIO, VoxelGrid",
-          "functions": [
-            "Create",
-            "main",
-            "curr_point_",
-            "computeATE",
-            "compute_ate",
-            "parse_args",
-            "params_",
-            "loadImuCsv",
-            "load_poses",
-            "stamp_to_sec",
-            "extract_points",
-            "write_binary_pcd"
-          ],
-          "ros_topics": [
-            "/lidar/0/pandar_packets",
-            "/imu/0/data_raw/corrected",
-            "/velodyne"
-          ],
-          "io": {
-            "inputs": [
-              "Imu",
-              "Odometry",
-              "Path",
-              "PointCloud2"
-            ],
-            "outputs": [
-              "Path",
-              "Pose"
-            ]
-          },
-          "algorithms": [
-            "ICP",
-            "LIO",
-            "VoxelGrid",
-            "Odometry",
-            "NDT",
-            "GICP",
-            "IMUPreintegration",
-            "CLAS",
-            "MPC",
-            "Submap"
-          ],
-          "relevant_files": [
-            "common/include/common/io.h",
-            "common/include/common/math_utils.h",
-            "common/include/common/types.h",
-            "common/src/io.cpp",
-            "common/src/math_utils.cpp",
-            "evaluation/scripts/benchmark.py",
-            "evaluation/scripts/export_benchmark_site.py",
-            "evaluation/scripts/extract_ros1_lidar_imu.py",
-            "evaluation/scripts/extract_ros2_lidar_imu.py",
-            "evaluation/scripts/plot_trajectory.py",
-            "evaluation/scripts/reference_pose_to_gt_csv.py",
-            "evaluation/src/dataset_loader.h",
-            "evaluation/src/kitti_eval.cpp",
-            "evaluation/src/pcd_dogfooding.cpp",
-            "evaluation/src/synthetic_benchmark.cpp",
-            "papers/aloam/include/aloam/laser_mapping.h",
-            "papers/aloam/include/aloam/laser_odometry.h",
-            "papers/aloam/include/aloam/lidar_factor.h",
-            "papers/aloam/include/aloam/scan_registration.h",
-            "papers/aloam/include/aloam/types.h"
-          ],
-          "reason": "primarily_other_domain"
-        },
-        {
           "repo": "PoseOptimizationSLAM3D",
-          "description": "Python sample code of 3D pose optimization SLAM",
+          "description": "3D ポーズ最適化 SLAM の Python サンプルコード",
           "language": "Python",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/PoseOptimizationSLAM3D",
           "match_score": 1,
-          "summary": "pointcloud_transformation: unknown input -> Pose via SLAM, PoseGraph, CLAS",
+          "summary": "pointcloud_transformation: 入力不明 -> Pose / SLAM, PoseGraph, CLAS",
           "functions": [
             "__init__",
             "main",
@@ -9549,7 +9510,7 @@
           "track": "pointcloud_analysis",
           "local_path": "rsasaki-hub/.cache/repos/github-curator",
           "match_score": 2,
-          "summary": "pointcloud_analysis: Odometry -> Path via CLAS, SLAM, LIO",
+          "summary": "pointcloud_analysis: Odometry -> Path / CLAS, SLAM, LIO",
           "functions": [
             "_make_repo",
             "_fetch",
@@ -9606,12 +9567,12 @@
         },
         {
           "repo": "lidar_localization_ros2",
-          "description": "3D LIDAR Localization using NDT/GICP and pointcloud map in ROS 2 (Not SLAM)",
+          "description": "ROS 2 上で NDT/GICP と点群地図を用いる 3D LiDAR 自己位置推定（SLAM ではない）",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/lidar_localization_ros2",
           "match_score": 1,
-          "summary": "pointcloud_transformation: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose via NDT, VoxelGrid, GICP",
+          "summary": "pointcloud_transformation: Imu, Odometry, PointCloud2 -> Path, PointCloud2, Pose / NDT, VoxelGrid, GICP",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -9655,12 +9616,12 @@
         },
         {
           "repo": "lidar_undistortion",
-          "description": "A header-only program of 3d rotary lidar undistortion using 9-axis imu",
+          "description": "9 軸 IMU を用いた 3D 回転 LiDAR 歪み補正の header-only 実装",
           "language": "C++",
           "track": "pointcloud_transformation",
           "local_path": "rsasaki-hub/.cache/repos/lidar_undistortion",
           "match_score": 1,
-          "summary": "pointcloud_transformation: Imu -> unknown output via CLAS",
+          "summary": "pointcloud_transformation: Imu -> 出力不明 / CLAS",
           "functions": [
             "LidarUndistortion",
             "adjustDistortion",
@@ -9680,9 +9641,84 @@
             "lidar_undistortion.hpp"
           ],
           "reason": "weak_problem_match"
+        },
+        {
+          "repo": "localization_zoo",
+          "description": "ROS 2・テスト・ベンチマーク付きで、自己位置推定論文の C++ 実装、派生バリアント、コンパクトなベースラインをまとめたリポジトリ。",
+          "language": "C++",
+          "track": "pointcloud_analysis",
+          "local_path": "rsasaki-hub/.cache/repos/localization_zoo",
+          "match_score": 2,
+          "summary": "pointcloud_analysis: Imu, Odometry, Path -> Path, Pose / ICP, GICP, VoxelGrid",
+          "functions": [
+            "main",
+            "parse_args",
+            "load_json",
+            "write_binary_pcd",
+            "computeATE",
+            "compute_ate",
+            "relpath",
+            "render_metric",
+            "loadImuCsv",
+            "load_poses",
+            "stamp_to_sec",
+            "extract_points"
+          ],
+          "ros_topics": [
+            "/lidar/0/pandar_packets",
+            "/imu/0/data_raw/corrected",
+            "/velodyne"
+          ],
+          "io": {
+            "inputs": [
+              "Imu",
+              "Odometry",
+              "Path",
+              "PointCloud2"
+            ],
+            "outputs": [
+              "Path",
+              "Pose"
+            ]
+          },
+          "algorithms": [
+            "ICP",
+            "GICP",
+            "VoxelGrid",
+            "LIO",
+            "NDT",
+            "SLAM",
+            "SMALL_GICP",
+            "Odometry",
+            "IMUPreintegration",
+            "VGICP"
+          ],
+          "relevant_files": [
+            "common/include/common/io.h",
+            "common/include/common/math_utils.h",
+            "common/include/common/types.h",
+            "common/src/io.cpp",
+            "common/src/math_utils.cpp",
+            "docs/variant_analysis.md",
+            "evaluation/scripts/VERIFY_KITTI_IMU_DLIO.md",
+            "evaluation/scripts/benchmark.py",
+            "evaluation/scripts/cube_lio_cubemap_demo.py",
+            "evaluation/scripts/export_benchmark_site.py",
+            "evaluation/scripts/export_paper_assets.py",
+            "evaluation/scripts/extract_ros1_lidar.py",
+            "evaluation/scripts/extract_ros1_lidar_imu.py",
+            "evaluation/scripts/extract_ros2_lidar_imu.py",
+            "evaluation/scripts/generate_default_variant_matrix.py",
+            "evaluation/scripts/generate_paper_comparison.py",
+            "evaluation/scripts/generate_publication_docs.py",
+            "evaluation/scripts/generate_variant_analysis.py",
+            "evaluation/scripts/kitti_bin_to_pcd_dir.py",
+            "evaluation/scripts/kitti_oxts_imu_for_dogfooding.py"
+          ],
+          "reason": "weak_problem_match"
         }
       ],
-      "generated_at": "2026-04-04T04:01:55+00:00",
+      "generated_at": "2026-04-10T05:40:12+00:00",
       "track_rankings": {
         "pointcloud_analysis": [
           {
@@ -9719,7 +9755,7 @@
           },
           {
             "repo": "dynamic-3d-object-removal",
-            "overall_score": 51.26
+            "overall_score": 52.86
           },
           {
             "repo": "npy2pointcloud",
@@ -9772,8 +9808,8 @@
             "CLAS",
             "NDT",
             "VoxelGrid",
-            "Downsampling",
-            "RANSAC"
+            "RANSAC",
+            "Downsampling"
           ]
         },
         "pointcloud_to_model": {

@@ -13,7 +13,7 @@
     },
     {
       "name": "gnss_gpu",
-      "description": "GPU-accelerated GNSS signal processing library (CUDA + Python)",
+      "description": "GPU 加速 GNSS 信号処理ライブラリ（CUDA + Python）",
       "topics": [],
       "language": "Python",
       "clone_url": "https://github.com/rsasaki0109/gnss_gpu.git",
@@ -22,7 +22,7 @@
     },
     {
       "name": "rsasaki0109",
-      "description": "GitHub profile README for Ryohei Sasaki",
+      "description": "Ryohei Sasaki の GitHub プロフィール README",
       "topics": [],
       "language": null,
       "clone_url": "https://github.com/rsasaki0109/rsasaki0109.git",
@@ -31,7 +31,7 @@
     },
     {
       "name": "gnssplusplus-library",
-      "description": "Modern C++ GNSS/RTK/PPP/CLAS toolkit.",
+      "description": "モダン C++ による GNSS / RTK / PPP / CLAS ツールキット。",
       "topics": [
         "c-plus-plus",
         "gnss",
@@ -51,7 +51,7 @@
     },
     {
       "name": "CudaRobotics",
-      "description": "CUDA-accelerated robotics algorithms in C++. 20+ algorithms for SLAM, Path Planning, and Localization.",
+      "description": "C++ による CUDA 加速ロボティクスアルゴリズム集。SLAM・経路計画・自己位置推定を 20 種以上収録。",
       "topics": [
         "cpp",
         "cuda",
@@ -94,7 +94,7 @@
     },
     {
       "name": "localization_zoo",
-      "description": "C++ implementations, derived variants, and compact baselines for localization papers with ROS 2, tests, and benchmarks.",
+      "description": "ROS 2・テスト・ベンチマーク付きで、自己位置推定論文の C++ 実装、派生バリアント、コンパクトなベースラインをまとめたリポジトリ。",
       "topics": [
         "cpp",
         "icp",
@@ -114,7 +114,7 @@
     },
     {
       "name": "CloudAnalyzer",
-      "description": "AI-friendly CLI tool for point cloud analysis and evaluation — F1/Chamfer/Hausdorff metrics, ICP/GICP registration, 22 commands",
+      "description": "AI フレンドリーな点群分析・評価 CLI。F1 / Chamfer / Hausdorff 指標、ICP / GICP レジストレーション、22 コマンドを提供。",
       "topics": [
         "cli",
         "evaluation",
@@ -130,7 +130,7 @@
     },
     {
       "name": "roboclaw-rs",
-      "description": "Rust-first, agent-first robotics workspace with ROS 2 hooks, YAML skills, simulator/hardware backends, and LLM-plannable execution.",
+      "description": "Rust-first・agent-first のロボティクスワークスペース。ROS 2 フック、YAML スキル、シミュレータ / 実機バックエンド、LLM で計画可能な実行基盤を備える。",
       "topics": [
         "ai-agent",
         "autonomy",
@@ -149,7 +149,7 @@
     },
     {
       "name": "gs-sim2real",
-      "description": "Multi-dataset 3D Gaussian Splatting reconstruction playground (COLMAP, gsplat, nerfstudio, Waymo)",
+      "description": "複数データセット対応の 3D Gaussian Splatting 再構成プレイグラウンド（COLMAP、gsplat、nerfstudio、Waymo）。",
       "topics": [
         "3d-gaussian-splatting",
         "3d-reconstruction",
@@ -166,7 +166,7 @@
     },
     {
       "name": "rustclaw",
-      "description": "Memory search engine with hybrid vector/keyword search, MMR re-ranking, and temporal decay — Rust port of OpenClaw's memory system",
+      "description": "ハイブリッドなベクトル / キーワード検索、MMR 再ランキング、時間減衰を備えたメモリ検索エンジン。OpenClaw のメモリシステムの Rust 移植",
       "topics": [
         "embeddings",
         "fts5",
@@ -182,7 +182,7 @@
     },
     {
       "name": "kalman_filter_localization_ros2",
-      "description": "gnss/imu localization using kalman filter",
+      "description": "Kalman Filter による GNSS / IMU 測位。",
       "topics": [
         "gnss",
         "imu",
@@ -198,7 +198,7 @@
     },
     {
       "name": "rust_robotics",
-      "description": "Rust implementation of PythonRobotics, sample codes for robotics algorithms",
+      "description": "PythonRobotics の Rust 実装。ロボティクスアルゴリズムのサンプルコード集。",
       "topics": [
         "algorithm",
         "control",
@@ -217,7 +217,7 @@
     },
     {
       "name": "dynamic-3d-object-removal",
-      "description": "Numpy-only dynamic object removal for LiDAR point clouds. 3D box crop + temporal filtering, ROS2 realtime node, public AV2 demos.",
+      "description": "NumPy のみで動く LiDAR 点群向け動的物体除去。3D box crop + 時系列フィルタ、ROS2 リアルタイムノード、公開 AV2 デモ付き。",
       "topics": [
         "argoverse",
         "autonomous-driving",
@@ -238,7 +238,7 @@
     },
     {
       "name": "lidarslam_ros2",
-      "description": "ROS 2 LiDAR SLAM for pointcloud-map authoring, benchmarking, and Autoware-compatible map workflows.",
+      "description": "点群地図の作成、ベンチマーク、Autoware 互換の地図ワークフローに対応した ROS 2 LiDAR SLAM",
       "topics": [
         "autoware-compatible",
         "benchmarking",
@@ -259,7 +259,7 @@
     },
     {
       "name": "lidar_localization_ros2",
-      "description": "3D LIDAR Localization using NDT/GICP and pointcloud map in ROS 2 (Not SLAM)",
+      "description": "ROS 2 上で NDT/GICP と点群地図を用いる 3D LiDAR 自己位置推定（SLAM ではない）",
       "topics": [
         "gicp",
         "lidar",
@@ -275,7 +275,7 @@
     },
     {
       "name": "tree-trunk-mapper",
-      "description": "Detect and map individual tree trunks from LiDAR point clouds",
+      "description": "LiDAR 点群から個々の樹幹を検出して地図化",
       "topics": [
         "dbscan",
         "forest-inventory",
@@ -292,7 +292,7 @@
     },
     {
       "name": "GNSS-Radar",
-      "description": "GNSS-Radar is a web application to show the current GNSS constellation",
+      "description": "現在の GNSS コンステレーションを表示する Web アプリ",
       "topics": [],
       "language": "HTML",
       "clone_url": "https://github.com/rsasaki0109/GNSS-Radar.git",
@@ -319,7 +319,7 @@
     },
     {
       "name": "ge-drive-visualizer",
-      "description": "Visualization of vehicle position and pose estimation in Google Earth",
+      "description": "Google Earth 上での車両位置・姿勢推定の可視化",
       "topics": [],
       "language": "C++",
       "clone_url": "https://github.com/rsasaki0109/ge-drive-visualizer.git",
@@ -328,7 +328,7 @@
     },
     {
       "name": "tc-datasets",
-      "description": "Real World Datasets for Autonomous Navigation",
+      "description": "自律ナビゲーション向け実世界データセット集",
       "topics": [],
       "language": null,
       "clone_url": "https://github.com/rsasaki0109/tc-datasets.git",
@@ -337,7 +337,7 @@
     },
     {
       "name": "robotics-technology-genealogy",
-      "description": "Interactive genealogy tree of Robotics & AI technologies. Live demo available.",
+      "description": "ロボティクス / AI 技術のインタラクティブ系譜図。ライブデモあり。",
       "topics": [
         "autonomous-driving",
         "awesome-list",
@@ -357,7 +357,7 @@
     },
     {
       "name": "slam-handbook-public-release",
-      "description": "Release repo for our SLAM Handbook",
+      "description": "SLAM Handbook の公開用リポジトリ",
       "topics": [],
       "language": null,
       "clone_url": "https://github.com/rsasaki0109/slam-handbook-public-release.git",
@@ -366,7 +366,7 @@
     },
     {
       "name": "amcl_3d",
-      "description": "AMCL(Adaptive Monte Carlo Localization) using 3D LiDAR for ROS.",
+      "description": "ROS 向け 3D LiDAR を使う AMCL（Adaptive Monte Carlo Localization）実装",
       "topics": [
         "lidar",
         "localization",
@@ -382,7 +382,7 @@
     },
     {
       "name": "bagx",
-      "description": "Post-processing analysis engine for ROS2 rosbag — eval, compare, sync, anomaly detection, AI export",
+      "description": "ROS2 rosbag 向け後処理解析エンジン。評価、比較、同期、異常検出、AI エクスポートに対応",
       "topics": [
         "cli",
         "python",
@@ -398,7 +398,7 @@
     },
     {
       "name": "virtual-tukuba-challenge-ros2",
-      "description": "ROS2 bridge and workflow workspace for Virtual Tsukuba Challenge (VTC)",
+      "description": "Virtual Tsukuba Challenge（VTC）向け ROS2 ブリッジ兼ワークフローワークスペース",
       "topics": [],
       "language": "C++",
       "clone_url": "https://github.com/rsasaki0109/virtual-tukuba-challenge-ros2.git",
@@ -407,7 +407,7 @@
     },
     {
       "name": "game_product_ws",
-      "description": "🎮 8 browser games + 11 Roblox games. Play now: https://rsasaki0109.github.io/game_product_ws/",
+      "description": "🎮 8 個のブラウザゲーム + 11 個の Roblox ゲーム。今すぐプレイ: https://rsasaki0109.github.io/game_product_ws/",
       "topics": [
         "browser-games",
         "games",
@@ -425,7 +425,7 @@
     },
     {
       "name": "mathematical_robotics",
-      "description": "A C++ port of the MathematicalRobotics library",
+      "description": "MathematicalRobotics ライブラリの C++ 移植",
       "topics": [
         "bundle-adjustment",
         "cpp",
@@ -442,7 +442,7 @@
     },
     {
       "name": "rsasaki0109-tweet-summaries",
-      "description": "ロボティクス・自動運転・3D再構成・VLA関連の技術ポストを月次でアーカイブ | Monthly archive of robotics, autonomous driving, 3D reconstruction & VLA posts",
+      "description": "ロボティクス・自動運転・3D 再構成・VLA 関連の技術ポストを月次でアーカイブ | ロボティクス、自動運転、3D 再構成、VLA 投稿の月次アーカイブ",
       "topics": [
         "3d-reconstruction",
         "autonomous-driving",
@@ -488,7 +488,7 @@
     },
     {
       "name": "company-technology-genealogy",
-      "description": "Interactive genealogy of robotics & AI companies and their technology evolution",
+      "description": "ロボティクス / AI 企業とその技術進化をたどるインタラクティブ系譜図",
       "topics": [],
       "language": "Python",
       "clone_url": "https://github.com/rsasaki0109/company-technology-genealogy.git",
@@ -506,7 +506,7 @@
     },
     {
       "name": "construction-diff",
-      "description": "Detect construction progress by comparing point cloud scans over time",
+      "description": "時系列の点群スキャン比較で建設進捗を検出",
       "topics": [
         "3d",
         "change-detection",
@@ -523,7 +523,7 @@
     },
     {
       "name": "npy2pointcloud",
-      "description": "Convert Rohbau3D .npy point clouds to PLY/PCD/LAS formats",
+      "description": "Rohbau3D の .npy 点群を PLY / PCD / LAS 形式へ変換",
       "topics": [
         "format-conversion",
         "las",
@@ -540,7 +540,7 @@
     },
     {
       "name": "forest-place-recognition",
-      "description": "Season-invariant visual place recognition in forest environments",
+      "description": "森林環境向け季節不変の視覚的場所認識",
       "topics": [
         "benchmark",
         "cosplace",
@@ -573,7 +573,7 @@
     },
     {
       "name": "crossdomain-object-tracker",
-      "description": "Cross-domain object detection/tracking evaluation tool for robotics datasets (YOLOv8, Grounding DINO, ByteTrack, COCO mAP)",
+      "description": "ロボティクス向けデータセットのクロスドメイン物体検出・追跡評価ツール（YOLOv8、Grounding DINO、ByteTrack、COCO mAP）",
       "topics": [
         "computer-vision",
         "cross-domain",
@@ -590,7 +590,7 @@
     },
     {
       "name": "ndt_omp_ros2",
-      "description": "ROS2 porting of ndt_omp",
+      "description": "ndt_omp の ROS2 移植版",
       "topics": [
         "mapping",
         "ndt",
@@ -605,7 +605,7 @@
     },
     {
       "name": "forest-panoptic-nav",
-      "description": "Panoptic segmentation for autonomous forest navigation",
+      "description": "自律森林走行向けパノプティックセグメンテーション",
       "topics": [
         "autonomous-navigation",
         "forest",
@@ -621,7 +621,7 @@
     },
     {
       "name": "li_slam_ros2",
-      "description": "ROS 2 package of tightly-coupled lidar inertial ndt/gicp slam",
+      "description": "密結合な LiDAR 慣性 NDT/GICP SLAM の ROS 2 パッケージ",
       "topics": [
         "g2o",
         "gicp",
@@ -639,7 +639,7 @@
     },
     {
       "name": "rohbau-annotator",
-      "description": "Annotate Rohbau3D construction site point clouds via panorama back-projection",
+      "description": "パノラマ逆投影で Rohbau3D 建設現場点群にアノテーションを付与",
       "topics": [
         "3d",
         "annotation",
@@ -656,7 +656,7 @@
     },
     {
       "name": "bim-quality-checker",
-      "description": "Evaluate BIM model quality against point cloud measurements",
+      "description": "点群計測に対して BIM モデル品質を評価",
       "topics": [
         "3d",
         "bim",
@@ -673,7 +673,7 @@
     },
     {
       "name": "pointcloud2ifc",
-      "description": "Automatic point cloud to IFC (BIM) conversion using semantic segmentation",
+      "description": "セマンティックセグメンテーションを用いた点群から IFC（BIM）への自動変換",
       "topics": [
         "3d-reconstruction",
         "bim",
@@ -699,7 +699,7 @@
     },
     {
       "name": "littleslam_ros2",
-      "description": "A ROS2 Wrapper for LittleSLAM, which is a 2D-LiDAR SLAM for educational use",
+      "description": "教育用途の 2D LiDAR SLAM である LittleSLAM の ROS2 ラッパー",
       "topics": [
         "localization",
         "robotics",
@@ -713,7 +713,7 @@
     },
     {
       "name": "PoseOptimizationSLAM3D",
-      "description": "Python sample code of 3D pose optimization SLAM",
+      "description": "3D ポーズ最適化 SLAM の Python サンプルコード",
       "topics": [
         "localization",
         "mapping",
@@ -728,7 +728,7 @@
     },
     {
       "name": "gnss_imu_wheel_localizer",
-      "description": "gnss/imu/wheel localizer for autoware",
+      "description": "Autoware 向け GNSS / IMU / Wheel 自己位置推定器",
       "topics": [
         "autoware",
         "gnss",
@@ -743,7 +743,7 @@
     },
     {
       "name": "lidar_localizer",
-      "description": "lidar localizer in Autoware AI",
+      "description": "Autoware AI 向け LiDAR ローカライザ",
       "topics": [
         "lidar",
         "ros1"
@@ -755,7 +755,7 @@
     },
     {
       "name": "NormalDistributionTransform2D",
-      "description": "Python sample code of 2D NDT Scan Matching",
+      "description": "2D NDT スキャンマッチングの Python サンプルコード",
       "topics": [
         "lidar",
         "localization",
@@ -825,7 +825,7 @@
     },
     {
       "name": "lidar_undistortion",
-      "description": "A header-only program of 3d rotary lidar undistortion using 9-axis imu",
+      "description": "9 軸 IMU を用いた 3D 回転 LiDAR 歪み補正の header-only 実装",
       "topics": [
         "imu",
         "lidar",
@@ -838,7 +838,7 @@
     },
     {
       "name": "RANSAC-plus",
-      "description": "(unofficial)(2025)RANSAC Revisited: An Improved Algorithm for Robust Subspace Recovery under Adversarial and Noisy Corruptions",
+      "description": "（非公式）（2025）RANSAC Revisited: 敵対的かつノイズを含む破損下での頑健な部分空間復元を扱う改良アルゴリズム",
       "topics": [],
       "language": "Python",
       "clone_url": "https://github.com/rsasaki0109/RANSAC-plus.git",
@@ -847,7 +847,7 @@
     },
     {
       "name": "particle_filtering_model_predictive_control",
-      "description": "Particle filtering model predictive control simulation.",
+      "description": "Particle Filter とモデル予測制御のシミュレーション",
       "topics": [
         "mpc",
         "particle-filter",
@@ -878,7 +878,7 @@
     },
     {
       "name": "transfrom_velocity",
-      "description": "C++ program for performing 3D and 2D velocity transformations using Lie algebra.",
+      "description": "Lie 代数を用いて 3D / 2D 速度変換を行う C++ プログラム",
       "topics": [],
       "language": "C++",
       "clone_url": "https://github.com/rsasaki0109/transfrom_velocity.git",
@@ -887,7 +887,7 @@
     },
     {
       "name": "q-method",
-      "description": "estimator to minimize Wahba's loss function for satellite attitude ",
+      "description": "衛星姿勢に対する Wahba 損失関数最小化推定器",
       "topics": [
         "attitude-determination",
         "gnss",
@@ -900,7 +900,7 @@
     },
     {
       "name": "laser_deskew",
-      "description": "ros1 package for 2d laser deskew using tf.",
+      "description": "tf を用いた 2D レーザ deskew の ROS1 パッケージ",
       "topics": [
         "deskew",
         "laser",
@@ -915,7 +915,7 @@
     },
     {
       "name": "imu_estimator",
-      "description": "attitude estimator with gyro bias correction",
+      "description": "ジャイロバイアス補正付き姿勢推定器",
       "topics": [
         "bias-correction",
         "ekf",
@@ -928,7 +928,7 @@
     },
     {
       "name": "gaussian_particle_filter",
-      "description": "Python sample of Gaussian Particle Filter localization",
+      "description": "Gaussian Particle Filter 自己位置推定の Python サンプル",
       "topics": [
         "localization",
         "particle-filter",
@@ -959,7 +959,7 @@
     },
     {
       "name": "glim",
-      "description": "GLIM: versatile and extensible range-based 3D localization and mapping framework",
+      "description": "GLIM: 汎用性と拡張性を重視した range-based 3D 自己位置推定・地図構築フレームワーク",
       "topics": [],
       "language": "C++",
       "clone_url": "https://github.com/rsasaki0109/glim.git",
@@ -968,7 +968,7 @@
     },
     {
       "name": "FAST_LIO",
-      "description": "A computationally efficient and robust LiDAR-inertial odometry (LIO) package",
+      "description": "計算効率と頑健性を重視した LiDAR 慣性オドメトリ（LIO）パッケージ",
       "topics": [],
       "language": "C++",
       "clone_url": "https://github.com/rsasaki0109/FAST_LIO.git",
@@ -977,7 +977,7 @@
     },
     {
       "name": "sideslip-angle-vehicle-estimation",
-      "description": "MATLAB and C++ implementations of sideslip angle estimators",
+      "description": "横滑り角推定器の MATLAB / C++ 実装",
       "topics": [],
       "language": "C++",
       "clone_url": "https://github.com/rsasaki0109/sideslip-angle-vehicle-estimation.git",
@@ -986,7 +986,7 @@
     },
     {
       "name": "RosDataTools",
-      "description": "ROS1/ROS2 data analystics tools",
+      "description": "ROS1 / ROS2 データ解析ツール",
       "topics": [
         "ros",
         "ros2"

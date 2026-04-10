@@ -1,12 +1,12 @@
 ---
-title: "State Estimation"
+title: "状態推定"
 type: "llm_article"
 concept: "state_estimation"
 generated_at: "2026-04-05"
 source_count: 11
 ---
 
-# State Estimation (状態推定)
+# 状態推定
 
 ノイズを含むセンサ観測から、システムの隠れた状態 (位置、速度、姿勢など) を推定する理論体系。[[localization]]、[[slam]]、[[control]] の基盤であり、ベイズ推定の枠組みで定式化される。
 
@@ -22,7 +22,7 @@ source_count: 11
 シグマ点を用いた非線形フィルタ。線形化不要で EKF より精度が良い場合がある。`CudaRobotics` に CUDA 実装あり。
 
 ### Particle Filter (PF)
-非線形・非ガウスに対応可能な Monte Carlo 法ベース。`gaussian_particle_filter` は Gaussian PF の Python 実装。`amcl_3d` ��� AMCL (Adaptive MCL) を 3D に拡張。`particle_filtering_model_predictive_control` は PF と [[control]] (MPC) の統合。
+非線形・非ガウスに対応可能な Monte Carlo 法ベース。`gaussian_particle_filter` は Gaussian PF の Python 実装。`amcl_3d` は AMCL (Adaptive MCL) を 3D に拡張した実装。`particle_filtering_model_predictive_control` は PF と [[control]] (MPC) の統合。
 
 ### 四元数 Kalman Filter
 姿勢推定に特化。`quaternion-based_kalman_filter` が Python 実装。`imu_estimator` はジャイロバイアス補正付き。

@@ -1,112 +1,112 @@
-# Interfaces
+# インターフェース候補
 
-This repo stabilizes the smallest shared I/O contract that survived comparison.
+このリポジトリでは、比較を経ても残った最小共有 I/O 契約を整理します。
 
-Generated at: 2026-04-04T21:34:41+00:00
+生成日時: 2026-04-10T09:30:59+00:00
 
-## lidar_stack_exploration
+## LiDAR スタック (`lidar_stack_exploration`)
 
-### lidar_localization
+### LiDAR 自己位置推定 (`lidar_localization`)
 
-- Input: Imu, Odometry, PointCloud2, Pose
-- Optional input: Path
-- Output: Path, PointCloud2, Pose
-- Optional output: none
-- Common algorithm markers: CLAS, NDT, Odometry, SLAM, ICP
-- Current lineage: amcl_3d is the temporary stabilized reference.
+- 入力: Imu, Odometry, PointCloud2, Pose
+- 任意入力: Path
+- 出力: Path, PointCloud2, Pose
+- 任意出力: なし
+- 共通アルゴリズム指標: CLAS, NDT, Odometry, SLAM, ICP
+- 現在の基準系統: amcl_3d を暫定的な安定参照とします。
 
-### lidar_slam
+### LiDAR SLAM (`lidar_slam`)
 
-- Input: PointCloud2
-- Optional input: Imu, MapArray, Odometry, NavSatFix, Pose
-- Output: Path, PointCloud2, Pose
-- Optional output: MapArray
-- Common algorithm markers: SLAM, Submap, LoopClosure, PoseGraph, VoxelGrid
-- Current lineage: lidarslam_ros2 is the temporary stabilized reference.
+- 入力: PointCloud2
+- 任意入力: Imu, MapArray, Odometry, NavSatFix, Pose
+- 出力: Path, PointCloud2, Pose
+- 任意出力: MapArray
+- 共通アルゴリズム指標: SLAM, Submap, LoopClosure, PoseGraph, VoxelGrid
+- 現在の基準系統: lidarslam_ros2 を暫定的な安定参照とします。
 
-### lidar_imu_slam
+### LiDAR+IMU SLAM (`lidar_imu_slam`)
 
-- Input: Imu, Odometry, PointCloud2
-- Optional input: Path
-- Output: Odometry, Path
-- Optional output: PointCloud2, Pose
-- Common algorithm markers: LIO, Odometry, Inertial, ICP, LoopClosure
-- Current lineage: localization_zoo is the temporary stabilized reference.
+- 入力: Imu, Odometry, PointCloud2
+- 任意入力: なし
+- 出力: Path
+- 任意出力: Odometry, PointCloud2
+- 共通アルゴリズム指標: LIO, Odometry, Inertial, ICP, VoxelGrid
+- 現在の基準系統: localization_zoo を暫定的な安定参照とします。
 
-## robotics_algorithms_exploration
+## ロボティクスアルゴリズム (`robotics_algorithms_exploration`)
 
-### state_estimation
+### 状態推定 (`state_estimation`)
 
-- Input: Imu, Odometry
-- Optional input: none
-- Output: Path, Pose
-- Optional output: none
-- Common algorithm markers: CLAS, ParticleFilter, Kalman, EKF, MPC
-- Current lineage: imu_estimator is the temporary stabilized reference.
+- 入力: Imu, Odometry
+- 任意入力: なし
+- 出力: Path, Pose
+- 任意出力: なし
+- 共通アルゴリズム指標: CLAS, ParticleFilter, Kalman, EKF, MPC
+- 現在の基準系統: imu_estimator を暫定的な安定参照とします。
 
-### path_planning
+### 経路計画 (`path_planning`)
 
-- Input: none
-- Optional input: none
-- Output: Path
-- Optional output: none
-- Common algorithm markers: LoopClosure, SLAM, DWA, CLAS, MPC
-- Current lineage: simple_visual_slam is the temporary stabilized reference.
+- 入力: なし
+- 任意入力: なし
+- 出力: Path
+- 任意出力: Pose
+- 共通アルゴリズム指標: SLAM, MPC, AStar, LoopClosure, EKF
+- 現在の基準系統: simple_visual_slam を暫定的な安定参照とします。
 
-### scan_matching
+### スキャンマッチング (`scan_matching`)
 
-- Input: none
-- Optional input: none
-- Output: none
-- Optional output: none
-- Common algorithm markers: NDT, SLAM
-- Current lineage: NormalDistributionTransform2D is the temporary stabilized reference.
+- 入力: なし
+- 任意入力: なし
+- 出力: Path
+- 任意出力: なし
+- 共通アルゴリズム指標: NDT, SLAM, CLAS, LoopClosure, ICP
+- 現在の基準系統: NormalDistributionTransform2D を暫定的な安定参照とします。
 
-## gnss_positioning_exploration
+## GNSS 測位 (`gnss_positioning_exploration`)
 
-### gnss_processing
+### GNSS 処理 (`gnss_processing`)
 
-- Input: NavSatFix, Path, Pose
-- Optional input: PointCloud2
-- Output: Path, NavSatFix
-- Optional output: Pose
-- Common algorithm markers: RTK, CLAS, RINEX, QZSS, PPP
-- Current lineage: gnssplusplus-library is the temporary stabilized reference.
+- 入力: Path, PointCloud2
+- 任意入力: なし
+- 出力: Path
+- 任意出力: なし
+- 共通アルゴリズム指標: RTK, CLAS, RINEX, QZSS, PPP
+- 現在の基準系統: gnssplusplus-library を暫定的な安定参照とします。
 
-### multi_sensor_positioning
+### 複合測位 (`multi_sensor_positioning`)
 
-- Input: Imu, Odometry, Pose
-- Optional input: NavSatFix
-- Output: Pose
-- Optional output: Imu, Odometry, Path
-- Common algorithm markers: Kalman, EKF, Odometry, CLAS, NDT
-- Current lineage: kalman_filter_localization_ros2 is the temporary stabilized reference.
+- 入力: Imu, Odometry, Pose
+- 任意入力: NavSatFix
+- 出力: Pose
+- 任意出力: Imu, Odometry, Path
+- 共通アルゴリズム指標: Kalman, EKF, Odometry, CLAS, NDT
+- 現在の基準系統: kalman_filter_localization_ros2 を暫定的な安定参照とします。
 
-## pointcloud_processing_exploration
+## 点群処理 (`pointcloud_processing_exploration`)
 
-### pointcloud_analysis
+### 点群分析 (`pointcloud_analysis`)
 
-- Input: Path
-- Optional input: none
-- Output: Path
-- Optional output: none
-- Common algorithm markers: CLAS, VoxelGrid, ICP, GICP, RTK
-- Current lineage: CloudAnalyzer is the temporary stabilized reference.
+- 入力: Path
+- 任意入力: なし
+- 出力: Path
+- 任意出力: なし
+- 共通アルゴリズム指標: CLAS, VoxelGrid, ICP, GICP, RTK
+- 現在の基準系統: CloudAnalyzer を暫定的な安定参照とします。
 
-### pointcloud_transformation
+### 点群変換 (`pointcloud_transformation`)
 
-- Input: Path, PointCloud2, LaserScan
-- Optional input: Odometry
-- Output: Path, PointCloud2
-- Optional output: LaserScan, Pose
-- Common algorithm markers: CLAS, NDT, VoxelGrid, Downsampling, RANSAC
-- Current lineage: construction-diff is the temporary stabilized reference.
+- 入力: Path, PointCloud2, LaserScan
+- 任意入力: Odometry
+- 出力: Path, PointCloud2
+- 任意出力: LaserScan, Pose
+- 共通アルゴリズム指標: CLAS, NDT, VoxelGrid, RANSAC, Downsampling
+- 現在の基準系統: construction-diff を暫定的な安定参照とします。
 
-### pointcloud_to_model
+### 点群モデル化 (`pointcloud_to_model`)
 
-- Input: Path, PointCloud2
-- Optional input: none
-- Output: Path
-- Optional output: none
-- Common algorithm markers: CLAS, NDT, Semantic, Segmentation, VoxelGrid
-- Current lineage: pointcloud2ifc is the temporary stabilized reference.
+- 入力: Path, PointCloud2
+- 任意入力: なし
+- 出力: Path
+- 任意出力: なし
+- 共通アルゴリズム指標: CLAS, NDT, Semantic, Segmentation, VoxelGrid
+- 現在の基準系統: pointcloud2ifc を暫定的な安定参照とします。

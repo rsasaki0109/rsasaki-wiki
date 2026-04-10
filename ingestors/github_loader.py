@@ -20,7 +20,7 @@ def utc_now() -> str:
 
 
 def dump_yaml_like(data: Any) -> str:
-    # JSON is valid YAML 1.2 and keeps the repo dependency-free.
+    # JSON は YAML 1.2 として有効で、追加依存なしで扱える。
     return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 
@@ -39,7 +39,7 @@ def github_request(url: str, token: str | None = None) -> Any:
             return json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="ignore")
-        raise RuntimeError(f"GitHub API request failed for {url}: {exc.code} {detail}") from exc
+        raise RuntimeError(f"GitHub API リクエストに失敗しました: {url}: {exc.code} {detail}") from exc
 
 
 def fetch_public_repos(owner: str, token: str | None = None) -> list[dict[str, Any]]:
@@ -102,7 +102,15 @@ def sync_repo_checkout(repo: dict[str, Any], checkout_root: Path) -> Path:
             text=True,
         )
         pull_cmd = ["git", "-C", str(target), "pull", "--ff-only", "origin", default_branch]
-        subprocess.run(pull_cmd, check=True, capture_output=True, text=True)
+        try:
+            subprocess.run(pull_cmd, check=True, capture_output=True, text=True)
+        except subprocess.CalledProcessError as exc:
+            detail = (exc.stderr or exc.stdout or "").strip()
+            print(
+                f"警告: {repo['name']} は fast-forward 更新できなかったため、既存 checkout を継続使用します。"
+            )
+            if detail:
+                print(detail)
         return target
 
     clone_cmd = [
@@ -132,4 +140,3 @@ def github_token_from_env() -> str | None:
         if value:
             return value
     return None
-

@@ -1,12 +1,12 @@
 ---
-title: "Point Cloud Processing"
+title: "点群処理"
 type: "llm_article"
 concept: "point_cloud_processing"
 generated_at: "2026-04-05"
 source_count: 14
 ---
 
-# Point Cloud Processing (点群処理)
+# 点群処理
 
 3D 点群データの取得・変換・解析を行う技術群。[[lidar]] スキャンの前処理から、BIM モデル変換、動的物体除去まで幅広い応用を持つ。
 
@@ -36,7 +36,7 @@ VoxelGrid フィルタが標準手法。ほぼ全ての [[slam]] 実装が前処
 
 ## rsasaki-hub での位置づけ
 
-pointcloud_processing_exploration で 3 track に分類:
+`pointcloud_processing_exploration` では 3 トラックに分類される:
 - **pointcloud_analysis**: `CloudAnalyzer` (暫定採用, score: 79.22)
 - **pointcloud_transformation**: `construction-diff` (暫定採用, score: 83.92)
 - **pointcloud_to_model**: `pointcloud2ifc` (暫定採用, score: 59.48)

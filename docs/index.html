@@ -33,121 +33,125 @@ footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border
 <body>
 
 <h1>rsasaki-hub</h1>
-<p class="subtitle"><code>rsasaki0109</code> public repos の探索中枢</p>
+<p class="subtitle"><code>rsasaki0109</code> の公開リポジトリを横断比較する探索ハブ</p>
 
 <div class="card">
-<div class="diff-label">Score について</div>
-<p>各リポジトリのスコア (0〜100) は以下の 3 指標の加重平均です。実行ベンチマークではなく、ソースコードの静的解析による proxy 評価です。</p>
+<div class="diff-label">スコアについて</div>
+<p>各リポジトリのスコア (0〜100) は以下の 3 指標の加重平均です。実行ベンチマークではなく、ソースコードの静的解析による代理評価です。</p>
 <table style="margin-top:0.5rem">
 <thead><tr><th>指標</th><th>重み</th><th>内容</th></tr></thead>
 <tbody>
-<tr><td>Benchmark 準備度</td><td>50%</td><td>README / docs に精度・速度の記述があるか、benchmark 用ファイルが存在するか</td></tr>
-<tr><td>可読性</td><td>25%</td><td>ファイル数、LOC、分岐数、最大関数サイズ、コメント率などの heuristic</td></tr>
-<tr><td>拡張性</td><td>25%</td><td>モジュール分割、設定ファイル、public API surface、ハードコード数などの heuristic</td></tr>
+<tr><td>ベンチマーク準備度</td><td>50%</td><td>README / docs に精度・速度の記述があるか、ベンチマーク用ファイルが存在するか</td></tr>
+<tr><td>可読性</td><td>25%</td><td>ファイル数、LOC、分岐数、最大関数サイズ、コメント率などのヒューリスティック</td></tr>
+<tr><td>拡張性</td><td>25%</td><td>モジュール分割、設定ファイル、公開 API、ハードコード数などのヒューリスティック</td></tr>
 </tbody>
 </table>
 <p style="margin-top:0.4rem;color:var(--muted);font-size:0.85rem">スコアが高い = 「比較・検証を進めやすい実装」であり、「実運用で最強」ではありません。</p>
 </div>
 
-<h2>&#9670; LiDAR Stack</h2>
-<p>Compare public lidar localization, lidar SLAM, and lidar+imu SLAM repositories under one exploration family.</p>
-<h3>lidar_localization</h3>
+<h2>&#9670; LiDAR スタック</h2>
+<p class="subtitle"><code>lidar_stack_exploration</code></p>
+<p>公開 LiDAR 自己位置推定・LiDAR SLAM・LiDAR+IMU SLAM 実装を 1 つの探索ファミリとして比較する。</p>
+<h3>LiDAR 自己位置推定 <code>lidar_localization</code></h3>
 <p>点群マップに対する自己位置推定</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/amcl_3d">amcl_3d</a></td><td class="score winner">90.22</td><td><span class="tag">AMCL</span><span class="tag">CLAS</span><span class="tag">PID</span><span class="tag">NDT</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/lidar_localization_ros2">lidar_localization_ros2</a></td><td class="score">36.72</td><td><span class="tag">NDT</span><span class="tag">VoxelGrid</span><span class="tag">GICP</span><span class="tag">ICP</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Imu, Odometry, PointCloud2, Pose &nbsp;|&nbsp; Optional: Path<br>Output: Path, PointCloud2, Pose</p><p>暫定採用: <strong>amcl_3d</strong></p></div>
-<h3>lidar_slam</h3>
-<p>LiDAR のみによる odometry + mapping</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Imu, Odometry, PointCloud2, Pose &nbsp;|&nbsp; 任意: Path<br>出力: Path, PointCloud2, Pose</p><p>暫定採用: <strong>amcl_3d</strong></p></div>
+<h3>LiDAR SLAM <code>lidar_slam</code></h3>
+<p>LiDAR 単独によるオドメトリと地図構築</p>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/lidarslam_ros2">lidarslam_ros2</a></td><td class="score winner">83.97</td><td><span class="tag">Submap</span><span class="tag">LoopClosure</span><span class="tag">SLAM</span><span class="tag">PoseGraph</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/littleslam_ros2">littleslam_ros2</a></td><td class="score">42.74</td><td><span class="tag">SLAM</span><span class="tag">CLAS</span><span class="tag">ICP</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/li_slam_ros2">li_slam_ros2</a></td><td class="score">36.48</td><td><span class="tag">VoxelGrid</span><span class="tag">Submap</span><span class="tag">SLAM</span><span class="tag">NDT</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: PointCloud2 &nbsp;|&nbsp; Optional: Imu, MapArray, Odometry, NavSatFix, Pose<br>Output: Path, PointCloud2, Pose &nbsp;|&nbsp; Optional: MapArray</p><p>暫定採用: <strong>lidarslam_ros2</strong></p></div>
-<h3>lidar_imu_slam</h3>
-<p>LiDAR + IMU による慣性融合 odometry + mapping</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
-<tr><td><a href="https://github.com/rsasaki0109/localization_zoo">localization_zoo</a></td><td class="score winner">84.33</td><td><span class="tag">ICP</span><span class="tag">LIO</span><span class="tag">GICP</span><span class="tag">VoxelGrid</span></td></tr>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: PointCloud2 &nbsp;|&nbsp; 任意: Imu, MapArray, Odometry, NavSatFix, Pose<br>出力: Path, PointCloud2, Pose &nbsp;|&nbsp; 任意: MapArray</p><p>暫定採用: <strong>lidarslam_ros2</strong></p></div>
+<h3>LiDAR+IMU SLAM <code>lidar_imu_slam</code></h3>
+<p>LiDAR と IMU を使う慣性融合オドメトリと地図構築</p>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/rsasaki0109/localization_zoo">localization_zoo</a></td><td class="score winner">92.81</td><td><span class="tag">ICP</span><span class="tag">GICP</span><span class="tag">LIO</span><span class="tag">NDT</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/FAST_LIO">FAST_LIO</a></td><td class="score">52.26</td><td><span class="tag">CLAS</span><span class="tag">LIO</span><span class="tag">EKF</span><span class="tag">Odometry</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Imu, Odometry, PointCloud2 &nbsp;|&nbsp; Optional: Path<br>Output: Odometry, Path &nbsp;|&nbsp; Optional: PointCloud2, Pose</p><p>暫定採用: <strong>localization_zoo</strong></p></div>
-<h2>&#9670; Robotics Algorithms</h2>
-<p>Compare cross-language implementations of core robotics algorithms (filtering, path planning, SLAM basics).</p>
-<h3>state_estimation</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Imu, Odometry, PointCloud2<br>出力: Path &nbsp;|&nbsp; 任意: Odometry, PointCloud2</p><p>暫定採用: <strong>localization_zoo</strong></p></div>
+<h2>&#9670; ロボティクスアルゴリズム</h2>
+<p class="subtitle"><code>robotics_algorithms_exploration</code></p>
+<p>ロボティクス基盤アルゴリズムの多言語実装を比較する（フィルタ、経路計画、SLAM 基礎）。</p>
+<h3>状態推定 <code>state_estimation</code></h3>
 <p>フィルタリング・状態推定 (EKF, UKF, Particle Filter 等)</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/imu_estimator">imu_estimator</a></td><td class="score winner">41.5</td><td><span class="tag">EKF</span><span class="tag">CLAS</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/quaternion-based_kalman_filter">quaternion-based_kalman_filter</a></td><td class="score">38.64</td><td><span class="tag">Kalman</span><span class="tag">CLAS</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/particle_filtering_model_predictive_control">particle_filtering_model_predictive_control</a></td><td class="score">35.44</td><td><span class="tag">MPC</span><span class="tag">ParticleFilter</span><span class="tag">CLAS</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/gaussian_particle_filter">gaussian_particle_filter</a></td><td class="score">33.64</td><td><span class="tag">ParticleFilter</span><span class="tag">Kalman</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/mathematical_robotics">mathematical_robotics</a></td><td class="score">32.91</td><td><span class="tag">IMUPreintegration</span><span class="tag">EKF</span><span class="tag">PoseGraph</span><span class="tag">CLAS</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Imu, Odometry<br>Output: Path, Pose</p><p>暫定採用: <strong>imu_estimator</strong></p></div>
-<h3>path_planning</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Imu, Odometry<br>出力: Path, Pose</p><p>暫定採用: <strong>imu_estimator</strong></p></div>
+<h3>経路計画 <code>path_planning</code></h3>
 <p>経路・動作計画 (RRT, A*, DWA 等)</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
-<tr><td><a href="https://github.com/rsasaki0109/simple_visual_slam">simple_visual_slam</a></td><td class="score winner">78.19</td><td><span class="tag">CLAS</span><span class="tag">LoopClosure</span><span class="tag">SLAM</span><span class="tag">NDT</span></td></tr>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/rsasaki0109/simple_visual_slam">simple_visual_slam</a></td><td class="score winner">78.99</td><td><span class="tag">CLAS</span><span class="tag">LoopClosure</span><span class="tag">SLAM</span><span class="tag">RANSAC</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/CudaRobotics">CudaRobotics</a></td><td class="score">63.29</td><td><span class="tag">CLAS</span><span class="tag">LIO</span><span class="tag">RRT</span><span class="tag">AStar</span></td></tr>
-<tr><td><a href="https://github.com/rsasaki0109/rust_robotics">rust_robotics</a></td><td class="score">41.34</td><td><span class="tag">MPC</span><span class="tag">LQR</span><span class="tag">AStar</span><span class="tag">LoopClosure</span></td></tr>
-<tr><td><a href="https://github.com/rsasaki0109/roboclaw-rs">roboclaw-rs</a></td><td class="score">27.62</td><td><span class="tag">CLAS</span><span class="tag">LoopClosure</span><span class="tag">ICP</span><span class="tag">DWA</span></td></tr>
+<tr><td><a href="https://github.com/rsasaki0109/rust_robotics">rust_robotics</a></td><td class="score">48.75</td><td><span class="tag">MPC</span><span class="tag">AStar</span><span class="tag">LQR</span><span class="tag">SLAM</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: none<br>Output: Path</p><p>暫定採用: <strong>simple_visual_slam</strong></p></div>
-<h3>scan_matching</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: なし<br>出力: Path &nbsp;|&nbsp; 任意: Pose</p><p>暫定採用: <strong>simple_visual_slam</strong></p></div>
+<h3>スキャンマッチング <code>scan_matching</code></h3>
 <p>点群レジストレーション・スキャンマッチング (ICP, NDT 等)</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/NormalDistributionTransform2D">NormalDistributionTransform2D</a></td><td class="score winner">36.44</td><td><span class="tag">NDT</span><span class="tag">SLAM</span></td></tr>
+<tr><td><a href="https://github.com/rsasaki0109/roboclaw-rs">roboclaw-rs</a></td><td class="score">27.62</td><td><span class="tag">CLAS</span><span class="tag">LoopClosure</span><span class="tag">ICP</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: none<br>Output: none</p><p>暫定採用: <strong>NormalDistributionTransform2D</strong></p></div>
-<h2>&#9670; GNSS Positioning</h2>
-<p>Compare GNSS and multi-sensor positioning implementations.</p>
-<h3>gnss_processing</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: なし<br>出力: Path</p><p>暫定採用: <strong>NormalDistributionTransform2D</strong></p></div>
+<h2>&#9670; GNSS 測位</h2>
+<p class="subtitle"><code>gnss_positioning_exploration</code></p>
+<p>GNSS および複合センサ測位の実装を比較する。</p>
+<h3>GNSS 処理 <code>gnss_processing</code></h3>
 <p>GNSS 信号処理・測位 (RTK, PPP 等)</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
-<tr><td><a href="https://github.com/rsasaki0109/gnssplusplus-library">gnssplusplus-library</a></td><td class="score winner">75.16</td><td><span class="tag">PPP</span><span class="tag">RTK</span><span class="tag">CLAS</span><span class="tag">RTCM</span></td></tr>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/rsasaki0109/gnssplusplus-library">gnssplusplus-library</a></td><td class="score winner">74.36</td><td><span class="tag">PPP</span><span class="tag">RTK</span><span class="tag">CLAS</span><span class="tag">RTCM</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/gnss_gpu">gnss_gpu</a></td><td class="score">53.86</td><td><span class="tag">EKF</span><span class="tag">Pseudorange</span><span class="tag">RTK</span><span class="tag">RINEX</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/q-method">q-method</a></td><td class="score">35.98</td><td></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/RTKLIB">RTKLIB</a></td><td class="score">31.51</td><td><span class="tag">RTK</span><span class="tag">RTCM</span><span class="tag">RINEX</span><span class="tag">CLAS</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: NavSatFix, Path, Pose &nbsp;|&nbsp; Optional: PointCloud2<br>Output: Path, NavSatFix &nbsp;|&nbsp; Optional: Pose</p><p>暫定採用: <strong>gnssplusplus-library</strong></p></div>
-<h3>multi_sensor_positioning</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Path, PointCloud2<br>出力: Path</p><p>暫定採用: <strong>gnssplusplus-library</strong></p></div>
+<h3>複合測位 <code>multi_sensor_positioning</code></h3>
 <p>GNSS + IMU/Wheel 複合測位</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/kalman_filter_localization_ros2">kalman_filter_localization_ros2</a></td><td class="score winner">45.77</td><td><span class="tag">EKF</span><span class="tag">Kalman</span><span class="tag">Odometry</span><span class="tag">NDT</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/gnss_imu_wheel_localizer">gnss_imu_wheel_localizer</a></td><td class="score">37.33</td><td><span class="tag">Kalman</span><span class="tag">EKF</span><span class="tag">Odometry</span><span class="tag">LoopClosure</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Imu, Odometry, Pose &nbsp;|&nbsp; Optional: NavSatFix<br>Output: Pose &nbsp;|&nbsp; Optional: Imu, Odometry, Path</p><p>暫定採用: <strong>kalman_filter_localization_ros2</strong></p></div>
-<h2>&#9670; Point Cloud Processing</h2>
-<p>Compare point cloud analysis, transformation, and processing tools.</p>
-<h3>pointcloud_analysis</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Imu, Odometry, Pose &nbsp;|&nbsp; 任意: NavSatFix<br>出力: Pose &nbsp;|&nbsp; 任意: Imu, Odometry, Path</p><p>暫定採用: <strong>kalman_filter_localization_ros2</strong></p></div>
+<h2>&#9670; 点群処理</h2>
+<p class="subtitle"><code>pointcloud_processing_exploration</code></p>
+<p>点群の分析・変換・処理ツールを比較する。</p>
+<h3>点群分析 <code>pointcloud_analysis</code></h3>
 <p>点群の分析・評価・可視化</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/CloudAnalyzer">CloudAnalyzer</a></td><td class="score winner">79.22</td><td><span class="tag">CLAS</span><span class="tag">VoxelGrid</span><span class="tag">ICP</span><span class="tag">GICP</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Path<br>Output: Path</p><p>暫定採用: <strong>CloudAnalyzer</strong></p></div>
-<h3>pointcloud_transformation</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Path<br>出力: Path</p><p>暫定採用: <strong>CloudAnalyzer</strong></p></div>
+<h3>点群変換 <code>pointcloud_transformation</code></h3>
 <p>点群のフィルタリング・変換・差分検出</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/construction-diff">construction-diff</a></td><td class="score winner">83.92</td><td><span class="tag">VoxelGrid</span><span class="tag">ICP</span><span class="tag">CLAS</span><span class="tag">RANSAC</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/tree-trunk-mapper">tree-trunk-mapper</a></td><td class="score">80.03</td><td><span class="tag">CLAS</span><span class="tag">RANSAC</span><span class="tag">NDT</span><span class="tag">Clustering</span></td></tr>
-<tr><td><a href="https://github.com/rsasaki0109/dynamic-3d-object-removal">dynamic-3d-object-removal</a></td><td class="score">51.26</td><td><span class="tag">VoxelGrid</span><span class="tag">CLAS</span><span class="tag">NDT</span><span class="tag">SLAM</span></td></tr>
+<tr><td><a href="https://github.com/rsasaki0109/dynamic-3d-object-removal">dynamic-3d-object-removal</a></td><td class="score">52.86</td><td><span class="tag">VoxelGrid</span><span class="tag">CLAS</span><span class="tag">NDT</span><span class="tag">SLAM</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/npy2pointcloud">npy2pointcloud</a></td><td class="score">40.05</td><td><span class="tag">CLAS</span><span class="tag">NDT</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/laser_deskew">laser_deskew</a></td><td class="score">39.11</td><td><span class="tag">Deskew</span><span class="tag">NDT</span><span class="tag">Odometry</span><span class="tag">CLAS</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Path, PointCloud2, LaserScan &nbsp;|&nbsp; Optional: Odometry<br>Output: Path, PointCloud2 &nbsp;|&nbsp; Optional: LaserScan, Pose</p><p>暫定採用: <strong>construction-diff</strong></p></div>
-<h3>pointcloud_to_model</h3>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Path, PointCloud2, LaserScan &nbsp;|&nbsp; 任意: Odometry<br>出力: Path, PointCloud2 &nbsp;|&nbsp; 任意: LaserScan, Pose</p><p>暫定採用: <strong>construction-diff</strong></p></div>
+<h3>点群モデル化 <code>pointcloud_to_model</code></h3>
 <p>点群から BIM/IFC・セマンティックモデルへの変換</p>
-<table><thead><tr><th>Repo</th><th>Score</th><th>Algorithms</th></tr></thead><tbody>
+<table><thead><tr><th>リポジトリ</th><th>スコア</th><th>主要アルゴリズム</th></tr></thead><tbody>
 <tr><td><a href="https://github.com/rsasaki0109/pointcloud2ifc">pointcloud2ifc</a></td><td class="score winner">59.48</td><td><span class="tag">CLAS</span><span class="tag">VoxelGrid</span><span class="tag">Segmentation</span><span class="tag">RANSAC</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/bim-quality-checker">bim-quality-checker</a></td><td class="score">58.59</td><td><span class="tag">CLAS</span><span class="tag">NDT</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/gs-sim2real">gs-sim2real</a></td><td class="score">48.67</td><td><span class="tag">CLAS</span><span class="tag">NDT</span><span class="tag">LoopClosure</span><span class="tag">SLAM</span></td></tr>
 <tr><td><a href="https://github.com/rsasaki0109/rohbau-annotator">rohbau-annotator</a></td><td class="score">36.59</td><td><span class="tag">CLAS</span><span class="tag">Semantic</span><span class="tag">Segmentation</span><span class="tag">NDT</span></td></tr>
 </tbody></table>
-<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">Input: Path, PointCloud2<br>Output: Path</p><p>暫定採用: <strong>pointcloud2ifc</strong></p></div>
+<div class="card"><div class="diff-label">最小 I/O 契約</div><p class="io">入力: Path, PointCloud2<br>出力: Path</p><p>暫定採用: <strong>pointcloud2ifc</strong></p></div>
 
 <footer>
-  <p>Generated at 2026-04-04T21:34:41+00:00 by <a href="https://github.com/rsasaki0109/rsasaki-hub">rsasaki-hub</a></p>
+  <p>生成日時 2026-04-10T09:30:59+00:00 / <a href="https://github.com/rsasaki0109/rsasaki-hub">rsasaki-hub</a></p>
 </footer>
 
 </body>

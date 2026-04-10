@@ -1,7 +1,7 @@
 .cache/
+.obsidian/
 __pycache__/
 *.pyc
 raw/
 wiki/*
 !wiki/articles/
-
